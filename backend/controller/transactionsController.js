@@ -6,6 +6,7 @@ const createTransaction = async(req, res) => {
 
         const newTransaction = new Transaction(
             {
+                userId: req.userId,
                 title,
                 amount,
                 type,
@@ -28,7 +29,9 @@ const createTransaction = async(req, res) => {
 
 const getTransactions = async(req, res) => {
     try{
-        const transactions = await Transaction.find();
+        const transactions = await Transaction.find({
+            userId : req.userId
+        });
 
         if(!transactions) {
             return res.status(404).json({
@@ -50,7 +53,10 @@ const getTransaction = async(req, res) => {
     try{
         const { id } = req.params;
 
-        const transaction = await Transaction.findById(id);
+        const transaction = await Transaction.findOne({
+            _id: id,
+            userId: req.userId
+        });
 
         if(!transaction){
             return res.status(404).json({
@@ -72,11 +78,17 @@ const updateTransaction = async(req, res) => {
     try{
         const { id } = req.params;
 
-        const transaction = await Transaction.findByIdAndUpdate(
-            id,
+        const transaction = await Transaction.findOneAndUpdate(
+            {
+                _id: id,
+                userId: req.userId
+            },
             req.body,
-            { new: true, runValidators: true }
-        )
+            {
+                new: true,
+                runValidators: true
+            }
+        );
 
         if(!transaction) {
             return res.status(404).json({
@@ -98,7 +110,10 @@ const deleteTransaction = async(req, res) => {
     try{
         const { id } = req.params;
 
-        const transaction = await Transaction.findByIdAndDelete(id);
+        const transaction = await Transaction.findByIdAndDelete({
+            _id: id,
+            userId : req.userId
+        });
 
         if(!transaction) {
             return res.status(404).json({
