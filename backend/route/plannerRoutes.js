@@ -9,13 +9,16 @@ const {
     getPlans,
     getPlan,
     updatePlan,
-    deletePlan
+    deletePlan,
+    getPlanSummary
 } = require("../controller/plannerController");
 
 router.post("/", protect, createPlan),
 router.get("/", protect, getPlans),
+router.get("/:id/summary", getPlanSummary)
 router.get("/:id", protect, getPlan);
 router.put("/:id", protect, updatePlan);
-router.delete("/:id", protect, deletePlan)
+router.delete("/:id", protect, deletePlan);
+
 
 module.exports = router
