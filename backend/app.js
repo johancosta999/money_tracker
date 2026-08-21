@@ -17,6 +17,7 @@ app.use("/api/transactions", require("./route/transactionsRoute"));
 app.use("/api/categories", require("./route/categoryRoutes"))
 app.use("/api/budget", require("./route/budgetRouter"))
 app.use("/api/plan", require("./route/plannerRoutes"))
+app.use("api/dashboard", require("./route/dashboardRoute"))
 
 app.get("/", (req, res) => {
     res.json({
