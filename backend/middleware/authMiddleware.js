@@ -28,7 +28,10 @@ const protect = async(req, res, next) => {
         next()
 
     } catch (error) {
-
+        return res.status(401).json({
+            message : "Invalid token or expired authorization",
+            error : error.message
+        })
     }
 }
 

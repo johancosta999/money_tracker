@@ -3,7 +3,7 @@ const mongoose = require("mongoose")
 const plannerSchema = new mongoose.Schema({
         userId : {
             type : mongoose.Schema.Types.ObjectId,
-            ref : "User",
+            ref : "Users",
             required : true
         },
 
@@ -14,7 +14,7 @@ const plannerSchema = new mongoose.Schema({
         
         weekEnd : {
             type : Date,
-            requied : true
+            required : true
         },
         
         totalBudget : {
