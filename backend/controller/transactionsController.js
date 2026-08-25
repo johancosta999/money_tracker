@@ -110,7 +110,7 @@ const deleteTransaction = async(req, res) => {
     try{
         const { id } = req.params;
 
-        const transaction = await Transaction.findByIdAndDelete({
+        const transaction = await Transaction.findOneAndDelete({
             _id: id,
             userId : req.userId
         });

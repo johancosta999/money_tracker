@@ -5,6 +5,7 @@ const createBudget = async(req, res) => {
         const { title, amount, duration } = req.body;
 
         const newBudget = new Budget({
+            userId : req.userId,
             title,
             amount,
             duration
@@ -23,10 +24,12 @@ const createBudget = async(req, res) => {
 
 const getBudgets = async(req, res) => {
     try{
-        const budget = await Budget.find()
+        const budget = await Budget.find({
+            userId : req.userId
+        })
 
         if(!budget) {
-            return res.staus(404).json({
+            return res.status(404).json({
                 message : "Couldn't find budget"
             })
         }
@@ -45,7 +48,10 @@ const getBudget = async(req, res) => {
     try {
         const { id } = req.params;
         
-        const findBudget = await Budget.findById(id);
+        const findBudget = await Budget.findOne({
+            _id: id,
+            userId: req.userId
+        });
 
         if(!findBudget) {
             return res.status(404).json({
@@ -67,11 +73,13 @@ const updateBudget = async(req, res) => {
     try {
         const { id } = req.params;
 
-        const updatedBudget = await Budget.findByIdAndUpdate(
-            id, 
+        const updatedBudget = await Budget.findOneAndUpdate({
+                _id : id, 
+                userId : req.userId
+            },
             req.body,
             { new: true, runValidators: true }
-        )
+        );
 
         if(!updatedBudget) {
             return res.status(404).json({
@@ -93,7 +101,10 @@ const deleteBudget = async(req, res) => {
     try {
         const { id } = req.params;
 
-        const deletedBudget = await Budget.findByIdAndDelete(id);
+        const deletedBudget = await Budget.findOneAndDelete({
+            _id : id,
+            userId: req.userId
+        });
 
         if(!deletedBudget) {
             return res.status(404).json({

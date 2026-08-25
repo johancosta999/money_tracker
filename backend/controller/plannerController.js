@@ -65,7 +65,7 @@ const getPlan = async(req, res) => {
         res.status(200).json(plan)
 
     } catch(error){
-        res.status(200).json({
+        res.status(500).json({
             message : "Couldn'y get the plan",
             error : error.message
         })
@@ -108,7 +108,7 @@ const deletePlan = async(req, res) =>{
     try {
         const { id } = req.params;
 
-        const deletedPlan = await Planner.findByIdAndDelete({
+        const deletedPlan = await Planner.findOneAndDelete({
             _id : id,
             userId: req.userId
         });
@@ -146,7 +146,7 @@ const getPlanSummary = async (req, res) => {
         }
 
         // Find expenses within the planned week
-        const transactions = await Transaction.find({
+        const transactions = await Transactions.find({
             userId: req.userId,
             type: "expense",
             date: {

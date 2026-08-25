@@ -15,7 +15,7 @@ const {
 
 router.post("/", protect, createPlan),
 router.get("/", protect, getPlans),
-router.get("/:id/summary", getPlanSummary)
+router.get("/:id/summary", protect, getPlanSummary)
 router.get("/:id", protect, getPlan);
 router.put("/:id", protect, updatePlan);
 router.delete("/:id", protect, deletePlan);
