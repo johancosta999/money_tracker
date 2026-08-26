@@ -1,24 +1,76 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Login from "./pages/Login"
-import Register from "./pages/Register"
-import Planner from "./pages/Planner"
-import Transactions from "./pages/Transactions"
-import Categories from "./pages/Categories"
-import Dashboard from "./pages/Dashboard"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import Transactions from "./pages/Transactions";
+import Planner from "./pages/Planner";
+import Categories from "./pages/Categories";
+
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  return (
-    <BrowserRouter>
-        <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-            <Route path="/planner" element={<Planner />} />
-            <Route path="/transactions" element={<Transactions />} />
-            <Route path="/categories" element={<Categories />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-        </Routes>
-    </BrowserRouter>
-  )
+
+    return (
+        <BrowserRouter>
+
+            <Routes>
+
+                {/* Public routes */}
+
+                <Route
+                    path="/login"
+                    element={<Login />}
+                />
+
+                <Route
+                    path="/register"
+                    element={<Register />}
+                />
+
+
+                {/* Protected routes */}
+
+                <Route
+                    path="/dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/transactions"
+                    element={
+                        <ProtectedRoute>
+                            <Transactions />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/planner"
+                    element={
+                        <ProtectedRoute>
+                            <Planner />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/categories"
+                    element={
+                        <ProtectedRoute>
+                            <Categories />
+                        </ProtectedRoute>
+                    }
+                />
+
+            </Routes>
+
+        </BrowserRouter>
+    );
 }
 
-export default App
+export default App;
