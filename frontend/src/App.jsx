@@ -6,8 +6,10 @@ import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
 import Planner from "./pages/Planner";
 import Categories from "./pages/Categories";
+import Budgets from "./pages/Budgets"
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import Landing from "./pages/Landing";
 
 function App() {
 
@@ -17,6 +19,10 @@ function App() {
             <Routes>
 
                 {/* Public routes */}
+                <Route 
+                    path="/"
+                    element={<Landing />}
+                />
 
                 <Route
                     path="/login"
@@ -63,6 +69,15 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <Categories />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route 
+                    path="/budgets"
+                    element={
+                        <ProtectedRoute>
+                            <Budgets />
                         </ProtectedRoute>
                     }
                 />

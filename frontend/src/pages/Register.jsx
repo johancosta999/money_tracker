@@ -1,120 +1,214 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom";
-import api from "../services/api"
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import api from "../services/api";
 
 function Register() {
 
-  const [userName, setuserName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [age, setAge] = useState("");
+    const [userName, setUserName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [age, setAge] = useState("");
 
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+    const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
+    const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const handleRegister = async(e) => {
-    e.preventDefault();
 
-    setError("");
-    setMessage("");
+    const handleRegister = async (e) => {
 
-    try {
-      const response = await api.post("/auth/register", {
-        userName,
-        email,
-        password,
-        age
-      });
+        e.preventDefault();
 
-      console.log(response.data);
+        setError("");
+        setMessage("");
+        setLoading(true);
 
-      setMessage("Account created successfully!")
+        try {
 
-      setTimeout(() => {
-        navigate("/login")
-      }, 1000)
+            const response = await api.post("/auth/register", {
+                userName,
+                email,
+                password,
+                age
+            });
 
-    } catch (error) {
-      console.log(error)
+            console.log(response.data);
 
-      setError(
-        error.response?.data?.message || "Registration failed"
-      );
-    }
-  }
+            setMessage("Account created successfully!");
 
-  return (
-    <div>
-      
-      <h1>Money Tracker</h1>
+            setTimeout(() => {
+                navigate("/login");
+            }, 1000);
 
-      <h2>Create Account</h2>
+        } catch (error) {
 
-      <form onSubmit={ handleRegister } >
+            console.log(error);
 
-        <div>
-          <label>Username</label> 
+            setError(
+                error.response?.data?.message || "Registration failed"
+            );
 
-          <input
-            type="text"
-            value={userName}
-            onChange={(e) => setuserName(e.target.value)}
-            required
-          />
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    return (
+
+        <div className="auth-page">
+
+            <div className="auth-card">
+
+                {/* Brand */}
+
+                <div className="auth-brand">
+
+                    <div className="brand-icon">
+                        ₿
+                    </div>
+
+                    <h1>MoneyTracker</h1>
+
+                    <p>Create your account.</p>
+
+                </div>
+
+
+                {/* Register Form */}
+
+                <form onSubmit={handleRegister}>
+
+                    {/* Username */}
+
+                    <div className="input-group">
+
+                        <label>Username</label>
+
+                        <input
+                            type="text"
+                            placeholder="Enter your username"
+                            value={userName}
+                            onChange={(e) => setUserName(e.target.value)}
+                            required
+                        />
+
+                    </div>
+
+
+                    {/* Email */}
+
+                    <div className="input-group">
+
+                        <label>Email</label>
+
+                        <input
+                            type="email"
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+
+                    </div>
+
+
+                    {/* Password */}
+
+                    <div className="input-group">
+
+                        <label>Password</label>
+
+                        <input
+                            type="password"
+                            placeholder="Create a password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+
+                    </div>
+
+
+                    {/* Age */}
+
+                    <div className="input-group">
+
+                        <label>Age</label>
+
+                        <input
+                            type="number"
+                            placeholder="Enter your age"
+                            value={age}
+                            onChange={(e) => setAge(e.target.value)}
+                            min="1"
+                            required
+                        />
+
+                    </div>
+
+
+                    {/* Error */}
+
+                    {error && (
+                        <div className="auth-error">
+                            {error}
+                        </div>
+                    )}
+
+
+                    {/* Success */}
+
+                    {message && (
+                        <div className="auth-success">
+                            {message}
+                        </div>
+                    )}
+
+
+                    {/* Register Button */}
+
+                    <button
+                        type="submit"
+                        className="auth-submit"
+                        disabled={loading}
+                    >
+                        {loading
+                            ? "Creating account..."
+                            : "Create Account"
+                        }
+                    </button>
+
+                </form>
+
+
+                {/* Login */}
+
+                <div className="auth-footer">
+
+                    <span>Already have an account?</span>
+
+                    <Link to="/login">
+                        Login
+                    </Link>
+
+                </div>
+
+
+                {/* Back */}
+
+                <Link
+                    to="/"
+                    className="back-home"
+                >
+                    ← Back to home
+                </Link>
+
+            </div>
+
         </div>
-
-        <div>
-          <label>Email</label>
-          <input 
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Age </label>
-          <input 
-            type="number"
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-            required
-          />
-        </div>
-
-        {error && (
-          <p>{error}</p>
-        )}
-
-        {message && (
-          <p>{message}</p>
-        )}
-
-        <button type="submit">Register</button>
-
-      </form>
-
-      <p>
-        Already have an account?
-        {" "}
-        <button onClick={() => navigate("/login")}>Login</button>
-      </p>
-
-    </div>
-  )
+    );
 }
 
-export default Register
+export default Register;
