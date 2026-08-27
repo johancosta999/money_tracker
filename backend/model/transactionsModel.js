@@ -8,6 +8,12 @@ const transactionsSchema = new mongoose.Schema({
             required : true
         },
 
+        plannerId : {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : "Planner",
+            required : true
+        },
+
         title : {
             type: String,
             required: true,
