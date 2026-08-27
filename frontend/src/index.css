@@ -1525,3 +1525,351 @@ body {
         flex-direction: column;
     }
 }
+
+/* =================================
+   PLAN DETAILS PAGE
+================================= */
+
+.plan-details-page {
+    min-height: 100vh;
+    padding: 40px;
+    background: #e8e8e8;
+    color: #333;
+}
+
+
+/* =================================
+   HEADER
+================================= */
+
+.plan-details-header {
+    margin-bottom: 35px;
+}
+
+.back-button {
+    margin-bottom: 25px;
+}
+
+.plan-label {
+    display: block;
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+
+    color: #888;
+}
+
+.plan-details-header h1 {
+    margin: 8px 0;
+
+    font-size: 32px;
+}
+
+.plan-details-header p {
+    margin: 0;
+
+    color: #777;
+}
+
+
+/* =================================
+   SUMMARY CARDS
+================================= */
+
+.summary-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 25px;
+
+    margin-bottom: 30px;
+}
+
+.summary-card {
+    padding: 25px;
+
+    border-radius: 22px;
+
+    background: #e8e8e8;
+
+    box-shadow:
+        10px 10px 20px rgba(0, 0, 0, 0.12),
+        -10px -10px 20px rgba(255, 255, 255, 0.8);
+}
+
+.summary-card span {
+    display: block;
+
+    margin-bottom: 12px;
+
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+
+    color: #888;
+}
+
+.summary-card strong {
+    font-size: 26px;
+}
+
+
+/* =================================
+   PROGRESS SECTION
+================================= */
+
+.progress-section {
+    padding: 30px;
+
+    margin-bottom: 30px;
+
+    border-radius: 24px;
+
+    background: #e8e8e8;
+
+    box-shadow:
+        10px 10px 20px rgba(0, 0, 0, 0.12),
+        -10px -10px 20px rgba(255, 255, 255, 0.8);
+}
+
+.progress-header {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.progress-header span {
+    color: #888;
+
+    font-size: 13px;
+}
+
+.progress-header h2 {
+    margin: 6px 0 0;
+
+    font-size: 28px;
+}
+
+
+/* =================================
+   MAIN PROGRESS BAR
+================================= */
+
+.progress-track {
+    height: 15px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #e8e8e8;
+
+    box-shadow:
+        inset 4px 4px 8px rgba(0, 0, 0, 0.1),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.progress-fill {
+    height: 100%;
+
+    border-radius: 20px;
+
+    background: #555;
+
+    transition: width 0.4s ease;
+}
+
+.progress-fill.over-budget {
+    background: #b23a3a;
+}
+
+
+/* =================================
+   CATEGORY SECTION
+================================= */
+
+.category-section {
+    padding: 30px;
+
+    border-radius: 24px;
+
+    background: #e8e8e8;
+
+    box-shadow:
+        10px 10px 20px rgba(0, 0, 0, 0.12),
+        -10px -10px 20px rgba(255, 255, 255, 0.8);
+}
+
+.section-header span {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+
+    color: #888;
+}
+
+.section-header h2 {
+    margin: 7px 0 25px;
+}
+
+
+/* =================================
+   CATEGORY LIST
+================================= */
+
+.plan-category-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+.plan-category {
+    padding: 20px;
+
+    border-radius: 18px;
+
+    background: #e8e8e8;
+
+    box-shadow:
+        inset 4px 4px 8px rgba(0, 0, 0, 0.07),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.category-info {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 12px;
+}
+
+.category-info strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 16px;
+}
+
+.category-info small {
+    color: #888;
+}
+
+.category-remaining {
+    text-align: right;
+}
+
+.category-remaining small {
+    display: block;
+
+    margin-bottom: 4px;
+}
+
+.category-remaining strong {
+    font-size: 15px;
+}
+
+
+/* =================================
+   CATEGORY PROGRESS
+================================= */
+
+.category-progress {
+    height: 10px;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #e8e8e8;
+
+    box-shadow:
+        inset 3px 3px 6px rgba(0, 0, 0, 0.08),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+.category-progress-fill {
+    height: 100%;
+
+    border-radius: 20px;
+
+    background: #777;
+
+    transition: width 0.4s ease;
+}
+
+.category-progress-fill.over-budget {
+    background: #b23a3a;
+}
+
+
+/* =================================
+   NEGATIVE VALUE
+================================= */
+
+.negative {
+    color: #b23a3a !important;
+}
+
+
+/* =================================
+   RESPONSIVE
+================================= */
+
+@media (max-width: 800px) {
+
+    .plan-details-page {
+        padding: 25px 18px;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .plan-details-header h1 {
+        font-size: 26px;
+    }
+
+    .progress-header {
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+}
+
+
+@media (max-width: 500px) {
+
+    .plan-details-page {
+        padding: 20px 15px;
+    }
+
+    .progress-section,
+    .category-section {
+        padding: 20px;
+    }
+
+    .progress-header {
+        flex-direction: column;
+    }
+
+    .category-info {
+        align-items: flex-start;
+
+        gap: 15px;
+    }
+
+    .category-remaining {
+        text-align: left;
+    }
+}

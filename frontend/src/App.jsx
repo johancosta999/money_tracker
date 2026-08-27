@@ -10,6 +10,7 @@ import Budgets from "./pages/Budgets"
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import Landing from "./pages/Landing";
+import PlanDetails from "./pages/planDetails";
 
 function App() {
 
@@ -78,6 +79,15 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <Budgets />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/planner/:id"
+                    element={
+                        <ProtectedRoute>
+                            <PlanDetails />
                         </ProtectedRoute>
                     }
                 />
