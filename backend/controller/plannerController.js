@@ -1,5 +1,5 @@
 const Planner = require("../model/moneyPlanModel")
-const Transactions = require("../model/transactionsModel")
+const Transaction = require("../model/transactionsModel")
 
 // =====================================================
 // CREATE MONTHLY PLANNER

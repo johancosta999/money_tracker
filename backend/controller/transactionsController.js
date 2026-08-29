@@ -1,6 +1,5 @@
 const Transaction = require("../model/transactionsModel");
-const Planner = require("../model/plannerModel");
-
+const Planner = require("../model/moneyPlanModel")
 
 // =====================================================
 // CREATE TRANSACTION

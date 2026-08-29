@@ -25,7 +25,6 @@ const weeklySchema = new mongoose.Schema(
         },
 
         {
-            _,
             _id: true
         }
     );
