@@ -1,29 +1,31 @@
-const mongoose = require("mongoose")
+```js
+const mongoose = require("mongoose");
 
-const transactionsSchema = new mongoose.Schema({
-
-        user : {
-            type : mongoose.Schema.Types.ObjectId,
-            ref : "Users",
-            required : true
+const transactionsSchema = new mongoose.Schema(
+    {
+        // User who created the transaction
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Users",
+            required: true
         },
 
-        plannerId : {
-            type : mongoose.Schema.Types.ObjectId,
-            ref : "Planner",
-            required : true
+        // Planner this transaction belongs to
+        plannerId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Planner",
+            required: true
         },
 
-        title : {
+        title: {
             type: String,
             required: true,
-            trim : true
+            trim: true
         },
 
-        amount : {
+        amount: {
             type: Number,
-            required: true,
-            min: 0
+            required: true
         },
 
         type: {
@@ -32,27 +34,30 @@ const transactionsSchema = new mongoose.Schema({
             required: true
         },
 
-        category : {
-            type : String,
-            required : true,
-            trim : true
+        category: {
+            type: String,
+            required: true,
+            trim: true
         },
 
-        date : {
-            type : Date,
-            default : Date.now
+        date: {
+            type: Date,
+            default: Date.now
         },
 
-        description : {
-            type : String,
-            required : true,
-            trim : true
+        description: {
+            type: String,
+            required: true,
+            trim: true
         }
     },
     {
-        timestamps : true
+        timestamps: true
     }
-
 );
 
-module.exports = mongoose.model("transaction", transactionsSchema)
+module.exports = mongoose.model(
+    "transaction",
+    transactionsSchema
+);
+```
