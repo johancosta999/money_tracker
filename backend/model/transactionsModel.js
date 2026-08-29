@@ -2,7 +2,7 @@ const mongoose = require("mongoose")
 
 const transactionsSchema = new mongoose.Schema({
 
-        userId : {
+        user : {
             type : mongoose.Schema.Types.ObjectId,
             ref : "Users",
             required : true
@@ -22,7 +22,8 @@ const transactionsSchema = new mongoose.Schema({
 
         amount : {
             type: Number,
-            required: true
+            required: true,
+            min: 0
         },
 
         type: {
