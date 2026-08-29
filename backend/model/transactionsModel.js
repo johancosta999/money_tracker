@@ -1,4 +1,3 @@
-```js
 const mongoose = require("mongoose");
 
 const transactionsSchema = new mongoose.Schema(
@@ -60,4 +59,3 @@ module.exports = mongoose.model(
     "transaction",
     transactionsSchema
 );
-```
