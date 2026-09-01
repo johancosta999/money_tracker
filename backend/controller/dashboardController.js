@@ -1,46 +1,49 @@
-const Transaction = require("../model/transactionsModel")
+const Transaction = require("../model/transactionsModel");
 
-const getDashboardSummary = async(req, res) => {
-    try{
-        //get all transactions belonging to a logged user
+const getDashboardSummary = async (req, res) => {
+
+    try {
+
+        // Get all transactions belonging to the logged-in user
         const transactions = await Transaction.find({
-            userId : req.userId
+            user: req.userId
         });
 
         let totalIncome = 0;
         let totalExpense = 0;
 
-        //calculate income and expenses
-        transactions.forEach((transaction) =>{
-            
-        if(transaction.type === "income"){
-            totalIncome += transaction.amount;
-        }
+        // Calculate income and expenses
+        transactions.forEach((transaction) => {
 
-        if(transaction.type === "expense"){
-            totalExpense += transaction.amount;
-        }
-        
-    });
+            if (transaction.type === "income") {
+                totalIncome += transaction.amount;
+            }
 
-    //calculate balance 
-    const balance = totalIncome - totalExpense;
+            if (transaction.type === "expense") {
+                totalExpense += transaction.amount;
+            }
 
-    res.status(200).json({
-        totalIncome,
-        totalExpense,
-        balance
-    })
+        });
 
-    } catch(error){
+        // Calculate balance
+        const balance = totalIncome - totalExpense;
+
+        res.status(200).json({
+            totalIncome,
+            totalExpense,
+            balance
+        });
+
+    } catch (error) {
+
         res.status(500).json({
-            message : "Couldn't get deshboard summary",
-            error : error.message
-        })
+            message: "Couldn't get dashboard summary",
+            error: error.message
+        });
+
     }
 };
 
-
 module.exports = {
     getDashboardSummary
-}
+};
