@@ -1,178 +1,221 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import api from "../services/api";
 
 function PlanDetails() {
 
     const { id } = useParams();
-    const navigate = useNavigate();
 
-    const [plan, setPlan] = useState(null);
+    const [planner, setPlanner] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
 
+    const [weeklyBudgets, setWeeklyBudgets] = useState({});
+
+    // =========================
+    // Load planner
+    // =========================
 
     useEffect(() => {
 
-        let ignore = false;
-
-        const fetchPlan = async () => {
+        const fetchPlanner = async () => {
 
             try {
 
-                const response = await api.get(
-                    `/plan/${id}/summary`
-                );
+                const response = await api.get(`/plan/${id}`);
 
-                if (!ignore) {
-                    setPlan(response.data);
-                }
+                setPlanner(response.data);
+
+                // Store existing weekly budgets
+                const budgets = {};
+
+                response.data.weeks?.forEach((week) => {
+                    budgets[week.weekNumber] = week.budget || "";
+                });
+
+                setWeeklyBudgets(budgets);
 
             } catch (error) {
 
                 console.log(error);
 
-                if (!ignore) {
-                    setError(
-                        error.response?.data?.message ||
-                        "Couldn't load plan"
-                    );
-                }
+                setError(
+                    error.response?.data?.message ||
+                    "Couldn't load planner"
+                );
 
             } finally {
 
-                if (!ignore) {
-                    setLoading(false);
-                }
+                setLoading(false);
 
             }
+
         };
 
-        fetchPlan();
-
-        return () => {
-            ignore = true;
-        };
+        fetchPlanner();
 
     }, [id]);
 
 
+    // =========================
+    // Update weekly budget
+    // =========================
+
+    const handleBudgetChange = (weekNumber, value) => {
+
+        setWeeklyBudgets({
+            ...weeklyBudgets,
+            [weekNumber]: value
+        });
+
+    };
+
+
+    // =========================
+    // Save weekly budget
+    // =========================
+
+    const saveWeeklyBudget = async (weekNumber) => {
+
+        try {
+
+            const budget = Number(
+                weeklyBudgets[weekNumber]
+            );
+
+            if (budget < 0) {
+                return;
+            }
+
+            await api.put(
+                `/plan/${id}/week/${weekNumber}`,
+                {
+                    budget
+                }
+            );
+
+            // Reload planner
+            const response = await api.get(`/plan/${id}`);
+
+            setPlanner(response.data);
+
+            alert("Weekly budget updated!");
+
+        } catch (error) {
+
+            console.log(error);
+
+            alert(
+                error.response?.data?.message ||
+                "Couldn't update weekly budget"
+            );
+
+        }
+
+    };
+
+
+    // =========================
+    // Loading
+    // =========================
+
     if (loading) {
+
         return (
-            <div className="plan-details-page">
-                <h2>Loading plan...</h2>
+
+            <div className="planner-page">
+
+                <div className="dashboard-loading">
+                    Loading planner...
+                </div>
+
             </div>
+
         );
+
     }
 
 
-    if (error) {
+    // =========================
+    // Error
+    // =========================
+
+    if (error || !planner) {
+
         return (
-            <div className="plan-details-page">
 
-                <button onClick={() => navigate("/planner")}>
-                    ← Back to Planner
-                </button>
+            <div className="planner-page">
 
-                <p className="error">
-                    {error}
-                </p>
+                <Link
+                    to="/planner"
+                    className="back-button"
+                >
+                    ← Back to Planners
+                </Link>
+
+                <div className="dashboard-error">
+                    {error || "Planner not found"}
+                </div>
 
             </div>
+
         );
-    }
 
-
-    if (!plan) {
-        return null;
     }
 
 
     return (
 
-        <div className="plan-details-page">
+        <div className="planner-page">
 
-            {/* HEADER */}
+            {/* =========================
+                Header
+            ========================= */}
 
-            <div className="plan-details-header">
+            <div className="planner-header">
 
                 <div>
 
-                    <button
+                    <Link
+                        to="/planner"
                         className="back-button"
-                        onClick={() => navigate("/planner")}
                     >
-                        ← Back to Planner
-                    </button>
+                        ← Back to Planners
+                    </Link>
 
-                    <span className="plan-label">
-                        WEEKLY PLAN
-                    </span>
+                    <p className="dashboard-greeting">
+                        MONTHLY PLANNER
+                    </p>
 
                     <h1>
-                        {new Date(
-                            plan.weekStart
-                        ).toLocaleDateString()}
-                        {" — "}
-                        {new Date(
-                            plan.weekEnd
-                        ).toLocaleDateString()}
+                        {planner.name}
                     </h1>
 
                     <p>
-                        Here's how your spending compares
-                        with your weekly plan.
+
+                        {new Date(
+                            planner.startDate
+                        ).toLocaleDateString()}
+
+                        {" — "}
+
+                        {new Date(
+                            planner.endDate
+                        ).toLocaleDateString()}
+
                     </p>
 
                 </div>
 
-            </div>
+                <div className="budget">
 
-
-            {/* SUMMARY CARDS */}
-
-            <div className="summary-grid">
-
-                <div className="summary-card">
-
-                    <span>
-                        WEEKLY BUDGET
-                    </span>
+                    <small>
+                        Total Budget
+                    </small>
 
                     <strong>
-                        Rs. {plan.planned}
-                    </strong>
-
-                </div>
-
-
-                <div className="summary-card">
-
-                    <span>
-                        ACTUAL SPENDING
-                    </span>
-
-                    <strong>
-                        Rs. {plan.actual}
-                    </strong>
-
-                </div>
-
-
-                <div className="summary-card">
-
-                    <span>
-                        REMAINING
-                    </span>
-
-                    <strong
-                        className={
-                            plan.remaining < 0
-                                ? "negative"
-                                : ""
-                        }
-                    >
-                        Rs. {plan.remaining}
+                        Rs.{" "}
+                        {planner.totalBudget?.toLocaleString()}
                     </strong>
 
                 </div>
@@ -180,160 +223,367 @@ function PlanDetails() {
             </div>
 
 
-            {/* PROGRESS */}
+            {/* =========================
+                Planner summary
+            ========================= */}
 
-            <div className="progress-section">
+            <section className="summary-grid">
 
-                <div className="progress-header">
+                <div className="summary-card">
 
-                    <div>
-                        <span>
-                            BUDGET USED
-                        </span>
-
-                        <h2>
-                            {plan.percentageUsed}%
-                        </h2>
+                    <div className="summary-icon">
+                        ₹
                     </div>
 
-                    <span>
-                        Rs. {plan.actual} / Rs. {plan.planned}
-                    </span>
-
-                </div>
-
-
-                <div className="progress-track">
-
-                    <div
-                        className={
-                            plan.percentageUsed > 100
-                                ? "progress-fill over-budget"
-                                : "progress-fill"
-                        }
-                        style={{
-                            width: `${Math.min(
-                                plan.percentageUsed,
-                                100
-                            )}%`
-                        }}
-                    />
-
-                </div>
-
-            </div>
-
-
-            {/* CATEGORY BREAKDOWN */}
-
-            <div className="category-section">
-
-                <div className="section-header">
-
                     <div>
-                        <span>
-                            BREAKDOWN
-                        </span>
 
-                        <h2>
-                            Category Spending
-                        </h2>
+                        <p>
+                            Total Budget
+                        </p>
+
+                        <h3>
+                            Rs.{" "}
+                            {planner.totalBudget?.toLocaleString()}
+                        </h3>
+
                     </div>
 
                 </div>
 
 
-                <div className="plan-category-list">
+                <div className="summary-card">
 
-                    {plan.categories.map(
-                        (category, index) => {
+                    <div className="summary-icon">
+                        4
+                    </div>
 
-                            const percentage =
-                                category.planned > 0
-                                    ? (
-                                        category.actual /
-                                        category.planned
-                                    ) * 100
-                                    : 0;
+                    <div>
 
-                            return (
+                        <p>
+                            Weeks
+                        </p>
 
-                                <div
-                                    className="plan-category"
-                                    key={index}
-                                >
+                        <h3>
+                            {planner.weeks?.length || 0}
+                        </h3>
 
-                                    <div className="category-info">
+                    </div>
 
-                                        <div>
+                </div>
 
-                                            <strong>
-                                                {category.category}
-                                            </strong>
 
-                                            <small>
-                                                Rs.{" "}
-                                                {category.actual}
-                                                {" / "}
-                                                {category.planned}
-                                            </small>
+                <div className="summary-card">
 
-                                        </div>
+                    <div className="summary-icon">
+                        ●
+                    </div>
 
-                                        <div className="category-remaining">
+                    <div>
 
-                                            <small>
-                                                Remaining
-                                            </small>
+                        <p>
+                            Status
+                        </p>
 
-                                            <strong
-                                                className={
-                                                    category.remaining < 0
-                                                        ? "negative"
-                                                        : ""
-                                                }
-                                            >
-                                                Rs.{" "}
-                                                {category.remaining}
-                                            </strong>
+                        <h3>
+                            {planner.status}
+                        </h3>
 
-                                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            {/* =========================
+                Categories
+            ========================= */}
+
+            <section className="dashboard-section">
+
+                <div className="section-heading">
+
+                    <div>
+
+                        <p>
+                            Spending categories
+                        </p>
+
+                        <h2>
+                            Your categories
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div className="category-grid">
+
+                    {planner.categories?.map(
+                        (category) => (
+
+                            <div
+                                className="category-card"
+                                key={category}
+                            >
+
+                                <span>
+                                    {category}
+                                </span>
+
+                            </div>
+
+                        )
+                    )}
+
+                </div>
+
+            </section>
+
+
+            {/* =========================
+                Weekly Planner
+            ========================= */}
+
+            <section className="dashboard-section">
+
+                <div className="section-heading">
+
+                    <div>
+
+                        <p>
+                            28-day spending plan
+                        </p>
+
+                        <h2>
+                            Weekly Breakdown
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div className="planner-weeks">
+
+                    {planner.weeks?.map(
+                        (week) => (
+
+                            <div
+                                className="week-card"
+                                key={week._id}
+                            >
+
+                                {/* Week Header */}
+
+                                <div className="week-card-header">
+
+                                    <div>
+
+                                        <span>
+                                            WEEK {week.weekNumber}
+                                        </span>
+
+                                        <h2>
+
+                                            {new Date(
+                                                week.startDate
+                                            ).toLocaleDateString()}
+
+                                            {" — "}
+
+                                            {new Date(
+                                                week.endDate
+                                            ).toLocaleDateString()}
+
+                                        </h2>
 
                                     </div>
 
 
-                                    <div className="category-progress">
+                                    <div className="budget">
 
-                                        <div
-                                            className={
-                                                percentage > 100
-                                                    ? "category-progress-fill over-budget"
-                                                    : "category-progress-fill"
-                                            }
-                                            style={{
-                                                width: `${Math.min(
-                                                    percentage,
-                                                    100
-                                                )}%`
-                                            }}
-                                        />
+                                        <small>
+                                            Weekly Budget
+                                        </small>
+
+                                        <strong>
+                                            Rs.{" "}
+                                            {(week.budget || 0)
+                                                .toLocaleString()}
+                                        </strong>
 
                                     </div>
 
                                 </div>
 
-                            );
 
-                        }
+                                {/* Weekly Budget Input */}
+
+                                <div className="planner-form">
+
+                                    <label>
+                                        Set Week {week.weekNumber} Budget
+                                    </label>
+
+                                    <div className="category-row">
+
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            placeholder="7500"
+                                            value={
+                                                weeklyBudgets[
+                                                    week.weekNumber
+                                                ] ?? ""
+                                            }
+                                            onChange={(e) =>
+                                                handleBudgetChange(
+                                                    week.weekNumber,
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                saveWeeklyBudget(
+                                                    week.weekNumber
+                                                )
+                                            }
+                                        >
+                                            Save
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+
+                                {/* Weekly Spending */}
+
+                                <div className="category-grid">
+
+                                    {planner.categories?.map(
+                                        (category) => (
+
+                                            <div
+                                                className="category-card"
+                                                key={category}
+                                            >
+
+                                                <span>
+                                                    {category}
+                                                </span>
+
+                                                <strong>
+                                                    Rs. 0
+                                                </strong>
+
+                                                <small>
+                                                    spent
+                                                </small>
+
+                                            </div>
+
+                                        )
+                                    )}
+
+                                </div>
+
+
+                                {/* Net Balance */}
+
+                                <div className="balance-card">
+
+                                    <div>
+
+                                        <p>
+                                            Week {week.weekNumber} Net Balance
+                                        </p>
+
+                                        <h2>
+                                            Rs.{" "}
+                                            {(week.budget || 0)
+                                                .toLocaleString()}
+                                        </h2>
+
+                                    </div>
+
+                                    <div className="balance-label">
+                                        REMAINING
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        )
                     )}
 
                 </div>
 
-            </div>
+            </section>
+
+
+            {/* =========================
+                Transactions
+            ========================= */}
+
+            <section className="dashboard-section">
+
+                <div className="section-heading">
+
+                    <div>
+
+                        <p>
+                            Keep your spending updated
+                        </p>
+
+                        <h2>
+                            Transactions
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div className="quick-actions">
+
+                    <Link
+                        to="/transactions"
+                        className="quick-action-card"
+                    >
+
+                        <span className="quick-action-icon">
+                            +
+                        </span>
+
+                        <div>
+
+                            <h3>
+                                Add Transaction
+                            </h3>
+
+                            <p>
+                                Record income or expenses
+                            </p>
+
+                        </div>
+
+                    </Link>
+
+                </div>
+
+            </section>
 
         </div>
 
     );
+
 }
 
 export default PlanDetails;

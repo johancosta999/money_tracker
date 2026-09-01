@@ -1,145 +1,203 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import api from "../services/api";
 
 function Planner() {
 
-    const [plans, setPlans] = useState([]);
+    const [planners, setPlanners] = useState([]);
+
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     const [showForm, setShowForm] = useState(false);
 
-    const [weekStart, setWeekStart] = useState("");
-    const [weekEnd, setWeekEnd] = useState("");
+    // Planner form
+    const [name, setName] = useState("");
+    const [type, setType] = useState("monthly");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
     const [totalBudget, setTotalBudget] = useState("");
 
-    const [categories, setCategories] = useState([
-        {
-            category: "Food",
-            plannedAmount: ""
-        }
-    ]);
+    const defaultCategories = [
+        "Food",
+        "Transport",
+        "Bills",
+        "Shopping",
+        "Education",
+        "Entertainment",
+        "Health"
+    ];
 
-    const [error, setError] = useState("");
+    const [categories, setCategories] = useState(defaultCategories);
 
+    const [newCategory, setNewCategory] = useState("");
 
-    // Used for manual reloads (e.g. after creating a plan)
-    const loadPlans = async () => {
-        try {
-            const response = await api.get("/plan");
-            setPlans(response.data);
-        } catch (error) {
-            console.log(error);
-            setError(
-                error.response?.data?.message ||
-                "Couldn't load plans"
-            );
-        } finally {
-            setLoading(false);
-        }
-    };
+    const [saving, setSaving] = useState(false);
 
 
-    // Initial load — kept self-contained with an "ignore" guard
-    // so we don't setState if the effect re-runs/unmounts first
+    // =========================
+    // Load planners
+    // =========================
+
     useEffect(() => {
-        let ignore = false;
 
-        const fetchPlans = async () => {
+        const fetchPlanners = async () => {
+
             try {
+
                 const response = await api.get("/plan");
-                if (!ignore) {
-                    setPlans(response.data);
-                }
+
+                setPlanners(response.data);
+
             } catch (error) {
+
                 console.log(error);
-                if (!ignore) {
-                    setError(
-                        error.response?.data?.message ||
-                        "Couldn't load plans"
-                    );
-                }
+
+                setError(
+                    error.response?.data?.message ||
+                    "Couldn't load planners"
+                );
+
             } finally {
-                if (!ignore) {
-                    setLoading(false);
-                }
+
+                setLoading(false);
+
             }
+
         };
 
-        fetchPlans();
+        fetchPlanners();
 
-        return () => {
-            ignore = true;
-        };
     }, []);
 
 
-    const addCategory = () => {
+    // =========================
+    // Calculate end date
+    // =========================
+
+    const handleStartDateChange = (value) => {
+
+        setStartDate(value);
+
+        if (!value) {
+            setEndDate("");
+            return;
+        }
+
+        const date = new Date(value);
+
+        date.setDate(date.getDate() + 30);
+
+        const formattedDate =
+            date.toISOString().split("T")[0];
+
+        setEndDate(formattedDate);
+
+    };
+
+
+    // =========================
+    // Add category
+    // =========================
+
+    const handleAddCategory = () => {
+
+        const trimmedCategory = newCategory.trim();
+
+        if (!trimmedCategory) {
+            return;
+        }
+
+        if (
+            categories.some(
+                category =>
+                    category.toLowerCase() ===
+                    trimmedCategory.toLowerCase()
+            )
+        ) {
+            return;
+        }
 
         setCategories([
             ...categories,
-            {
-                category: "",
-                plannedAmount: ""
-            }
+            trimmedCategory
         ]);
 
-    };
-
-    const updateCategory = (index, field, value) => {
-
-        const updatedCategories = [...categories];
-
-        updatedCategories[index][field] = value;
-
-        setCategories(updatedCategories);
+        setNewCategory("");
 
     };
 
-    const removeCategory = (index) => {
 
-        const updatedCategories = categories.filter(
-            (_, i) => i !== index
+    // =========================
+    // Remove category
+    // =========================
+
+    const handleRemoveCategory = (categoryToRemove) => {
+
+        setCategories(
+            categories.filter(
+                category =>
+                    category !== categoryToRemove
+            )
         );
 
-        setCategories(updatedCategories);
+    };
+
+
+    // =========================
+    // Reset form
+    // =========================
+
+    const resetForm = () => {
+
+        setName("");
+        setType("monthly");
+        setStartDate("");
+        setEndDate("");
+        setTotalBudget("");
+        setCategories(defaultCategories);
+        setNewCategory("");
 
     };
 
-    const createPlan = async (e) => {
+
+    // =========================
+    // Create planner
+    // =========================
+
+    const handleCreatePlanner = async (e) => {
 
         e.preventDefault();
 
         setError("");
+        setSaving(true);
 
         try {
 
             await api.post("/plan", {
 
-                weekStart,
-                weekEnd,
+                name,
+
+                type,
+
+                startDate,
+
+                endDate,
+
                 totalBudget: Number(totalBudget),
 
-                categories: categories.map(item => ({
-                    category: item.category,
-                    plannedAmount: Number(item.plannedAmount)
-                }))
+                categories
 
             });
 
+            // Reload planners
+            const response = await api.get("/plan");
+
+            setPlanners(response.data);
+
+            resetForm();
+
             setShowForm(false);
-
-            setWeekStart("");
-            setWeekEnd("");
-            setTotalBudget("");
-
-            setCategories([
-                {
-                    category: "Food",
-                    plannedAmount: ""
-                }
-            ]);
-
-            loadPlans();
 
         } catch (error) {
 
@@ -147,103 +205,133 @@ function Planner() {
 
             setError(
                 error.response?.data?.message ||
-                "Couldn't create plan"
+                "Couldn't create planner"
             );
+
+        } finally {
+
+            setSaving(false);
 
         }
 
     };
 
+
     if (loading) {
-        return <h2>Loading planner...</h2>;
+
+        return (
+
+            <div className="planner-page">
+
+                <div className="dashboard-loading">
+                    Loading planners...
+                </div>
+
+            </div>
+
+        );
+
     }
+
 
     return (
 
         <div className="planner-page">
 
+
+            {/* =========================
+                Header
+            ========================= */}
+
             <div className="planner-header">
 
                 <div>
-                    <h1>Weekly Planner</h1>
+
+                    <Link
+                        to="/dashboard"
+                        className="back-button"
+                    >
+                        ← Dashboard
+                    </Link>
+
+                    <p className="dashboard-greeting">
+                        Financial planning
+                    </p>
+
+                    <h1>
+                        My Planners
+                    </h1>
 
                     <p>
                         Plan your money before you spend it.
                     </p>
+
                 </div>
 
+
                 <button
-                    onClick={() => setShowForm(!showForm)}
+                    onClick={() =>
+                        setShowForm(!showForm)
+                    }
                 >
-                    + New Plan
+                    {showForm
+                        ? "Close"
+                        : "+ New Planner"
+                    }
                 </button>
 
             </div>
 
 
+            {/* =========================
+                Error
+            ========================= */}
+
             {error && (
-                <p className="error">
+
+                <div className="dashboard-error">
                     {error}
-                </p>
+                </div>
+
             )}
 
 
+            {/* =========================
+                Create Planner
+            ========================= */}
+
             {showForm && (
 
-                <div className="planner-form">
+                <section className="planner-form">
 
-                    <h2>Create Weekly Plan</h2>
+                    <h2>
+                        Create New Planner
+                    </h2>
 
-                    <form onSubmit={createPlan}>
-
-                        <div className="date-row">
-
-                            <div>
-                                <label>
-                                    Week Start
-                                </label>
-
-                                <input
-                                    type="date"
-                                    value={weekStart}
-                                    onChange={(e) =>
-                                        setWeekStart(e.target.value)
-                                    }
-                                    required
-                                />
-                            </div>
+                    <p>
+                        Set up your monthly spending plan.
+                    </p>
 
 
-                            <div>
-                                <label>
-                                    Week End
-                                </label>
+                    <form
+                        onSubmit={handleCreatePlanner}
+                    >
 
-                                <input
-                                    type="date"
-                                    value={weekEnd}
-                                    onChange={(e) =>
-                                        setWeekEnd(e.target.value)
-                                    }
-                                    required
-                                />
-                            </div>
 
-                        </div>
-
+                        {/* Planner name */}
 
                         <div>
 
                             <label>
-                                Total Weekly Budget
+                                Planner Name
                             </label>
 
                             <input
-                                type="number"
-                                placeholder="10000"
-                                value={totalBudget}
+                                type="text"
+                                placeholder="Salary Manager"
+                                value={name}
                                 onChange={(e) =>
-                                    setTotalBudget(e.target.value)
+                                    setName(e.target.value)
                                 }
                                 required
                             />
@@ -251,165 +339,159 @@ function Planner() {
                         </div>
 
 
-                        <h3>Category Plans</h3>
+                        {/* Planner type */}
+
+                        <div>
+
+                            <label>
+                                Planner Type
+                            </label>
+
+                            <div className="planner-type-options">
+
+                                <button
+                                    type="button"
+                                    className="planner-type active"
+                                    onClick={() =>
+                                        setType("monthly")
+                                    }
+                                >
+                                    Monthly
+                                </button>
 
 
-                        {categories.map((item, index) => (
+                                <button
+                                    type="button"
+                                    className="planner-type"
+                                    disabled
+                                >
+                                    Weekly
+                                </button>
 
-                            <div
-                                className="category-row"
-                                key={index}
-                            >
+
+                                <button
+                                    type="button"
+                                    className="planner-type"
+                                    disabled
+                                >
+                                    Yearly
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        {/* Dates */}
+
+                        <div className="date-row">
+
+
+                            <div>
+
+                                <label>
+                                    Start Date
+                                </label>
 
                                 <input
-                                    type="text"
-                                    placeholder="Category"
-                                    value={item.category}
+                                    type="date"
+                                    value={startDate}
                                     onChange={(e) =>
-                                        updateCategory(
-                                            index,
-                                            "category",
+                                        handleStartDateChange(
                                             e.target.value
                                         )
                                     }
                                     required
                                 />
 
+                            </div>
+
+
+                            <div>
+
+                                <label>
+                                    End Date
+                                </label>
 
                                 <input
-                                    type="number"
-                                    placeholder="Amount"
-                                    value={item.plannedAmount}
-                                    onChange={(e) =>
-                                        updateCategory(
-                                            index,
-                                            "plannedAmount",
-                                            e.target.value
-                                        )
-                                    }
-                                    required
+                                    type="date"
+                                    value={endDate}
+                                    readOnly
                                 />
 
-
-                                {categories.length > 1 && (
-
-                                    <button
-                                        type="button"
-                                        onClick={() =>
-                                            removeCategory(index)
-                                        }
-                                    >
-                                        ×
-                                    </button>
-
-                                )}
-
-                            </div>
-
-                        ))}
-
-
-                        <button
-                            type="button"
-                            onClick={addCategory}
-                        >
-                            + Add Category
-                        </button>
-
-
-                        <button type="submit">
-                            Create Plan
-                        </button>
-
-                    </form>
-
-                </div>
-
-            )}
-
-
-            <div className="plans-container">
-
-                {plans.length === 0 ? (
-
-                    <div className="empty-planner">
-
-                        <h2>No plans yet</h2>
-
-                        <p>
-                            Create your first weekly spending plan.
-                        </p>
-
-                    </div>
-
-                ) : (
-
-                    plans.map((plan) => (
-
-                        <div
-                            className="week-card"
-                            key={plan._id}
-                        >
-
-                            <div className="week-card-header">
-
-                                <div>
-
-                                    <span>
-                                        WEEKLY PLAN
-                                    </span>
-
-                                    <h2>
-                                        {new Date(
-                                            plan.weekStart
-                                        ).toLocaleDateString()}
-                                        {" — "}
-                                        {new Date(
-                                            plan.weekEnd
-                                        ).toLocaleDateString()}
-                                    </h2>
-
-                                </div>
-
-                                <div className="budget">
-
-                                    <small>
-                                        Weekly Budget
-                                    </small>
-
-                                    <strong>
-                                        Rs. {plan.totalBudget}
-                                    </strong>
-
-                                </div>
+                                <small>
+                                    Automatically calculated
+                                    as 30 days.
+                                </small>
 
                             </div>
 
 
-                            <div className="category-grid">
+                        </div>
 
-                                {plan.categories.map(
-                                    (category, index) => (
+
+                        {/* Total budget */}
+
+                        <div>
+
+                            <label>
+                                Total Budget
+                            </label>
+
+                            <input
+                                type="number"
+                                min="0"
+                                placeholder="20000"
+                                value={totalBudget}
+                                onChange={(e) =>
+                                    setTotalBudget(
+                                        e.target.value
+                                    )
+                                }
+                                required
+                            />
+
+                        </div>
+
+
+                        {/* Categories */}
+
+                        <div>
+
+                            <h3>
+                                Categories
+                            </h3>
+
+                            <p>
+                                Choose the categories you want
+                                to track.
+                            </p>
+
+
+                            <div className="category-list">
+
+                                {categories.map(
+                                    (category) => (
 
                                         <div
-                                            className="category-card"
-                                            key={index}
+                                            className="category-tag"
+                                            key={category}
                                         >
 
                                             <span>
-                                                {category.category}
+                                                {category}
                                             </span>
 
-                                            <strong>
-                                                Rs.{" "}
-                                                {
-                                                    category.plannedAmount
+                                            <button
+                                                type="button"
+                                                onClick={() =>
+                                                    handleRemoveCategory(
+                                                        category
+                                                    )
                                                 }
-                                            </strong>
-
-                                            <small>
-                                                planned
-                                            </small>
+                                            >
+                                                ×
+                                            </button>
 
                                         </div>
 
@@ -419,22 +501,234 @@ function Planner() {
                             </div>
 
 
+                            {/* New category */}
+
+                            <div className="add-category">
+
+                                <input
+                                    type="text"
+                                    placeholder="Add custom category"
+                                    value={newCategory}
+                                    onChange={(e) =>
+                                        setNewCategory(
+                                            e.target.value
+                                        )
+                                    }
+                                    onKeyDown={(e) => {
+
+                                        if (
+                                            e.key === "Enter"
+                                        ) {
+
+                                            e.preventDefault();
+
+                                            handleAddCategory();
+
+                                        }
+
+                                    }}
+                                />
+
+                                <button
+                                    type="button"
+                                    onClick={
+                                        handleAddCategory
+                                    }
+                                >
+                                    + Add
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        {/* Save */}
+
+                        <button
+                            type="submit"
+                            disabled={saving}
+                        >
+
+                            {saving
+                                ? "Saving..."
+                                : "Save Planner"
+                            }
+
+                        </button>
+
+                    </form>
+
+                </section>
+
+            )}
+
+
+            {/* =========================
+                Planner list
+            ========================= */}
+
+            {!showForm && (
+
+                <section className="plans-container">
+
+                    {planners.length === 0 ? (
+
+                        <div className="empty-planner">
+
+                            <h2>
+                                No planners yet
+                            </h2>
+
+                            <p>
+                                Create your first monthly
+                                spending planner.
+                            </p>
+
                             <button
                                 onClick={() =>
-                                    window.location.href =
-                                    `/planner/${plan._id}`
+                                    setShowForm(true)
                                 }
                             >
-                                View Plan →
+                                + Create Planner
                             </button>
 
                         </div>
 
-                    ))
+                    ) : (
 
-                )}
+                        planners.map((planner) => (
 
-            </div>
+                            <div
+                                className="week-card"
+                                key={planner._id}
+                            >
+
+                                <div className="week-card-header">
+
+                                    <div>
+
+                                        <span>
+                                            MONTHLY PLANNER
+                                        </span>
+
+                                        <h2>
+                                            {planner.name}
+                                        </h2>
+
+                                        <p>
+                                            {new Date(
+                                                planner.startDate
+                                            ).toLocaleDateString()}
+                                            {" — "}
+                                            {new Date(
+                                                planner.endDate
+                                            ).toLocaleDateString()}
+                                        </p>
+
+                                    </div>
+
+
+                                    <div className="budget">
+
+                                        <small>
+                                            Total Budget
+                                        </small>
+
+                                        <strong>
+                                            Rs.{" "}
+                                            {planner.totalBudget?.toLocaleString()}
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+
+                                {/* Categories */}
+
+                                <div className="category-grid">
+
+                                    {planner.categories?.map(
+                                        (category) => (
+
+                                            <div
+                                                className="category-card"
+                                                key={category}
+                                            >
+
+                                                <span>
+                                                    {category}
+                                                </span>
+
+                                            </div>
+
+                                        )
+                                    )}
+
+                                </div>
+
+
+                                {/* Weeks */}
+
+                                <div className="planner-weeks">
+
+                                    {planner.weeks?.map(
+                                        (week) => (
+
+                                            <div
+                                                className="category-card"
+                                                key={week._id}
+                                            >
+
+                                                <small>
+                                                    WEEK{" "}
+                                                    {week.weekNumber}
+                                                </small>
+
+                                                <strong>
+                                                    Rs.{" "}
+                                                    {week.budget?.toLocaleString()}
+                                                </strong>
+
+                                                <span>
+
+                                                    {new Date(
+                                                        week.startDate
+                                                    ).toLocaleDateString()}
+
+                                                    {" — "}
+
+                                                    {new Date(
+                                                        week.endDate
+                                                    ).toLocaleDateString()}
+
+                                                </span>
+
+                                            </div>
+
+                                        )
+                                    )}
+
+                                </div>
+
+
+                                <Link
+                                    to={`/planner/${planner._id}`}
+                                    className="dashboard-action"
+                                >
+                                    Open Planner →
+                                </Link>
+
+                            </div>
+
+                        ))
+
+                    )}
+
+                </section>
+
+            )}
 
         </div>
 

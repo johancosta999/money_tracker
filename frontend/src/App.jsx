@@ -1,26 +1,29 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
 import Planner from "./pages/Planner";
 import Categories from "./pages/Categories";
-import Budgets from "./pages/Budgets"
+import Budgets from "./pages/Budgets";
+import PlanDetails from "./pages/planDetails";
 
 import ProtectedRoute from "./components/ProtectedRoute";
-import Landing from "./pages/Landing";
-import PlanDetails from "./pages/planDetails";
 
 function App() {
 
     return (
+
         <BrowserRouter>
 
             <Routes>
 
-                {/* Public routes */}
-                <Route 
+                {/* ================= PUBLIC ROUTES ================= */}
+
+                <Route
                     path="/"
                     element={<Landing />}
                 />
@@ -36,7 +39,7 @@ function App() {
                 />
 
 
-                {/* Protected routes */}
+                {/* ================= PROTECTED ROUTES ================= */}
 
                 <Route
                     path="/dashboard"
@@ -66,24 +69,6 @@ function App() {
                 />
 
                 <Route
-                    path="/categories"
-                    element={
-                        <ProtectedRoute>
-                            <Categories />
-                        </ProtectedRoute>
-                    }
-                />
-
-                <Route 
-                    path="/budgets"
-                    element={
-                        <ProtectedRoute>
-                            <Budgets />
-                        </ProtectedRoute>
-                    }
-                />
-
-                <Route
                     path="/planner/:id"
                     element={
                         <ProtectedRoute>
@@ -92,10 +77,30 @@ function App() {
                     }
                 />
 
+                <Route
+                    path="/categories"
+                    element={
+                        <ProtectedRoute>
+                            <Categories />
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/budgets"
+                    element={
+                        <ProtectedRoute>
+                            <Budgets />
+                        </ProtectedRoute>
+                    }
+                />
+
             </Routes>
 
         </BrowserRouter>
+
     );
+
 }
 
 export default App;
