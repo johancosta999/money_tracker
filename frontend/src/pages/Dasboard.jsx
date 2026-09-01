@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
@@ -5,17 +6,109 @@ function Dashboard() {
 
     const navigate = useNavigate();
 
+    const [summary, setSummary] = useState({
+        totalIncome: 0,
+        totalExpense: 0,
+        balance: 0
+    });
+
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
+
+
+    // Get logged-in user
+    const storedUser = localStorage.getItem("user");
+
+    const user = storedUser
+        ? JSON.parse(storedUser)
+        : null;
+
+
+    useEffect(() => {
+
+        const fetchDashboard = async () => {
+
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                navigate("/login");
+                return;
+            }
+
+            try {
+
+                const response = await fetch(
+                    "http://localhost:5000/api/dashboard/summary",
+                    {
+                        method: "GET",
+
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+
+                const data = await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message || "Couldn't load dashboard"
+                    );
+
+                }
+
+
+                setSummary({
+                    totalIncome: data.totalIncome,
+                    totalExpense: data.totalExpense,
+                    balance: data.balance
+                });
+
+
+            } catch (error) {
+
+                setError(error.message);
+
+            } finally {
+
+                setLoading(false);
+
+            }
+        };
+
+
+        fetchDashboard();
+
+    }, [navigate]);
+
+
+    // Logout
     const handleLogout = () => {
 
-        // Remove authentication data
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
 
-        // Return to login
         navigate("/login");
+
     };
 
 
+    if (loading) {
+
+        return (
+            <div className="dashboard-loading">
+                Loading your dashboard...
+            </div>
+        );
+
+    }
+
+
     return (
+
         <div className="dashboard-page">
 
             {/* =========================
@@ -27,16 +120,14 @@ function Dashboard() {
                 <div>
 
                     <p className="dashboard-greeting">
-                        WELCOME BACK
+                        Welcome back{user?.userName
+                            ? `, ${user.userName}`
+                            : ""}
                     </p>
 
                     <h1>
-                        Good evening 👋
+                        Your Dashboard
                     </h1>
-
-                    <p className="dashboard-subtitle">
-                        Here's how your money is looking.
-                    </p>
 
                 </div>
 
@@ -45,16 +136,18 @@ function Dashboard() {
 
                     <button
                         className="dashboard-action"
-                        onClick={() => alert("Settings coming soon")}
+                        onClick={() => {
+                            // Settings will be implemented later
+                        }}
                     >
                         ⚙ Settings
                     </button>
 
                     <button
-                        className="dashboard-action logout-action"
+                        className="dashboard-action"
                         onClick={handleLogout}
                     >
-                        ↪ Logout
+                        Logout
                     </button>
 
                 </div>
@@ -63,34 +156,45 @@ function Dashboard() {
 
 
             {/* =========================
-                Main Action
+                Error
             ========================= */}
 
-            <section className="transaction-priority">
+            {error && (
 
-                <div className="transaction-priority-text">
-
-                    <span className="priority-label">
-                        KEEP YOUR FINANCES UPDATED
-                    </span>
-
-                    <h2>
-                        Add a transaction
-                    </h2>
-
-                    <p>
-                        Record your income or spending and keep
-                        your budget on track.
-                    </p>
-
+                <div className="dashboard-error">
+                    {error}
                 </div>
 
+            )}
+
+
+            {/* =========================
+                Add Transaction
+            ========================= */}
+
+            <section className="add-transaction-section">
 
                 <Link
                     to="/transactions/add"
-                    className="add-transaction-btn"
+                    className="add-transaction-button"
                 >
-                    + Add Transaction
+
+                    <span className="add-transaction-icon">
+                        +
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Add Transaction
+                        </strong>
+
+                        <p>
+                            Record your income or spending
+                        </p>
+
+                    </div>
+
                 </Link>
 
             </section>
@@ -105,22 +209,17 @@ function Dashboard() {
                 <div>
 
                     <p>
-                        CURRENT BALANCE
+                        Current Balance
                     </p>
 
                     <h2>
-                        Rs. 85,450
+                        Rs. {summary.balance.toLocaleString()}
                     </h2>
 
                     <span className="balance-label">
-                        AVAILABLE BALANCE
+                        INCOME − EXPENSES
                     </span>
 
-                </div>
-
-
-                <div className="balance-decoration">
-                    ₨
                 </div>
 
             </section>
@@ -134,18 +233,18 @@ function Dashboard() {
 
                 <div className="summary-card">
 
-                    <div className="summary-icon income-icon">
+                    <div className="summary-icon">
                         ↑
                     </div>
 
                     <div>
 
                         <p>
-                            TOTAL INCOME
+                            Total Income
                         </p>
 
                         <h3>
-                            Rs. 120,000
+                            Rs. {summary.totalIncome.toLocaleString()}
                         </h3>
 
                     </div>
@@ -155,18 +254,18 @@ function Dashboard() {
 
                 <div className="summary-card">
 
-                    <div className="summary-icon expense-icon">
+                    <div className="summary-icon">
                         ↓
                     </div>
 
                     <div>
 
                         <p>
-                            TOTAL EXPENSES
+                            Total Expenses
                         </p>
 
                         <h3>
-                            Rs. 34,550
+                            Rs. {summary.totalExpense.toLocaleString()}
                         </h3>
 
                     </div>
@@ -183,11 +282,11 @@ function Dashboard() {
                     <div>
 
                         <p>
-                            NET BALANCE
+                            Net Balance
                         </p>
 
                         <h3>
-                            Rs. 85,450
+                            Rs. {summary.balance.toLocaleString()}
                         </h3>
 
                     </div>
@@ -210,7 +309,7 @@ function Dashboard() {
                     </p>
 
                     <h2>
-                        Quick actions
+                        Quick Actions
                     </h2>
 
                 </div>
@@ -219,46 +318,22 @@ function Dashboard() {
                 <div className="quick-actions">
 
                     <Link
-                        to="/transactions"
-                        className="quick-action-card"
-                    >
-
-                        <div className="quick-action-icon">
-                            ₨
-                        </div>
-
-                        <div>
-
-                            <h3>
-                                Transactions
-                            </h3>
-
-                            <p>
-                                View and manage your transactions.
-                            </p>
-
-                        </div>
-
-                    </Link>
-
-
-                    <Link
                         to="/planner"
                         className="quick-action-card"
                     >
 
                         <div className="quick-action-icon">
-                            ✓
+                            📅
                         </div>
 
                         <div>
 
                             <h3>
-                                Money Planner
+                                Planner
                             </h3>
 
                             <p>
-                                Plan your monthly spending.
+                                Plan and manage your budget
                             </p>
 
                         </div>
@@ -282,7 +357,7 @@ function Dashboard() {
                             </h3>
 
                             <p>
-                                Quickly record new spending.
+                                Record income or expense
                             </p>
 
                         </div>
@@ -293,133 +368,8 @@ function Dashboard() {
 
             </section>
 
-
-            {/* =========================
-                Recent Transactions
-            ========================= */}
-
-            <section className="dashboard-section">
-
-                <div className="section-heading recent-heading">
-
-                    <div>
-
-                        <p>
-                            ACTIVITY
-                        </p>
-
-                        <h2>
-                            Recent transactions
-                        </h2>
-
-                    </div>
-
-                    <Link to="/transactions">
-                        View all →
-                    </Link>
-
-                </div>
-
-
-                <div className="recent-transactions">
-
-                    {/* Transaction 1 */}
-
-                    <div className="recent-transaction">
-
-                        <div className="transaction-left">
-
-                            <div className="transaction-icon">
-                                🍔
-                            </div>
-
-                            <div>
-
-                                <h3>
-                                    Food
-                                </h3>
-
-                                <p>
-                                    Today · Food
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                        <strong className="expense">
-                            - Rs. 1,200
-                        </strong>
-
-                    </div>
-
-
-                    {/* Transaction 2 */}
-
-                    <div className="recent-transaction">
-
-                        <div className="transaction-left">
-
-                            <div className="transaction-icon">
-                                📚
-                            </div>
-
-                            <div>
-
-                                <h3>
-                                    Books
-                                </h3>
-
-                                <p>
-                                    Yesterday · Books
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                        <strong className="expense">
-                            - Rs. 2,500
-                        </strong>
-
-                    </div>
-
-
-                    {/* Transaction 3 */}
-
-                    <div className="recent-transaction">
-
-                        <div className="transaction-left">
-
-                            <div className="transaction-icon">
-                                💼
-                            </div>
-
-                            <div>
-
-                                <h3>
-                                    Salary
-                                </h3>
-
-                                <p>
-                                    Aug 28 · Income
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                        <strong className="income">
-                            + Rs. 120,000
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </section>
-
         </div>
+
     );
 }
 

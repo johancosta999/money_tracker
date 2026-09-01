@@ -661,3 +661,106 @@
         font-size: 12px;
     }
 }
+
+/* =========================
+   Add Transaction
+========================= */
+
+.add-transaction-section {
+    margin-bottom: 30px;
+}
+
+.add-transaction-button {
+    width: 100%;
+
+    min-height: 95px;
+
+    padding: 22px 28px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 20px;
+
+    text-decoration: none;
+
+    color: #292d32;
+
+    background: #e8e9ed;
+
+    border-radius: 22px;
+
+    box-shadow:
+        10px 10px 20px rgba(163, 165, 170, 0.5),
+        -10px -10px 20px rgba(255, 255, 255, 0.9);
+
+    transition: 0.2s ease;
+}
+
+.add-transaction-button:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        12px 12px 24px rgba(163, 165, 170, 0.55),
+        -12px -12px 24px rgba(255, 255, 255, 0.95);
+}
+
+.add-transaction-button:active {
+    transform: translateY(1px);
+
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 165, 170, 0.45),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+
+.add-transaction-icon {
+    width: 50px;
+    height: 50px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 16px;
+
+    font-size: 27px;
+    font-weight: 400;
+
+    color: #555a61;
+
+    background: #e8e9ed;
+
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 165, 170, 0.45),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+.add-transaction-button strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 15px;
+
+    font-weight: 600;
+}
+
+.add-transaction-button p {
+    font-size: 12px;
+
+    color: #858a91;
+}
+
+
+/* =========================
+   Dashboard Buttons
+========================= */
+
+.dashboard-action {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}

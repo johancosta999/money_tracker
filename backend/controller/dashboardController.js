@@ -1,10 +1,8 @@
 const Transaction = require("../model/transactionsModel");
 
 const getDashboardSummary = async (req, res) => {
-
     try {
 
-        // Get all transactions belonging to the logged-in user
         const transactions = await Transaction.find({
             user: req.userId
         });
@@ -12,7 +10,6 @@ const getDashboardSummary = async (req, res) => {
         let totalIncome = 0;
         let totalExpense = 0;
 
-        // Calculate income and expenses
         transactions.forEach((transaction) => {
 
             if (transaction.type === "income") {
@@ -25,7 +22,6 @@ const getDashboardSummary = async (req, res) => {
 
         });
 
-        // Calculate balance
         const balance = totalIncome - totalExpense;
 
         res.status(200).json({

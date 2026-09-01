@@ -3,6 +3,7 @@ import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dasboard";
+import AddTransaction from "./pages/AddTransaction";
 
 function App() {
 
@@ -30,6 +31,11 @@ function App() {
                 <Route
                     path="/dashboard"
                     element={<Dashboard />}
+                />
+
+                <Route
+                    path="/transactions/add"
+                    element={<AddTransaction />}
                 />
 
                 <Route
