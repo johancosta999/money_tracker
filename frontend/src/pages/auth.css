@@ -1,0 +1,295 @@
+/* =========================
+   Authentication Page
+========================= */
+
+.auth-page {
+    min-height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 30px;
+
+    background: #e8e9ed;
+}
+
+
+/* =========================
+   Auth Card
+========================= */
+
+.auth-card {
+    width: 420px;
+
+    padding: 45px 40px;
+
+    border-radius: 28px;
+
+    background: #e8e9ed;
+
+    box-shadow:
+        18px 18px 35px rgba(163, 165, 170, 0.6),
+        -18px -18px 35px rgba(255, 255, 255, 0.95);
+}
+
+
+/* =========================
+   Brand
+========================= */
+
+.auth-brand {
+    text-align: center;
+
+    margin-bottom: 35px;
+}
+
+
+.brand-icon {
+    width: 55px;
+    height: 55px;
+
+    margin: 0 auto 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 18px;
+
+    font-size: 22px;
+
+    background: #e8e9ed;
+
+    box-shadow:
+        7px 7px 14px rgba(163, 165, 170, 0.55),
+        -7px -7px 14px rgba(255, 255, 255, 0.95);
+}
+
+
+.auth-brand h1 {
+    margin-bottom: 8px;
+
+    font-size: 25px;
+
+    font-weight: 600;
+
+    letter-spacing: -0.7px;
+
+    color: #292d32;
+}
+
+
+.auth-brand p {
+    font-size: 14px;
+
+    color: #858a91;
+}
+
+
+/* =========================
+   Inputs
+========================= */
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+
+.input-group label {
+    display: block;
+
+    margin-bottom: 9px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #555a61;
+}
+
+
+.input-group input {
+    width: 100%;
+
+    padding: 15px 16px;
+
+    border: none;
+    outline: none;
+
+    border-radius: 14px;
+
+    font-size: 14px;
+
+    color: #292d32;
+
+    background: #e8e9ed;
+
+    box-shadow:
+        inset 5px 5px 10px rgba(163, 165, 170, 0.5),
+        inset -5px -5px 10px rgba(255, 255, 255, 0.9);
+
+    transition: 0.2s ease;
+}
+
+
+.input-group input::placeholder {
+    color: #a0a4aa;
+}
+
+
+.input-group input:focus {
+    box-shadow:
+        inset 3px 3px 7px rgba(163, 165, 170, 0.5),
+        inset -3px -3px 7px rgba(255, 255, 255, 0.9);
+}
+
+
+/* =========================
+   Submit Button
+========================= */
+
+.auth-submit {
+    width: 100%;
+
+    margin-top: 5px;
+
+    padding: 15px;
+
+    border: none;
+    outline: none;
+
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #34784d;
+
+    background: #e8e9ed;
+
+    box-shadow:
+        8px 8px 16px rgba(163, 165, 170, 0.6),
+        -8px -8px 16px rgba(255, 255, 255, 0.95);
+
+    transition: 0.2s ease;
+}
+
+
+.auth-submit:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        5px 5px 10px rgba(163, 165, 170, 0.6),
+        -5px -5px 10px rgba(255, 255, 255, 0.95);
+}
+
+
+.auth-submit:active {
+    transform: translateY(1px);
+
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 165, 170, 0.5),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+
+/* =========================
+   Footer
+========================= */
+
+.auth-footer {
+    margin-top: 28px;
+
+    display: flex;
+    justify-content: center;
+
+    gap: 6px;
+
+    font-size: 13px;
+
+    color: #858a91;
+}
+
+
+.auth-footer a {
+    color: #4d9966;
+
+    font-weight: 600;
+
+    text-decoration: none;
+}
+
+
+.auth-footer a:hover {
+    color: #34784d;
+}
+
+
+/* =========================
+   Back Home
+========================= */
+
+.back-home {
+    display: block;
+
+    margin-top: 25px;
+
+    text-align: center;
+
+    font-size: 13px;
+
+    color: #858a91;
+
+    text-decoration: none;
+}
+
+
+.back-home:hover {
+    color: #292d32;
+}
+
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 500px) {
+
+    .auth-page {
+        padding: 20px;
+    }
+
+    .auth-card {
+        width: 100%;
+
+        padding: 35px 25px;
+
+        border-radius: 22px;
+    }
+
+    .auth-brand h1 {
+        font-size: 23px;
+    }
+}
+
+.auth-error {
+    margin-bottom: 18px;
+
+    padding: 12px 14px;
+
+    border-radius: 12px;
+
+    font-size: 13px;
+
+    color: #8a4d4d;
+
+    background: #e8e9ed;
+
+    box-shadow:
+        inset 3px 3px 7px rgba(163, 165, 170, 0.35),
+        inset -3px -3px 7px rgba(255, 255, 255, 0.8);
+}

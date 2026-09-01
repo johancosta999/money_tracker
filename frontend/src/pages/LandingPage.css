@@ -1,0 +1,506 @@
+/* =========================
+   Global
+========================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+
+    background: #e8e9ed;
+
+    color: #292d32;
+}
+
+
+/* =========================
+   Landing Page
+========================= */
+
+.landing-page {
+    min-height: 100vh;
+
+    background: #e8e9ed;
+}
+
+
+/* =========================
+   Navbar
+========================= */
+
+.landing-navbar {
+    height: 80px;
+
+    padding: 0 7%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.landing-navbar h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 21px;
+    font-weight: 600;
+
+    letter-spacing: -0.5px;
+}
+
+.logo-money {
+    font-size: 20px;
+}
+
+
+/* =========================
+   Navbar Buttons
+========================= */
+
+.landing-nav-buttons {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+}
+
+.login-btn,
+.register-btn {
+    text-decoration: none;
+
+    padding: 11px 20px;
+
+    border-radius: 12px;
+
+    font-size: 14px;
+
+    transition: 0.2s ease;
+}
+
+
+/* Login */
+
+.login-btn {
+    color: #555a61;
+}
+
+.login-btn:hover {
+    color: #292d32;
+}
+
+
+/* Register */
+
+.register-btn {
+    color: #34784d;
+
+    background: #e8e9ed;
+
+    box-shadow:
+        6px 6px 12px rgba(163, 165, 170, 0.55),
+        -6px -6px 12px rgba(255, 255, 255, 0.9);
+}
+
+.register-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        3px 3px 7px rgba(163, 165, 170, 0.55),
+        -3px -3px 7px rgba(255, 255, 255, 0.9);
+}
+
+
+/* =========================
+   Hero
+========================= */
+
+.landing-content {
+    min-height: calc(100vh - 80px);
+
+    padding: 60px 7%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 80px;
+}
+
+
+/* =========================
+   Hero Text
+========================= */
+
+.hero-text {
+    max-width: 600px;
+}
+
+.hero-label {
+    margin-bottom: 20px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    color: #6e9c7d;
+}
+
+.hero-text h1 {
+    margin-bottom: 28px;
+
+    font-size: clamp(48px, 6vw, 78px);
+
+    line-height: 0.98;
+
+    letter-spacing: -4px;
+
+    font-weight: 700;
+
+    color: #292d32;
+}
+
+
+/* Green accent */
+
+.hero-text h1 span {
+    color: #5daa79;
+}
+
+
+.hero-description {
+    max-width: 500px;
+
+    margin-bottom: 35px;
+
+    font-size: 17px;
+
+    line-height: 1.7;
+
+    color: #70757c;
+}
+
+
+/* =========================
+   Hero Buttons
+========================= */
+
+.hero-buttons {
+    display: flex;
+    align-items: center;
+
+    gap: 18px;
+}
+
+.primary-btn,
+.secondary-btn {
+    text-decoration: none;
+
+    padding: 14px 22px;
+
+    border-radius: 14px;
+
+    font-size: 14px;
+
+    transition: 0.2s ease;
+}
+
+
+/* =========================
+   Primary Button
+========================= */
+
+.primary-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    color: #34784d;
+
+    background: #e8e9ed;
+
+    box-shadow:
+        8px 8px 16px rgba(163, 165, 170, 0.6),
+        -8px -8px 16px rgba(255, 255, 255, 0.95);
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+
+    color: #2d6843;
+
+    box-shadow:
+        5px 5px 10px rgba(163, 165, 170, 0.6),
+        -5px -5px 10px rgba(255, 255, 255, 0.95);
+}
+
+.primary-btn span {
+    font-size: 17px;
+}
+
+
+/* =========================
+   Secondary Button
+========================= */
+
+.secondary-btn {
+    color: #73777d;
+}
+
+.secondary-btn:hover {
+    color: #292d32;
+}
+
+
+/* =========================
+   Finance Card
+========================= */
+
+.hero-card {
+    width: 380px;
+
+    padding: 30px;
+
+    border-radius: 24px;
+
+    background: #e8e9ed;
+
+    box-shadow:
+        15px 15px 30px rgba(163, 165, 170, 0.6),
+        -15px -15px 30px rgba(255, 255, 255, 0.95);
+}
+
+
+/* =========================
+   Card Header
+========================= */
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+
+    margin-bottom: 25px;
+
+    color: #858a91;
+
+    font-size: 13px;
+}
+
+.card-menu {
+    letter-spacing: 2px;
+}
+
+
+/* =========================
+   Balance
+========================= */
+
+.hero-card h2 {
+    margin-bottom: 30px;
+
+    font-size: 38px;
+
+    font-weight: 600;
+
+    letter-spacing: -1px;
+
+    color: #292d32;
+}
+
+
+/* =========================
+   Card Stats
+========================= */
+
+.card-stats {
+    display: flex;
+
+    gap: 45px;
+}
+
+.card-stats div {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.card-stats span {
+    color: #858a91;
+
+    font-size: 12px;
+}
+
+.card-stats strong {
+    font-size: 14px;
+
+    font-weight: 600;
+
+    color: #41464d;
+}
+
+
+/* Green income */
+
+.card-stats .income {
+    color: #4d9966;
+}
+
+
+/* =========================
+   Fake Chart
+========================= */
+
+.fake-chart {
+    height: 100px;
+
+    margin-top: 35px;
+
+    display: flex;
+    align-items: end;
+
+    gap: 12px;
+}
+
+.fake-chart div {
+    flex: 1;
+
+    border-radius: 6px 6px 2px 2px;
+
+    background: #d5d7dc;
+
+    box-shadow:
+        inset 2px 2px 4px rgba(163, 165, 170, 0.5),
+        inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+
+/* Individual heights */
+
+.fake-chart div:nth-child(1) {
+    height: 35%;
+}
+
+.fake-chart div:nth-child(2) {
+    height: 50%;
+}
+
+.fake-chart div:nth-child(3) {
+    height: 40%;
+}
+
+.fake-chart div:nth-child(4) {
+    height: 70%;
+}
+
+.fake-chart div:nth-child(5) {
+    height: 55%;
+}
+
+.fake-chart div:nth-child(6) {
+    height: 85%;
+}
+
+.fake-chart div:nth-child(7) {
+    height: 100%;
+}
+
+
+/* =========================
+   Chart Labels
+========================= */
+
+.chart-labels {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 10px;
+
+    padding: 0 3px;
+
+    color: #a0a4aa;
+
+    font-size: 9px;
+}
+
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 800px) {
+
+    .landing-navbar {
+        padding: 0 5%;
+    }
+
+    .landing-content {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        padding: 40px 5%;
+
+        gap: 50px;
+    }
+
+    .hero-text h1 {
+        font-size: 52px;
+
+        letter-spacing: -2px;
+    }
+
+    .hero-card {
+        width: 100%;
+
+        max-width: 380px;
+    }
+
+    .hero-buttons {
+        flex-wrap: wrap;
+    }
+}
+
+
+@media (max-width: 500px) {
+
+    .landing-navbar h2 {
+        font-size: 18px;
+    }
+
+    .landing-nav-buttons {
+        gap: 5px;
+    }
+
+    .login-btn,
+    .register-btn {
+        padding: 9px 13px;
+
+        font-size: 12px;
+    }
+
+    .hero-text h1 {
+        font-size: 46px;
+
+        letter-spacing: -2px;
+    }
+
+    .hero-description {
+        font-size: 15px;
+    }
+
+    .hero-card {
+        padding: 25px;
+    }
+
+    .hero-card h2 {
+        font-size: 32px;
+    }
+}
