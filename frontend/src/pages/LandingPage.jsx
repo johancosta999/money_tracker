@@ -12,7 +12,7 @@ function LandingPage() {
             <nav className="landing-navbar">
 
                 <h2>
-                    <span className="logo-money">💰</span>
+                    <span className="logo-money"></span>
                     MoneyTracker
                 </h2>
 
@@ -247,7 +247,7 @@ function LandingPage() {
 
                     <div className="footer-brand">
                         <h2>
-                            <span className="logo-money">💰</span>
+                            <span className="logo-money"></span>
                             MoneyTracker
                         </h2>
                         <p>Budgeting for real weeks and real rupees.</p>

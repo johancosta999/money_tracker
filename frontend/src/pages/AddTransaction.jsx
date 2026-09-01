@@ -19,7 +19,6 @@ function AddTransaction() {
 
     const [plannerOptions, setPlannerOptions] = useState([]);
     const [selectedPlannerId, setSelectedPlannerId] = useState("");
-    const [availableCategories, setAvailableCategories] = useState(defaultCategories);
 
     const [formData, setFormData] = useState({
         title: "",
@@ -29,6 +28,14 @@ function AddTransaction() {
         date: new Date().toISOString().split("T")[0],
         description: ""
     });
+
+    const selectedPlanner = plannerOptions.find((planner) => planner._id === selectedPlannerId)
+        || plannerOptions[0]
+        || null;
+
+    const availableCategories = selectedPlanner?.categories?.length
+        ? selectedPlanner.categories
+        : defaultCategories;
 
     const [loading, setLoading] = useState(false);
     const [loadingPlans, setLoadingPlans] = useState(true);
@@ -45,7 +52,7 @@ function AddTransaction() {
             }
 
             try {
-                const response = await fetch("http://localhost:5000/api/plan", {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/plan`, {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -67,10 +74,11 @@ function AddTransaction() {
                 if (sortedPlans.length > 0) {
                     const newestPlanner = sortedPlans[0];
                     setSelectedPlannerId(newestPlanner._id);
+
                     const categories = newestPlanner.categories?.length
                         ? newestPlanner.categories
                         : defaultCategories;
-                    setAvailableCategories(categories);
+
                     setFormData((previous) => ({
                         ...previous,
                         category: categories.includes(previous.category)
@@ -87,32 +95,6 @@ function AddTransaction() {
 
         fetchPlans();
     }, [navigate]);
-
-    useEffect(() => {
-        if (!plannerOptions.length) {
-            setAvailableCategories(defaultCategories);
-            setFormData((previous) => ({
-                ...previous,
-                category: previous.category || defaultCategories[0]
-            }));
-            return;
-        }
-
-        const selectedPlanner = plannerOptions.find((planner) => planner._id === selectedPlannerId)
-            || plannerOptions[0];
-
-        const categories = selectedPlanner?.categories?.length
-            ? selectedPlanner.categories
-            : defaultCategories;
-
-        setAvailableCategories(categories);
-        setFormData((previous) => ({
-            ...previous,
-            category: categories.includes(previous.category)
-                ? previous.category
-                : categories[0] || defaultCategories[0]
-        }));
-    }, [plannerOptions, selectedPlannerId]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -167,7 +149,7 @@ function AddTransaction() {
 
         try {
             const response = await fetch(
-                "http://localhost:5000/api/transactions",
+                `${import.meta.env.VITE_API_URL}/api/transactions`,
                 {
                     method: "POST",
                     headers: {

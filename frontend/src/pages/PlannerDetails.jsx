@@ -34,7 +34,7 @@ function PlannerDetails() {
             setError("");
 
             const response = await fetch(
-                `http://localhost:5000/api/plan/${id}/summary`,
+                `${import.meta.env.VITE_API_URL}/api/plan/${id}/summary`,
                 {
                     method: "GET",
                     headers: {
@@ -119,7 +119,7 @@ function PlannerDetails() {
 
         try {
             const response = await fetch(
-                `http://localhost:5000/api/plan/${id}/weeks/${weekId}`,
+                `${import.meta.env.VITE_API_URL}/api/plan/${id}/weeks/${weekId}`,
                 {
                     method: "PUT",
                     headers: {
