@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import useAuth from "../context/useAuth.js";
-import api from "../services/api";
+import "./Dashboard.css";
 
 function Dashboard() {
 
-    const { user, logout } = useAuth();
     const navigate = useNavigate();
 
     const [summary, setSummary] = useState({
@@ -18,43 +16,80 @@ function Dashboard() {
     const [error, setError] = useState("");
 
 
-    // Get dashboard summary
+    // Get logged-in user
+    const storedUser = localStorage.getItem("user");
+
+    const user = storedUser
+        ? JSON.parse(storedUser)
+        : null;
+
+
     useEffect(() => {
 
-        const getDashboardSummary = async () => {
+        const fetchDashboard = async () => {
+
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                navigate("/login");
+                return;
+            }
 
             try {
 
-                const response = await api.get("/dashboard/summary");
+                const response = await fetch(
+                    `${import.meta.env.VITE_API_URL}/api/dashboard/summary`,
+                    {
+                        method: "GET",
 
-                setSummary(response.data);
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+
+                const data = await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.message || "Couldn't load dashboard"
+                    );
+
+                }
+
+
+                setSummary({
+                    totalIncome: data.totalIncome,
+                    totalExpense: data.totalExpense,
+                    balance: data.balance
+                });
+
 
             } catch (error) {
 
-                console.log(error);
-
-                setError(
-                    error.response?.data?.message ||
-                    "Couldn't load dashboard"
-                );
+                setError(error.message);
 
             } finally {
 
                 setLoading(false);
 
             }
-
         };
 
-        getDashboardSummary();
 
-    }, []);
+        fetchDashboard();
+
+    }, [navigate]);
 
 
     // Logout
     const handleLogout = () => {
 
-        logout();
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
 
         navigate("/login");
 
@@ -64,15 +99,9 @@ function Dashboard() {
     if (loading) {
 
         return (
-
-            <div className="dashboard-page">
-
-                <div className="dashboard-loading">
-                    Loading dashboard...
-                </div>
-
+            <div className="dashboard-loading">
+                Loading your dashboard...
             </div>
-
         );
 
     }
@@ -81,7 +110,6 @@ function Dashboard() {
     return (
 
         <div className="dashboard-page">
-
 
             {/* =========================
                 Header
@@ -92,11 +120,13 @@ function Dashboard() {
                 <div>
 
                     <p className="dashboard-greeting">
-                        Welcome back
+                        Welcome back{user?.userName
+                            ? `, ${user.userName}`
+                            : ""}
                     </p>
 
                     <h1>
-                        {user?.userName || "User"}
+                        Your Dashboard
                     </h1>
 
                 </div>
@@ -104,17 +134,18 @@ function Dashboard() {
 
                 <div className="dashboard-header-actions">
 
-                    <Link
-                        to="/settings"
+                    <button
                         className="dashboard-action"
+                        onClick={() => {
+                            // Settings will be implemented later
+                        }}
                     >
                         ⚙ Settings
-                    </Link>
-
+                    </button>
 
                     <button
-                        onClick={handleLogout}
                         className="dashboard-action"
+                        onClick={handleLogout}
                     >
                         Logout
                     </button>
@@ -141,38 +172,32 @@ function Dashboard() {
                 Add Transaction
             ========================= */}
 
-            <section className="dashboard-section">
+            <section className="add-transaction-section">
 
-                <div className="quick-actions">
+                <Link
+                    to="/transactions/add"
+                    className="add-transaction-button"
+                >
 
-                    <Link
-                        to="/transactions"
-                        className="quick-action-card"
-                    >
+                    <span className="add-transaction-icon">
+                        +
+                    </span>
 
-                        <span className="quick-action-icon">
-                            +
-                        </span>
+                    <div>
 
-                        <div>
+                        <strong>
+                            Add Transaction
+                        </strong>
 
-                            <h3>
-                                Add Transaction
-                            </h3>
+                        <p>
+                            Record your income or spending
+                        </p>
 
-                            <p>
-                                Record income or expenses
-                            </p>
+                    </div>
 
-                        </div>
-
-                    </Link>
-
-                </div>
+                </Link>
 
             </section>
-
-            <br/> <br/>
 
 
             {/* =========================
@@ -191,23 +216,20 @@ function Dashboard() {
                         Rs. {summary.balance.toLocaleString()}
                     </h2>
 
-                </div>
+                    <span className="balance-label">
+                        INCOME − EXPENSES
+                    </span>
 
-                <div className="balance-label">
-                    MONEY TRACKER
                 </div>
 
             </section>
 
 
             {/* =========================
-                Summary Cards
+                Summary
             ========================= */}
 
             <section className="summary-grid">
-
-
-                {/* Income */}
 
                 <div className="summary-card">
 
@@ -230,8 +252,6 @@ function Dashboard() {
                 </div>
 
 
-                {/* Expenses */}
-
                 <div className="summary-card">
 
                     <div className="summary-icon">
@@ -253,8 +273,6 @@ function Dashboard() {
                 </div>
 
 
-                {/* Balance */}
-
                 <div className="summary-card">
 
                     <div className="summary-icon">
@@ -275,7 +293,6 @@ function Dashboard() {
 
                 </div>
 
-
             </section>
 
 
@@ -287,60 +304,27 @@ function Dashboard() {
 
                 <div className="section-heading">
 
-                    <div>
+                    <p>
+                        MANAGE YOUR MONEY
+                    </p>
 
-                        <p>
-                            Quick actions
-                        </p>
-
-                        <h2>
-                            Manage your money
-                        </h2>
-
-                    </div>
+                    <h2>
+                        Quick Actions
+                    </h2>
 
                 </div>
 
 
                 <div className="quick-actions">
 
-
-                    {/* Transactions */}
-
-                    <Link
-                        to="/transactions"
-                        className="quick-action-card"
-                    >
-
-                        <span className="quick-action-icon">
-                            +
-                        </span>
-
-                        <div>
-
-                            <h3>
-                                Transactions
-                            </h3>
-
-                            <p>
-                                View and manage transactions
-                            </p>
-
-                        </div>
-
-                    </Link>
-
-
-                    {/* Planner */}
-
                     <Link
                         to="/planner"
                         className="quick-action-card"
                     >
 
-                        <span className="quick-action-icon">
-                            ◷
-                        </span>
+                        <div className="quick-action-icon">
+                            📅
+                        </div>
 
                         <div>
 
@@ -349,7 +333,7 @@ function Dashboard() {
                             </h3>
 
                             <p>
-                                Plan your spending
+                                Plan and manage your budget
                             </p>
 
                         </div>
@@ -357,41 +341,36 @@ function Dashboard() {
                     </Link>
 
 
-                    {/* Categories */}
-
                     <Link
-                        to="/categories"
+                        to="/transactions/add"
                         className="quick-action-card"
                     >
 
-                        <span className="quick-action-icon">
-                            #
-                        </span>
+                        <div className="quick-action-icon">
+                            +
+                        </div>
 
                         <div>
 
                             <h3>
-                                Categories
+                                Add Transaction
                             </h3>
 
                             <p>
-                                Manage your categories
+                                Record income or expense
                             </p>
 
                         </div>
 
                     </Link>
-
 
                 </div>
 
             </section>
 
-
         </div>
 
     );
-
 }
 
 export default Dashboard;

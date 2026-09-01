@@ -1,0 +1,445 @@
+/* =========================
+   Add Transaction Page
+========================= */
+
+.add-transaction-page {
+    min-height: 100vh;
+    padding: 45px 7%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background: #e8e9ed;
+    color: #292d32;
+}
+
+
+/* =========================
+   Card
+========================= */
+
+.add-transaction-card {
+    width: 100%;
+    max-width: 720px;
+    padding: 40px;
+    border-radius: 28px;
+    background: #e8e9ed;
+
+    box-shadow:
+        15px 15px 30px rgba(163, 165, 170, 0.6),
+        -15px -15px 30px rgba(255, 255, 255, 0.95);
+}
+
+
+/* =========================
+   Header
+========================= */
+
+.add-transaction-header {
+    margin-bottom: 35px;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 28px;
+
+    color: #6e9c7d;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+
+    transition: 0.2s ease;
+}
+
+.back-link:hover {
+    color: #34784d;
+    transform: translateX(-3px);
+}
+
+
+.transaction-title {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.transaction-title-icon {
+    width: 58px;
+    height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 18px;
+
+    font-size: 28px;
+    font-weight: 300;
+    color: #5daa79;
+
+    background: #e8e9ed;
+
+    box-shadow:
+        inset 5px 5px 10px rgba(163, 165, 170, 0.4),
+        inset -5px -5px 10px rgba(255, 255, 255, 0.85);
+}
+
+.transaction-label {
+    margin-bottom: 5px;
+
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+
+    color: #6e9c7d;
+}
+
+.transaction-title h1 {
+    margin-bottom: 6px;
+
+    font-size: 29px;
+    font-weight: 600;
+    letter-spacing: -1px;
+}
+
+.transaction-title p:last-child {
+    font-size: 13px;
+    color: #858a91;
+}
+
+
+/* =========================
+   Messages
+========================= */
+
+.transaction-message {
+    margin-bottom: 25px;
+    padding: 14px 18px;
+
+    border-radius: 14px;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.error-message {
+    color: #9a6868;
+
+    box-shadow:
+        inset 3px 3px 7px rgba(163, 165, 170, 0.35),
+        inset -3px -3px 7px rgba(255, 255, 255, 0.8);
+}
+
+.success-message {
+    color: #4d9966;
+
+    box-shadow:
+        inset 3px 3px 7px rgba(163, 165, 170, 0.35),
+        inset -3px -3px 7px rgba(255, 255, 255, 0.8);
+}
+
+
+/* =========================
+   Form
+========================= */
+
+.transaction-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.input-group label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    color: #6e7075;
+}
+
+
+/* =========================
+   Inputs
+========================= */
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+
+    padding: 14px 16px;
+
+    border-radius: 13px;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    color: #292d32;
+    background: #e8e9ed;
+
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 165, 170, 0.45),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.85);
+
+    transition: 0.2s ease;
+}
+
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+    color: #a0a3a8;
+}
+
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+    box-shadow:
+        inset 2px 2px 5px rgba(163, 165, 170, 0.45),
+        inset -2px -2px 5px rgba(255, 255, 255, 0.85),
+        0 0 0 2px rgba(93, 170, 121, 0.15);
+}
+
+.input-group textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+.input-group select {
+    cursor: pointer;
+}
+
+
+/* =========================
+   Amount
+========================= */
+
+.amount-input {
+    position: relative;
+}
+
+.amount-input span {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    color: #858a91;
+
+    pointer-events: none;
+}
+
+.amount-input input {
+    padding-left: 52px;
+}
+
+
+/* =========================
+   Form Row
+========================= */
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+
+/* =========================
+   Type Selector
+========================= */
+
+.type-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.type-button {
+    border: none;
+    outline: none;
+
+    padding: 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    border-radius: 13px;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #777b81;
+    background: #e8e9ed;
+
+    cursor: pointer;
+
+    box-shadow:
+        6px 6px 12px rgba(163, 165, 170, 0.5),
+        -6px -6px 12px rgba(255, 255, 255, 0.85);
+
+    transition: 0.2s ease;
+}
+
+.type-button:hover {
+    transform: translateY(-2px);
+}
+
+.type-button span {
+    font-size: 17px;
+}
+
+.type-button.active {
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 165, 170, 0.4),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.type-button.expense-type.active {
+    color: #9a6868;
+}
+
+.type-button.income-type.active {
+    color: #4d9966;
+}
+
+
+/* =========================
+   Submit Button
+========================= */
+
+.submit-transaction {
+    width: 100%;
+
+    margin-top: 5px;
+    padding: 16px;
+
+    border: none;
+    outline: none;
+
+    border-radius: 15px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    color: #34784d;
+    background: #e8e9ed;
+
+    cursor: pointer;
+
+    box-shadow:
+        8px 8px 16px rgba(163, 165, 170, 0.6),
+        -8px -8px 16px rgba(255, 255, 255, 0.95);
+
+    transition: 0.2s ease;
+}
+
+.submit-transaction:hover:not(:disabled) {
+    transform: translateY(-2px);
+
+    color: #2d6843;
+}
+
+.submit-transaction:active:not(:disabled) {
+    transform: translateY(1px);
+
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 165, 170, 0.45),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.submit-transaction:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+
+/* =========================
+   Cancel
+========================= */
+
+.cancel-link {
+    display: block;
+
+    margin-top: 20px;
+
+    text-align: center;
+
+    color: #858a91;
+    font-size: 12px;
+    text-decoration: none;
+
+    transition: 0.2s ease;
+}
+
+.cancel-link:hover {
+    color: #555a61;
+}
+
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 650px) {
+
+    .add-transaction-page {
+        padding: 25px 5%;
+    }
+
+    .add-transaction-card {
+        padding: 28px 22px;
+        border-radius: 23px;
+    }
+
+    .transaction-title h1 {
+        font-size: 25px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+}
+
+
+@media (max-width: 450px) {
+
+    .add-transaction-page {
+        padding: 20px 4%;
+    }
+
+    .add-transaction-card {
+        padding: 25px 18px;
+    }
+
+    .transaction-title {
+        align-items: flex-start;
+    }
+
+    .transaction-title-icon {
+        width: 50px;
+        height: 50px;
+        flex-shrink: 0;
+    }
+
+    .transaction-title h1 {
+        font-size: 22px;
+    }
+
+    .type-selector {
+        grid-template-columns: 1fr;
+    }
+}

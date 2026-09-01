@@ -1,82 +1,140 @@
-import { useState } from "react"
-import useAuth  from "../context/useAuth.js";
-import { useNavigate, Link } from "react-router-dom";
-import api from "../services/api"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
+import "./Auth.css";
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState("")
+    const navigate = useNavigate();
 
-  const { login } = useAuth();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-  const navigate = useNavigate();
-
-  const handleLogin = async(e) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true)
-
-    try{
-      const response = await api.post("/auth/login", {
-        email,
-        password
-      })
-
-      console.log(response.data)
-
-      login(
-        response.data.user,
-        response.data.token
-      )
-
-      navigate("/dashboard")
-
-    }catch (error) {
-      console.log(error)
-
-      setError(
-        error.response?.data?.message || "Login failed"
-      );
-    } finally {
-      setLoading(false)
-    }
-  }
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
 
 
-  return (
+    const handleLogin = async (e) => {
+
+        e.preventDefault();
+
+        setError("");
+        setLoading(true);
+
+        try {
+
+            const response = await fetch(
+                `${import.meta.env.VITE_API_URL}/api/auth/login`,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        email,
+                        password
+                    })
+                }
+            );
+
+
+            const data = await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message || "Login failed"
+                );
+
+            }
+
+
+            // Save JWT
+            localStorage.setItem(
+                "token",
+                data.token
+            );
+
+
+            // Save user information
+            localStorage.setItem(
+                "user",
+                JSON.stringify(data.user)
+            );
+
+
+            // Go to dashboard
+            navigate("/dashboard");
+
+
+        } catch (error) {
+
+            setError(error.message);
+
+        } finally {
+
+            setLoading(false);
+
+        }
+    };
+
+
+    return (
+
         <div className="auth-page">
 
             <div className="auth-card">
 
                 {/* Brand */}
+
                 <div className="auth-brand">
 
                     <div className="brand-icon">
-                        ₿
+                        💰
                     </div>
 
-                    <h1>MoneyTracker</h1>
+                    <h1>
+                        Welcome back
+                    </h1>
 
-                    <p>Take control of your money.</p>
+                    <p>
+                        Login to continue managing your money.
+                    </p>
 
                 </div>
 
 
+                {/* Error */}
+
+                {error && (
+
+                    <div className="auth-error">
+                        {error}
+                    </div>
+
+                )}
+
+
                 {/* Login Form */}
+
                 <form onSubmit={handleLogin}>
 
                     <div className="input-group">
 
-                        <label>Email</label>
+                        <label>
+                            Email
+                        </label>
 
                         <input
                             type="email"
                             placeholder="Enter your email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) =>
+                                setEmail(e.target.value)
+                            }
                             required
                         />
 
@@ -85,52 +143,56 @@ function Login() {
 
                     <div className="input-group">
 
-                        <label>Password</label>
+                        <label>
+                            Password
+                        </label>
 
                         <input
                             type="password"
                             placeholder="Enter your password"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(e) =>
+                                setPassword(e.target.value)
+                            }
                             required
                         />
 
                     </div>
 
 
-                    {/* Error */}
-                    {error && (
-                        <div className="auth-error">
-                            {error}
-                        </div>
-                    )}
-
-
-                    {/* Submit */}
                     <button
                         type="submit"
                         className="auth-submit"
                         disabled={loading}
                     >
-                        {loading ? "Logging in..." : "Login"}
+
+                        {loading
+                            ? "Logging in..."
+                            : "Login"
+                        }
+
                     </button>
 
                 </form>
 
 
                 {/* Register */}
+
                 <div className="auth-footer">
 
-                    <span>Don't have an account?</span>
+                    <span>
+                        Don't have an account?
+                    </span>
 
                     <Link to="/register">
-                        Create one
+                        Register
                     </Link>
 
                 </div>
 
 
-                {/* Back */}
+                {/* Back Home */}
+
                 <Link
                     to="/"
                     className="back-home"
@@ -144,4 +206,4 @@ function Login() {
     );
 }
 
-export default Login
+export default Login;

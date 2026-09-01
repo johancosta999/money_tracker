@@ -1,19 +1,19 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import api from "../services/api";
+import { Link, useNavigate } from "react-router-dom";
+
+import "./Auth.css";
 
 function Register() {
 
+    const navigate = useNavigate();
+
     const [userName, setUserName] = useState("");
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const [age, setAge] = useState("");
+    const [password, setPassword] = useState("");
 
     const [error, setError] = useState("");
-    const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
-
-    const navigate = useNavigate();
 
 
     const handleRegister = async (e) => {
@@ -21,36 +21,55 @@ function Register() {
         e.preventDefault();
 
         setError("");
-        setMessage("");
         setLoading(true);
 
         try {
 
-            const response = await api.post("/auth/register", {
-                userName,
-                email,
-                password,
-                age
-            });
+            const response = await fetch(
+                `${import.meta.env.VITE_API_URL}/api/auth/register`,
+                {
+                    method: "POST",
 
-            console.log(response.data);
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
 
-            setMessage("Account created successfully!");
+                    body: JSON.stringify({
+                        userName,
+                        email,
+                        password,
+                        age: Number(age)
+                    })
+                }
+            );
 
-            setTimeout(() => {
-                navigate("/login");
-            }, 1000);
+
+            const data = await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data.message || "Registration failed"
+                );
+
+            }
+
+
+            // Registration successful
+            // Send user to login page
+
+            navigate("/login");
+
 
         } catch (error) {
 
-            console.log(error);
-
-            setError(
-                error.response?.data?.message || "Registration failed"
-            );
+            setError(error.message);
 
         } finally {
+
             setLoading(false);
+
         }
     };
 
@@ -66,82 +85,86 @@ function Register() {
                 <div className="auth-brand">
 
                     <div className="brand-icon">
-                        ₿
+                        💰
                     </div>
 
-                    <h1>MoneyTracker</h1>
+                    <h1>
+                        Create your account
+                    </h1>
 
-                    <p>Create your account.</p>
+                    <p>
+                        Start taking control of your money today.
+                    </p>
 
                 </div>
+
+
+                {/* Error */}
+
+                {error && (
+
+                    <div className="auth-error">
+                        {error}
+                    </div>
+
+                )}
 
 
                 {/* Register Form */}
 
                 <form onSubmit={handleRegister}>
 
-                    {/* Username */}
-
                     <div className="input-group">
 
-                        <label>Username</label>
+                        <label>
+                            Username
+                        </label>
 
                         <input
                             type="text"
                             placeholder="Enter your username"
                             value={userName}
-                            onChange={(e) => setUserName(e.target.value)}
+                            onChange={(e) =>
+                                setUserName(e.target.value)
+                            }
                             required
                         />
 
                     </div>
 
 
-                    {/* Email */}
-
                     <div className="input-group">
 
-                        <label>Email</label>
+                        <label>
+                            Email
+                        </label>
 
                         <input
                             type="email"
                             placeholder="Enter your email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) =>
+                                setEmail(e.target.value)
+                            }
                             required
                         />
 
                     </div>
 
 
-                    {/* Password */}
-
                     <div className="input-group">
 
-                        <label>Password</label>
-
-                        <input
-                            type="password"
-                            placeholder="Create a password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-
-                    </div>
-
-
-                    {/* Age */}
-
-                    <div className="input-group">
-
-                        <label>Age</label>
+                        <label>
+                            Age
+                        </label>
 
                         <input
                             type="number"
                             placeholder="Enter your age"
                             value={age}
-                            onChange={(e) => setAge(e.target.value)}
+                            onChange={(e) =>
+                                setAge(e.target.value)
+                            }
                             min="1"
                             required
                         />
@@ -149,35 +172,36 @@ function Register() {
                     </div>
 
 
-                    {/* Error */}
+                    <div className="input-group">
 
-                    {error && (
-                        <div className="auth-error">
-                            {error}
-                        </div>
-                    )}
+                        <label>
+                            Password
+                        </label>
 
+                        <input
+                            type="password"
+                            placeholder="Create a password"
+                            value={password}
+                            onChange={(e) =>
+                                setPassword(e.target.value)
+                            }
+                            required
+                        />
 
-                    {/* Success */}
+                    </div>
 
-                    {message && (
-                        <div className="auth-success">
-                            {message}
-                        </div>
-                    )}
-
-
-                    {/* Register Button */}
 
                     <button
                         type="submit"
                         className="auth-submit"
                         disabled={loading}
                     >
+
                         {loading
-                            ? "Creating account..."
+                            ? "Creating Account..."
                             : "Create Account"
                         }
+
                     </button>
 
                 </form>
@@ -187,7 +211,9 @@ function Register() {
 
                 <div className="auth-footer">
 
-                    <span>Already have an account?</span>
+                    <span>
+                        Already have an account?
+                    </span>
 
                     <Link to="/login">
                         Login
@@ -196,7 +222,7 @@ function Register() {
                 </div>
 
 
-                {/* Back */}
+                {/* Back Home */}
 
                 <Link
                     to="/"

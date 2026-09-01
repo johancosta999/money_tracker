@@ -1,17 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import Landing from "./pages/Landing";
+import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-
-import Dashboard from "./pages/Dashboard";
-import Transactions from "./pages/Transactions";
+import Dashboard from "./pages/Dasboard";
+import AddTransaction from "./pages/AddTransaction";
 import Planner from "./pages/Planner";
-import Categories from "./pages/Categories";
-import Budgets from "./pages/Budgets";
-import PlanDetails from "./pages/planDetails";
-
-import ProtectedRoute from "./components/ProtectedRoute";
+import PlannerDetails from "./pages/PlannerDetails";
+import Transactions from "./pages/Transactions";
 
 function App() {
 
@@ -21,11 +16,9 @@ function App() {
 
             <Routes>
 
-                {/* ================= PUBLIC ROUTES ================= */}
-
                 <Route
                     path="/"
-                    element={<Landing />}
+                    element={<LandingPage />}
                 />
 
                 <Route
@@ -38,69 +31,35 @@ function App() {
                     element={<Register />}
                 />
 
-
-                {/* ================= PROTECTED ROUTES ================= */}
-
                 <Route
                     path="/dashboard"
-                    element={
-                        <ProtectedRoute>
-                            <Dashboard />
-                        </ProtectedRoute>
-                    }
+                    element={<Dashboard />}
+                />
+
+                <Route
+                    path="/transactions/add"
+                    element={<AddTransaction />}
                 />
 
                 <Route
                     path="/transactions"
-                    element={
-                        <ProtectedRoute>
-                            <Transactions />
-                        </ProtectedRoute>
-                    }
+                    element={<Transactions />}
                 />
 
                 <Route
                     path="/planner"
-                    element={
-                        <ProtectedRoute>
-                            <Planner />
-                        </ProtectedRoute>
-                    }
+                    element={<Planner />}
                 />
 
                 <Route
                     path="/planner/:id"
-                    element={
-                        <ProtectedRoute>
-                            <PlanDetails />
-                        </ProtectedRoute>
-                    }
-                />
-
-                <Route
-                    path="/categories"
-                    element={
-                        <ProtectedRoute>
-                            <Categories />
-                        </ProtectedRoute>
-                    }
-                />
-
-                <Route
-                    path="/budgets"
-                    element={
-                        <ProtectedRoute>
-                            <Budgets />
-                        </ProtectedRoute>
-                    }
+                    element={<PlannerDetails />}
                 />
 
             </Routes>
 
         </BrowserRouter>
-
     );
-
 }
 
 export default App;
