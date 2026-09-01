@@ -4,6 +4,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dasboard";
 import AddTransaction from "./pages/AddTransaction";
+import Planner from "./pages/Planner";
+import PlannerDetails from "./pages/PlannerDetails";
+import Transactions from "./pages/Transactions";
 
 function App() {
 
@@ -40,12 +43,17 @@ function App() {
 
                 <Route
                     path="/transactions"
-                    element={<h1>Transactions Page</h1>}
+                    element={<Transactions />}
                 />
 
                 <Route
                     path="/planner"
-                    element={<h1>Planner Page</h1>}
+                    element={<Planner />}
+                />
+
+                <Route
+                    path="/planner/:id"
+                    element={<PlannerDetails />}
                 />
 
             </Routes>

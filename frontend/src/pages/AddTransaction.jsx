@@ -1,34 +1,118 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./AddTransaction.css";
 
+const defaultCategories = [
+    "Education",
+    "Food",
+    "Travel",
+    "Shopping",
+    "Bills",
+    "Sanitoring",
+    "Sports",
+    "Debt",
+    "Others"
+];
+
 function AddTransaction() {
     const navigate = useNavigate();
+
+    const [plannerOptions, setPlannerOptions] = useState([]);
+    const [selectedPlannerId, setSelectedPlannerId] = useState("");
+    const [availableCategories, setAvailableCategories] = useState(defaultCategories);
 
     const [formData, setFormData] = useState({
         title: "",
         amount: "",
         type: "expense",
-        category: "Food",
+        category: defaultCategories[0],
         date: new Date().toISOString().split("T")[0],
         description: ""
     });
 
     const [loading, setLoading] = useState(false);
+    const [loadingPlans, setLoadingPlans] = useState(true);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
-    const categories = [
-        "Education",
-        "Food",
-        "Travel",
-        "Shopping",
-        "Bills",
-        "Sanitoring",
-        "Sports",
-        "Debt",
-        "Others"
-    ];
+    useEffect(() => {
+        const fetchPlans = async () => {
+            const token = localStorage.getItem("token");
+
+            if (!token) {
+                navigate("/login");
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:5000/api/plan", {
+                    method: "GET",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || "Couldn't load planners");
+                }
+
+                const sortedPlans = [...data].sort(
+                    (a, b) => new Date(b.startDate) - new Date(a.startDate)
+                );
+
+                setPlannerOptions(sortedPlans);
+
+                if (sortedPlans.length > 0) {
+                    const newestPlanner = sortedPlans[0];
+                    setSelectedPlannerId(newestPlanner._id);
+                    const categories = newestPlanner.categories?.length
+                        ? newestPlanner.categories
+                        : defaultCategories;
+                    setAvailableCategories(categories);
+                    setFormData((previous) => ({
+                        ...previous,
+                        category: categories.includes(previous.category)
+                            ? previous.category
+                            : categories[0] || defaultCategories[0]
+                    }));
+                }
+            } catch (fetchError) {
+                setError(fetchError.message);
+            } finally {
+                setLoadingPlans(false);
+            }
+        };
+
+        fetchPlans();
+    }, [navigate]);
+
+    useEffect(() => {
+        if (!plannerOptions.length) {
+            setAvailableCategories(defaultCategories);
+            setFormData((previous) => ({
+                ...previous,
+                category: previous.category || defaultCategories[0]
+            }));
+            return;
+        }
+
+        const selectedPlanner = plannerOptions.find((planner) => planner._id === selectedPlannerId)
+            || plannerOptions[0];
+
+        const categories = selectedPlanner?.categories?.length
+            ? selectedPlanner.categories
+            : defaultCategories;
+
+        setAvailableCategories(categories);
+        setFormData((previous) => ({
+            ...previous,
+            category: categories.includes(previous.category)
+                ? previous.category
+                : categories[0] || defaultCategories[0]
+        }));
+    }, [plannerOptions, selectedPlannerId]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -52,7 +136,6 @@ function AddTransaction() {
         setError("");
         setSuccess("");
 
-        // Basic frontend validation
         if (!formData.title.trim()) {
             setError("Please enter a transaction title.");
             return;
@@ -65,6 +148,11 @@ function AddTransaction() {
 
         if (!formData.description.trim()) {
             setError("Please enter a description.");
+            return;
+        }
+
+        if (!selectedPlannerId) {
+            setError("Create a planner before adding a transaction.");
             return;
         }
 
@@ -92,11 +180,8 @@ function AddTransaction() {
                         type: formData.type,
                         category: formData.category,
                         date: formData.date,
-                        description: formData.description.trim()
-
-                        // plannerId is intentionally not sent.
-                        // Your backend automatically finds
-                        // the correct planner for the date.
+                        description: formData.description.trim(),
+                        plannerId: selectedPlannerId
                     })
                 }
             );
@@ -104,20 +189,16 @@ function AddTransaction() {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(
-                    data.message || "Couldn't create transaction"
-                );
+                throw new Error(data.message || "Couldn't create transaction");
             }
 
             setSuccess("Transaction added successfully!");
 
-            // Give the user a moment to see the success message
             setTimeout(() => {
-                navigate("/dashboard");
-            }, 1000);
-
-        } catch (error) {
-            setError(error.message);
+                navigate("/transactions");
+            }, 800);
+        } catch (submitError) {
+            setError(submitError.message);
         } finally {
             setLoading(false);
         }
@@ -125,64 +206,53 @@ function AddTransaction() {
 
     return (
         <div className="add-transaction-page">
-
             <div className="add-transaction-card">
-
-                {/* Header */}
                 <div className="add-transaction-header">
-
-                    <Link
-                        to="/dashboard"
-                        className="back-link"
-                    >
+                    <Link to="/dashboard" className="back-link">
                         ← Dashboard
                     </Link>
 
                     <div className="transaction-title">
-                        <div className="transaction-title-icon">
-                            +
-                        </div>
+                        <div className="transaction-title-icon">+</div>
 
                         <div>
-                            <p className="transaction-label">
-                                MONEY TRACKER
-                            </p>
-
+                            <p className="transaction-label">MONEY TRACKER</p>
                             <h1>Add Transaction</h1>
-
-                            <p>
-                                Record your income or expense.
-                            </p>
+                            <p>Record your income or expense.</p>
                         </div>
                     </div>
-
                 </div>
 
-                {/* Messages */}
-                {error && (
+                {error && <div className="transaction-message error-message">{error}</div>}
+                {success && <div className="transaction-message success-message">{success}</div>}
+
+                {!loadingPlans && plannerOptions.length === 0 && (
                     <div className="transaction-message error-message">
-                        {error}
+                        You need to create a planner before adding transactions.
                     </div>
                 )}
 
-                {success && (
-                    <div className="transaction-message success-message">
-                        {success}
-                    </div>
-                )}
+                <form className="transaction-form" onSubmit={handleSubmit}>
+                    {plannerOptions.length > 0 && (
+                        <div className="input-group">
+                            <label htmlFor="plannerId">Planner</label>
+                            <select
+                                id="plannerId"
+                                value={selectedPlannerId}
+                                onChange={(e) => setSelectedPlannerId(e.target.value)}
+                                disabled={loading}
+                            >
+                                {plannerOptions.map((planner) => (
+                                    <option key={planner._id} value={planner._id}>
+                                        {planner.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    )}
 
-                {/* Form */}
-                <form
-                    className="transaction-form"
-                    onSubmit={handleSubmit}
-                >
-
-                    {/* Title */}
                     <div className="input-group">
-                        <label htmlFor="title">
-                            Transaction Title
-                        </label>
-
+                        <label htmlFor="title">Transaction Title</label>
                         <input
                             id="title"
                             name="title"
@@ -190,19 +260,14 @@ function AddTransaction() {
                             placeholder="e.g. Grocery shopping"
                             value={formData.title}
                             onChange={handleChange}
-                            disabled={loading}
+                            disabled={loading || plannerOptions.length === 0}
                         />
                     </div>
 
-                    {/* Amount */}
                     <div className="input-group">
-                        <label htmlFor="amount">
-                            Amount
-                        </label>
-
+                        <label htmlFor="amount">Amount</label>
                         <div className="amount-input">
                             <span>LKR</span>
-
                             <input
                                 id="amount"
                                 name="amount"
@@ -212,19 +277,14 @@ function AddTransaction() {
                                 placeholder="0.00"
                                 value={formData.amount}
                                 onChange={handleChange}
-                                disabled={loading}
+                                disabled={loading || plannerOptions.length === 0}
                             />
                         </div>
                     </div>
 
-                    {/* Type */}
                     <div className="input-group">
-                        <label>
-                            Transaction Type
-                        </label>
-
+                        <label>Transaction Type</label>
                         <div className="type-selector">
-
                             <button
                                 type="button"
                                 className={
@@ -232,10 +292,8 @@ function AddTransaction() {
                                         ? "type-button active expense-type"
                                         : "type-button"
                                 }
-                                onClick={() =>
-                                    handleTypeChange("expense")
-                                }
-                                disabled={loading}
+                                onClick={() => handleTypeChange("expense")}
+                                disabled={loading || plannerOptions.length === 0}
                             >
                                 <span>↓</span>
                                 Expense
@@ -248,38 +306,27 @@ function AddTransaction() {
                                         ? "type-button active income-type"
                                         : "type-button"
                                 }
-                                onClick={() =>
-                                    handleTypeChange("income")
-                                }
-                                disabled={loading}
+                                onClick={() => handleTypeChange("income")}
+                                disabled={loading || plannerOptions.length === 0}
                             >
                                 <span>↑</span>
                                 Income
                             </button>
-
                         </div>
                     </div>
 
-                    {/* Category + Date */}
                     <div className="form-row">
-
                         <div className="input-group">
-                            <label htmlFor="category">
-                                Category
-                            </label>
-
+                            <label htmlFor="category">Category</label>
                             <select
                                 id="category"
                                 name="category"
                                 value={formData.category}
                                 onChange={handleChange}
-                                disabled={loading}
+                                disabled={loading || plannerOptions.length === 0}
                             >
-                                {categories.map((category) => (
-                                    <option
-                                        key={category}
-                                        value={category}
-                                    >
+                                {availableCategories.map((category) => (
+                                    <option key={category} value={category}>
                                         {category}
                                     </option>
                                 ))}
@@ -287,28 +334,20 @@ function AddTransaction() {
                         </div>
 
                         <div className="input-group">
-                            <label htmlFor="date">
-                                Date
-                            </label>
-
+                            <label htmlFor="date">Date</label>
                             <input
                                 id="date"
                                 name="date"
                                 type="date"
                                 value={formData.date}
                                 onChange={handleChange}
-                                disabled={loading}
+                                disabled={loading || plannerOptions.length === 0}
                             />
                         </div>
-
                     </div>
 
-                    {/* Description */}
                     <div className="input-group">
-                        <label htmlFor="description">
-                            Description
-                        </label>
-
+                        <label htmlFor="description">Description</label>
                         <textarea
                             id="description"
                             name="description"
@@ -316,33 +355,23 @@ function AddTransaction() {
                             rows="4"
                             value={formData.description}
                             onChange={handleChange}
-                            disabled={loading}
+                            disabled={loading || plannerOptions.length === 0}
                         />
                     </div>
 
-                    {/* Submit */}
                     <button
                         type="submit"
                         className="submit-transaction"
-                        disabled={loading}
+                        disabled={loading || plannerOptions.length === 0}
                     >
-                        {loading
-                            ? "Adding Transaction..."
-                            : "Add Transaction"}
+                        {loading ? "Adding Transaction..." : "Add Transaction"}
                     </button>
-
                 </form>
 
-                {/* Cancel */}
-                <Link
-                    to="/dashboard"
-                    className="cancel-link"
-                >
+                <Link to="/dashboard" className="cancel-link">
                     Cancel
                 </Link>
-
             </div>
-
         </div>
     );
 }

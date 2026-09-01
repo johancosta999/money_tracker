@@ -495,6 +495,8 @@ const getPlanSummary = async (req, res) => {
 
             weeklySummary.push({
 
+                id: week._id,
+
                 weekNumber: week.weekNumber,
 
                 startDate: week.startDate,

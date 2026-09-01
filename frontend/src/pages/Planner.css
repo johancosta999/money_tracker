@@ -1,0 +1,707 @@
+/* =========================
+   Planner Page
+========================= */
+
+.planner-page {
+    min-height: 100vh;
+    padding: 45px 7%;
+    background: #e8e9ed;
+    color: #292d32;
+}
+
+
+/* =========================
+   Loading
+========================= */
+
+.planner-loading {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e8e9ed;
+    color: #6e7075;
+    font-size: 14px;
+}
+
+
+/* =========================
+   Header
+========================= */
+
+.planner-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 30px;
+    margin-bottom: 35px;
+}
+
+.planner-back-link {
+    display: inline-block;
+    margin-bottom: 25px;
+    color: #6e9c7d;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.planner-back-link:hover {
+    color: #34784d;
+    transform: translateX(-3px);
+}
+
+.planner-label {
+    margin-bottom: 6px;
+    color: #6e9c7d;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.planner-header h1 {
+    margin: 0 0 7px;
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -1px;
+}
+
+.planner-subtitle {
+    margin: 0;
+    color: #858a91;
+    font-size: 13px;
+}
+
+
+/* =========================
+   Add Plan Button
+========================= */
+
+.add-plan-button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 14px;
+    background: #e8e9ed;
+    color: #34784d;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+
+    box-shadow:
+        7px 7px 14px rgba(163, 165, 170, 0.55),
+        -7px -7px 14px rgba(255, 255, 255, 0.9);
+
+    transition: 0.2s ease;
+}
+
+.add-plan-button span {
+    font-size: 20px;
+    font-weight: 300;
+}
+
+.add-plan-button:hover {
+    transform: translateY(-2px);
+}
+
+
+/* =========================
+   Messages
+========================= */
+
+.planner-message {
+    margin-bottom: 25px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-size: 13px;
+}
+
+.error-message {
+    color: #9a6868;
+
+    box-shadow:
+        inset 3px 3px 7px rgba(163, 165, 170, 0.35),
+        inset -3px -3px 7px rgba(255, 255, 255, 0.8);
+}
+
+.success-message {
+    color: #4d9966;
+
+    box-shadow:
+        inset 3px 3px 7px rgba(163, 165, 170, 0.35),
+        inset -3px -3px 7px rgba(255, 255, 255, 0.8);
+}
+
+
+/* =========================
+   Create Planner Card
+========================= */
+
+.create-planner-card {
+    width: 100%;
+    max-width: 850px;
+    margin: 0 auto 45px;
+    padding: 38px;
+    border-radius: 28px;
+    background: #e8e9ed;
+
+    box-shadow:
+        15px 15px 30px rgba(163, 165, 170, 0.6),
+        -15px -15px 30px rgba(255, 255, 255, 0.95);
+}
+
+.create-planner-heading {
+    margin-bottom: 30px;
+}
+
+.create-planner-heading h2 {
+    margin: 0 0 6px;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+.create-planner-heading p:last-child {
+    margin: 0;
+    color: #858a91;
+    font-size: 13px;
+}
+
+
+/* =========================
+   Form
+========================= */
+
+.planner-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.planner-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.planner-input-group label {
+    color: #6e7075;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+}
+
+.planner-input-group input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    border: none;
+    outline: none;
+    border-radius: 13px;
+
+    background: #e8e9ed;
+    color: #292d32;
+    font-family: inherit;
+    font-size: 13px;
+
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 165, 170, 0.45),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.85);
+
+    transition: 0.2s ease;
+}
+
+.planner-input-group input::placeholder {
+    color: #a0a3a8;
+}
+
+.planner-input-group input:focus {
+    box-shadow:
+        inset 2px 2px 5px rgba(163, 165, 170, 0.45),
+        inset -2px -2px 5px rgba(255, 255, 255, 0.85),
+        0 0 0 2px rgba(93, 170, 121, 0.15);
+}
+
+.input-hint {
+    color: #9a9da2;
+    font-size: 10px;
+}
+
+
+/* =========================
+   Form Row
+========================= */
+
+.planner-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+
+/* =========================
+   Planner Type
+========================= */
+
+.planner-type-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.planner-type-button {
+    padding: 13px;
+    border: none;
+    border-radius: 13px;
+    background: #e8e9ed;
+    color: #777b81;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    box-shadow:
+        6px 6px 12px rgba(163, 165, 170, 0.5),
+        -6px -6px 12px rgba(255, 255, 255, 0.85);
+}
+
+.planner-type-button.active {
+    color: #34784d;
+
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 165, 170, 0.4),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.planner-type-button.disabled {
+    color: #a9abb0;
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+
+/* =========================
+   Calculated End Date
+========================= */
+
+.calculated-date {
+    min-height: 17px;
+    padding: 14px 16px;
+    border-radius: 13px;
+
+    color: #555a61;
+    font-size: 13px;
+
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 165, 170, 0.45),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.85);
+}
+
+
+/* =========================
+   Amount
+========================= */
+
+.planner-amount-input {
+    position: relative;
+}
+
+.planner-amount-input span {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    transform: translateY(-50%);
+
+    color: #858a91;
+    font-size: 11px;
+    font-weight: 700;
+    pointer-events: none;
+}
+
+.planner-amount-input input {
+    padding-left: 52px;
+}
+
+
+/* =========================
+   Categories
+========================= */
+
+.category-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-height: 20px;
+}
+
+.category-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 11px;
+    border-radius: 10px;
+
+    color: #5d6269;
+    background: #e8e9ed;
+    font-size: 11px;
+    font-weight: 600;
+
+    box-shadow:
+        4px 4px 8px rgba(163, 165, 170, 0.45),
+        -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.category-tag button {
+    width: 17px;
+    height: 17px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+
+    color: #858a91;
+    background: transparent;
+
+    font-size: 15px;
+    line-height: 15px;
+    cursor: pointer;
+}
+
+.category-tag button:hover {
+    color: #9a6868;
+}
+
+.add-category-row {
+    display: flex;
+    gap: 10px;
+}
+
+.add-category-row input {
+    flex: 1;
+}
+
+.add-category-row button {
+    padding: 0 18px;
+    border: none;
+    border-radius: 13px;
+
+    background: #e8e9ed;
+    color: #34784d;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+
+    box-shadow:
+        5px 5px 10px rgba(163, 165, 170, 0.5),
+        -5px -5px 10px rgba(255, 255, 255, 0.85);
+}
+
+.add-category-row button:active {
+    box-shadow:
+        inset 3px 3px 6px rgba(163, 165, 170, 0.4),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+
+/* =========================
+   Save Button
+========================= */
+
+.save-planner-button {
+    width: 100%;
+    margin-top: 5px;
+    padding: 16px;
+
+    border: none;
+    border-radius: 15px;
+
+    background: #e8e9ed;
+    color: #34784d;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow:
+        8px 8px 16px rgba(163, 165, 170, 0.6),
+        -8px -8px 16px rgba(255, 255, 255, 0.95);
+
+    transition: 0.2s ease;
+}
+
+.save-planner-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    color: #2d6843;
+}
+
+.save-planner-button:active:not(:disabled) {
+    transform: translateY(1px);
+
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 165, 170, 0.45),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.save-planner-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* =========================
+   Planner List
+========================= */
+
+.planner-list-section {
+    margin-top: 15px;
+}
+
+.planner-section-heading {
+    margin-bottom: 22px;
+}
+
+.planner-section-heading h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+
+/* =========================
+   Empty State
+========================= */
+
+.planner-empty-state {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 55px 30px;
+    text-align: center;
+    border-radius: 24px;
+
+    box-shadow:
+        inset 5px 5px 10px rgba(163, 165, 170, 0.3),
+        inset -5px -5px 10px rgba(255, 255, 255, 0.8);
+}
+
+.empty-planner-icon {
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 18px;
+
+    color: #5daa79;
+    font-size: 28px;
+
+    box-shadow:
+        inset 5px 5px 10px rgba(163, 165, 170, 0.4),
+        inset -5px -5px 10px rgba(255, 255, 255, 0.85);
+}
+
+.planner-empty-state h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+}
+
+.planner-empty-state p {
+    max-width: 400px;
+    margin: 0 auto 22px;
+    color: #858a91;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.empty-create-button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 13px;
+
+    background: #e8e9ed;
+    color: #34784d;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+
+    box-shadow:
+        6px 6px 12px rgba(163, 165, 170, 0.5),
+        -6px -6px 12px rgba(255, 255, 255, 0.85);
+}
+
+
+/* =========================
+   Planner Cards
+========================= */
+
+.planner-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+.planner-card {
+    padding: 25px;
+    border-radius: 22px;
+    cursor: pointer;
+
+    background: #e8e9ed;
+
+    box-shadow:
+        9px 9px 18px rgba(163, 165, 170, 0.55),
+        -9px -9px 18px rgba(255, 255, 255, 0.9);
+
+    transition: 0.2s ease;
+}
+
+.planner-card:hover {
+    transform: translateY(-3px);
+}
+
+.planner-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.planner-card-type {
+    margin: 0 0 6px;
+    color: #6e9c7d;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.planner-card h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.planner-status {
+    padding: 6px 9px;
+    border-radius: 8px;
+
+    color: #4d9966;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+
+    box-shadow:
+        inset 2px 2px 5px rgba(163, 165, 170, 0.3),
+        inset -2px -2px 5px rgba(255, 255, 255, 0.8);
+}
+
+.planner-card-dates {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 20px 0;
+
+    color: #858a91;
+    font-size: 11px;
+}
+
+.planner-card-budget {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding-top: 18px;
+    border-top: 1px solid rgba(163, 165, 170, 0.2);
+}
+
+.planner-card-budget div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.planner-card-budget span {
+    color: #858a91;
+    font-size: 10px;
+}
+
+.planner-card-budget strong {
+    color: #34784d;
+    font-size: 16px;
+}
+
+.planner-card-arrow {
+    font-size: 20px !important;
+    color: #6e9c7d !important;
+}
+
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 750px) {
+
+    .planner-page {
+        padding: 30px 5%;
+    }
+
+    .planner-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .add-plan-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .create-planner-card {
+        padding: 28px 22px;
+    }
+
+    .planner-form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .planner-list {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .planner-page {
+        padding: 25px 4%;
+    }
+
+    .planner-header h1 {
+        font-size: 27px;
+    }
+
+    .create-planner-card {
+        padding: 24px 18px;
+        border-radius: 22px;
+    }
+
+    .planner-type-selector {
+        grid-template-columns: 1fr;
+    }
+
+    .add-category-row {
+        flex-direction: column;
+    }
+
+    .add-category-row button {
+        padding: 13px;
+    }
+
+}

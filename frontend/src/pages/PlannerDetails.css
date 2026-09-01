@@ -1,0 +1,505 @@
+
+/* =========================
+   Planner Details Page
+========================= */
+
+.planner-details-page {
+    min-height: 100vh;
+    padding: 45px 7%;
+    background: #e8e9ed;
+    color: #292d32;
+}
+
+/* =========================
+   Loading
+========================= */
+
+.planner-details-loading {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e8e9ed;
+    color: #6e7075;
+    font-size: 14px;
+}
+
+/* =========================
+   Header
+========================= */
+
+.planner-details-header {
+    margin-bottom: 35px;
+}
+
+.planner-back-link {
+    display: inline-block;
+    margin-bottom: 30px;
+    color: #6e9c7d;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.planner-back-link:hover {
+    color: #34784d;
+    transform: translateX(-3px);
+}
+
+.planner-details-label {
+    margin-bottom: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #6e9c7d;
+}
+
+.planner-details-header h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -1px;
+}
+
+.planner-period {
+    margin: 0;
+    font-size: 13px;
+    color: #858a91;
+}
+
+/* =========================
+   Error
+========================= */
+
+.planner-details-error {
+    margin-bottom: 25px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    color: #9a6868;
+    font-size: 13px;
+
+    box-shadow:
+        inset 3px 3px 7px rgba(163, 165, 170, 0.35),
+        inset -3px -3px 7px rgba(255, 255, 255, 0.8);
+}
+
+/* =========================
+   Overview
+========================= */
+
+.planner-overview {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 50px;
+}
+
+.overview-card {
+    padding: 25px;
+    border-radius: 20px;
+    background: #e8e9ed;
+
+    box-shadow:
+        10px 10px 20px rgba(163, 165, 170, 0.55),
+        -10px -10px 20px rgba(255, 255, 255, 0.9);
+}
+
+.overview-card p {
+    margin: 0 0 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    color: #777b81;
+}
+
+.overview-card h2 {
+    margin: 0;
+    font-size: 23px;
+    font-weight: 600;
+}
+
+.overview-card.danger h2 {
+    color: #9a6868;
+}
+
+/* =========================
+   Section Heading
+========================= */
+
+.section-heading {
+    margin-bottom: 25px;
+}
+
+.section-heading p {
+    margin: 0 0 5px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: #6e9c7d;
+}
+
+.section-heading h2 {
+    margin: 0;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+/* =========================
+   Weeks Grid
+========================= */
+
+.weeks-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+/* =========================
+   Week Card
+========================= */
+
+.week-card {
+    padding: 27px;
+    border-radius: 23px;
+    background: #e8e9ed;
+
+    box-shadow:
+        10px 10px 22px rgba(163, 165, 170, 0.55),
+        -10px -10px 22px rgba(255, 255, 255, 0.9);
+}
+
+.week-card.over-budget {
+    box-shadow:
+        10px 10px 22px rgba(163, 165, 170, 0.55),
+        -10px -10px 22px rgba(255, 255, 255, 0.9);
+}
+
+/* =========================
+   Week Header
+========================= */
+
+.week-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.week-number {
+    margin: 0 0 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #6e9c7d;
+}
+
+.week-card-header h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #3a3e43;
+}
+
+.week-status {
+    flex-shrink: 0;
+    padding: 7px 11px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #4d9966;
+
+    box-shadow:
+        inset 3px 3px 6px rgba(163, 165, 170, 0.35),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+.danger-status {
+    color: #9a6868;
+}
+
+/* =========================
+   Weekly Budget
+========================= */
+
+.week-budget-area {
+    margin-bottom: 22px;
+}
+
+.week-budget-area p {
+    margin: 0 0 8px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    color: #858a91;
+}
+
+.budget-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.budget-display h4 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.budget-display button {
+    border: none;
+    padding: 7px 13px;
+    border-radius: 9px;
+    background: #e8e9ed;
+    color: #6e9c7d;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+
+    box-shadow:
+        4px 4px 8px rgba(163, 165, 170, 0.45),
+        -4px -4px 8px rgba(255, 255, 255, 0.85);
+}
+
+.budget-display button:hover {
+    color: #34784d;
+}
+
+/* =========================
+   Budget Edit
+========================= */
+
+.budget-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.budget-input {
+    position: relative;
+}
+
+.budget-input span {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 11px;
+    font-weight: 700;
+    color: #858a91;
+}
+
+.budget-input input {
+    width: 100%;
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    padding: 13px 15px 13px 45px;
+    border-radius: 12px;
+    background: #e8e9ed;
+    color: #292d32;
+    font-family: inherit;
+    font-size: 13px;
+
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 165, 170, 0.45),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.85);
+}
+
+.budget-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.budget-actions button {
+    border: none;
+    padding: 9px 15px;
+    border-radius: 10px;
+    background: #e8e9ed;
+    color: #34784d;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+
+    box-shadow:
+        5px 5px 10px rgba(163, 165, 170, 0.45),
+        -5px -5px 10px rgba(255, 255, 255, 0.85);
+}
+
+.budget-actions button:active {
+    box-shadow:
+        inset 3px 3px 6px rgba(163, 165, 170, 0.4),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+.budget-actions .cancel-budget {
+    color: #858a91;
+}
+
+/* =========================
+   Spending
+========================= */
+
+.week-spending {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    margin-bottom: 22px;
+    padding: 17px;
+    border-radius: 15px;
+
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 165, 170, 0.35),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+}
+
+.spending-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.spending-row span {
+    font-size: 11px;
+    color: #777b81;
+}
+
+.spending-row strong {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.positive {
+    color: #4d9966;
+}
+
+.negative {
+    color: #9a6868;
+}
+
+/* =========================
+   Progress
+========================= */
+
+.week-progress {
+    margin-bottom: 20px;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.progress-label span {
+    font-size: 10px;
+    color: #858a91;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    border-radius: 10px;
+
+    box-shadow:
+        inset 3px 3px 6px rgba(163, 165, 170, 0.4),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    background: #6e9c7d;
+    transition: width 0.3s ease;
+}
+
+.danger-fill {
+    background: #9a6868;
+}
+
+/* =========================
+   Result
+========================= */
+
+.week-result {
+    margin-bottom: 18px;
+    padding: 12px;
+    border-radius: 11px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: #4d9966;
+
+    box-shadow:
+        inset 3px 3px 6px rgba(163, 165, 170, 0.3),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+.danger-result {
+    color: #9a6868;
+}
+
+/* =========================
+   Add Transaction
+========================= */
+
+.week-add-transaction {
+    display: block;
+    padding: 12px;
+    border-radius: 11px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 600;
+    color: #34784d;
+
+    box-shadow:
+        5px 5px 10px rgba(163, 165, 170, 0.45),
+        -5px -5px 10px rgba(255, 255, 255, 0.85);
+
+    transition: 0.2s ease;
+}
+
+.week-add-transaction:hover {
+    transform: translateY(-2px);
+}
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 800px) {
+
+    .planner-overview {
+        grid-template-columns: 1fr;
+    }
+
+    .weeks-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 550px) {
+
+    .planner-details-page {
+        padding: 25px 5%;
+    }
+
+    .planner-details-header h1 {
+        font-size: 27px;
+    }
+
+    .week-card {
+        padding: 22px;
+    }
+
+    .week-card-header {
+        flex-direction: column;
+    }
+
+    .week-status {
+        align-self: flex-start;
+    }
+}
