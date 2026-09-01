@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dasboard";
+import Dashboard from "./pages/Dashboard";
 import AddTransaction from "./pages/AddTransaction";
 import Planner from "./pages/Planner";
 import PlannerDetails from "./pages/PlannerDetails";
