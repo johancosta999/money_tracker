@@ -8,24 +8,27 @@ const app = express();
 
 connectDB();
 
-const corsOptions = {
-  origin: [
+const allowedOrigins = [
     "http://localhost:5173",
-    "https://money-tracker-43a9crzxi-johan-183b.vercel.app"
-  ],
-  credentials: true
-};
+    "https://money-tracker-kzjaipcqp-johan-183b.vercel.app"
+];
 
-app.use(cors(corsOptions));
+app.use(
+    cors({
+        origin: allowedOrigins,
+        methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"]
+    })
+);
+
 app.use(express.json());
 
-// app.use("/api/users", require("./route/userRoute"));
-app.use("/api/auth", require("./route/authRoute"))
+app.use("/api/auth", require("./route/authRoute"));
 app.use("/api/transactions", require("./route/transactionsRoute"));
-app.use("/api/categories", require("./route/categoryRoutes"))
-app.use("/api/budget", require("./route/budgetRouter"))
-app.use("/api/plan", require("./route/plannerRoutes"))
-app.use("/api/dashboard", require("./route/dashboardRoute"))
+app.use("/api/categories", require("./route/categoryRoutes"));
+app.use("/api/budget", require("./route/budgetRouter"));
+app.use("/api/plan", require("./route/plannerRoutes"));
+app.use("/api/dashboard", require("./route/dashboardRoute"));
 
 app.get("/", (req, res) => {
     res.json({
