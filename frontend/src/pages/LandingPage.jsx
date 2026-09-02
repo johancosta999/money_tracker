@@ -274,7 +274,7 @@ function LandingPage() {
                 <div className="footer-bottom">
 
                     <span className="footer-credit">
-                        Project by <span>Johan Costa</span>
+                        Project by <span>Johan Costa.</span>
                     </span>
 
                     <span>
