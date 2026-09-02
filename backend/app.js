@@ -10,17 +10,27 @@ connectDB();
 
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://money-tracker-kzjaipcqp-johan-183b.vercel.app",
-    "https://money-tracker-johan-183b.vercel.app/"
+    "https://money-tracker-kzjaipcqp-johan-183b.vercel.app", // preview
+    "https://money-tracker-johan-183b.vercel.app"            // production (no trailing slash!)
 ];
 
 app.use(
     cors({
-        origin: allowedOrigins,
+        origin: function (origin, callback) {
+            if (!origin || allowedOrigins.includes(origin) || origin.endsWith(".vercel.app")) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization"]
+        allowedHeaders: ["Content-Type", "Authorization"],
+        credentials: true
     })
 );
+
+// Explicitly handle preflight requests
+app.options("*", cors());
 
 app.use(express.json());
 
