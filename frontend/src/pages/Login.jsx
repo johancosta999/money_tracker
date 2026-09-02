@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../context/useAuth";
 
 import "./auth.css";
 
 function Login() {
 
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -52,18 +54,7 @@ function Login() {
             }
 
 
-            // Save JWT
-            localStorage.setItem(
-                "token",
-                data.token
-            );
-
-
-            // Save user information
-            localStorage.setItem(
-                "user",
-                JSON.stringify(data.user)
-            );
+            login(data.user, data.token);
 
 
             // Go to dashboard

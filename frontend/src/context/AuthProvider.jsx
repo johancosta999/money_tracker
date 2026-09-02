@@ -1,21 +1,36 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AuthContext from "./AuthContext";
+import api from "../services/api";
 
 function AuthProvider({ children }) {
 
-    const [user, setUser] = useState(() => {
+    const [user, setUser] = useState(null);
+    const [token, setToken] = useState(() => localStorage.getItem("token"));
+    const [isLoading, setIsLoading] = useState(() => Boolean(localStorage.getItem("token")));
 
-        const savedUser = localStorage.getItem("user");
+    useEffect(() => {
+        const storedToken = localStorage.getItem("token");
 
-        return savedUser
-            ? JSON.parse(savedUser)
-            : null;
-    });
+        if (!storedToken) {
+            return;
+        }
 
-    const [token, setToken] = useState(() => {
-
-        return localStorage.getItem("token");
-    });
+        api.get("/auth/me")
+            .then(({ data }) => {
+                setUser(data.user);
+                setToken(storedToken);
+                localStorage.setItem("user", JSON.stringify(data.user));
+            })
+            .catch((error) => {
+                if (error.response?.status === 401 || error.response?.status === 403) {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("user");
+                    setToken(null);
+                    setUser(null);
+                }
+            })
+            .finally(() => setIsLoading(false));
+    }, []);
 
 
     const login = (userData, jwtToken) => {
@@ -50,6 +65,7 @@ function AuthProvider({ children }) {
             value={{
                 user,
                 token,
+                isLoading,
                 login,
                 logout
             }}

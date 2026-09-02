@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -7,6 +7,18 @@ import AddTransaction from "./pages/AddTransaction";
 import Planner from "./pages/Planner";
 import PlannerDetails from "./pages/PlannerDetails";
 import Transactions from "./pages/Transactions";
+import ProtectedRoute from "./components/ProtectedRoute";
+import useAuth from "./context/useAuth";
+
+function PublicRoute({ children }) {
+    const { user, isLoading } = useAuth();
+
+    if (isLoading) {
+        return <div>Checking authentication...</div>;
+    }
+
+    return user ? <Navigate to="/dashboard" replace /> : children;
+}
 
 function App() {
 
@@ -23,37 +35,37 @@ function App() {
 
                 <Route
                     path="/login"
-                    element={<Login />}
+                    element={<PublicRoute><Login /></PublicRoute>}
                 />
 
                 <Route
                     path="/register"
-                    element={<Register />}
+                    element={<PublicRoute><Register /></PublicRoute>}
                 />
 
                 <Route
                     path="/dashboard"
-                    element={<Dashboard />}
+                    element={<ProtectedRoute><Dashboard /></ProtectedRoute>}
                 />
 
                 <Route
                     path="/transactions/add"
-                    element={<AddTransaction />}
+                    element={<ProtectedRoute><AddTransaction /></ProtectedRoute>}
                 />
 
                 <Route
                     path="/transactions"
-                    element={<Transactions />}
+                    element={<ProtectedRoute><Transactions /></ProtectedRoute>}
                 />
 
                 <Route
                     path="/planner"
-                    element={<Planner />}
+                    element={<ProtectedRoute><Planner /></ProtectedRoute>}
                 />
 
                 <Route
                     path="/planner/:id"
-                    element={<PlannerDetails />}
+                    element={<ProtectedRoute><PlannerDetails /></ProtectedRoute>}
                 />
 
             </Routes>

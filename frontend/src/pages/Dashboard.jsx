@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../context/useAuth";
 import "./dashboard.css";
 
 function Dashboard() {
 
     const navigate = useNavigate();
+    const { user, logout } = useAuth();
 
     const [summary, setSummary] = useState({
         totalIncome: 0,
@@ -14,14 +16,6 @@ function Dashboard() {
 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
-
-
-    // Get logged-in user
-    const storedUser = localStorage.getItem("user");
-
-    const user = storedUser
-        ? JSON.parse(storedUser)
-        : null;
 
 
     useEffect(() => {
@@ -87,10 +81,7 @@ function Dashboard() {
 
     // Logout
     const handleLogout = () => {
-
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-
+        logout();
         navigate("/login");
 
     };
