@@ -11,7 +11,7 @@ connectDB();
 const allowedOrigins = [
     "http://localhost:5173",
     "https://money-tracker-johan-183b.vercel.app", // preview
-    "money-tracker-eight-orcin.vercel.app"            // production (no trailing slash!)
+    "https://money-tracker-eight-orcin.vercel.app"            // production (no trailing slash!)
 ];
 
 app.use(
