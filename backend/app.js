@@ -10,7 +10,8 @@ connectDB();
 
 const allowedOrigins = [
     "http://localhost:5173",
-    "https://money-tracker-kzjaipcqp-johan-183b.vercel.app"
+    "https://money-tracker-kzjaipcqp-johan-183b.vercel.app",
+    "https://money-tracker-johan-183b.vercel.app/"
 ];
 
 app.use(
