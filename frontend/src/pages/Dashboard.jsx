@@ -73,7 +73,6 @@ function Dashboard() {
             }
         };
 
-
         fetchDashboard();
 
     }, [navigate]);
@@ -349,6 +348,29 @@ function Dashboard() {
 
                             <p>
                                 Record income or expense
+                            </p>
+
+                        </div>
+
+                    </Link>
+
+                    <Link
+                        to="/transactions"
+                        className="quick-action-card"
+                    >
+
+                        <div className="quick-action-icon">
+                            💳
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                All transactions
+                            </h3>
+
+                            <p>
+                                View all of your incomes and expenses.
                             </p>
 
                         </div>

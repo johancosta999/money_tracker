@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./dashboard.css";
 
 function Transactions() {
@@ -60,27 +60,9 @@ function Transactions() {
                     <h1>Your Activity</h1>
                 </div>
 
-                <div className="dashboard-header-actions">
-                    <Link to="/dashboard" className="dashboard-action">
-                        ← Dashboard
-                    </Link>
-                    <Link to="/transactions/add" className="dashboard-action">
-                        + Add
-                    </Link>
-                </div>
             </header>
 
             {error && <div className="dashboard-error">{error}</div>}
-
-            <section className="add-transaction-section">
-                <Link to="/transactions/add" className="add-transaction-button">
-                    <span className="add-transaction-icon">+</span>
-                    <div>
-                        <strong>Add Transaction</strong>
-                        <p>Record your next income or spending</p>
-                    </div>
-                </Link>
-            </section>
 
             <section className="dashboard-section">
                 <div className="section-heading">

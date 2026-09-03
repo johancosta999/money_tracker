@@ -9,6 +9,7 @@ import PlannerDetails from "./pages/PlannerDetails";
 import Transactions from "./pages/Transactions";
 import ProtectedRoute from "./components/ProtectedRoute";
 import useAuth from "./context/useAuth";
+import AllTransactions from "./pages/AllTransactions";
 
 function PublicRoute({ children }) {
     const { user, isLoading } = useAuth();
@@ -66,6 +67,11 @@ function App() {
                 <Route
                     path="/planner/:id"
                     element={<ProtectedRoute><PlannerDetails /></ProtectedRoute>}
+                />
+
+                <Route
+                    path="/transactions/:id"
+                    element={<ProtectedRoute><AllTransactions /></ProtectedRoute>}
                 />
 
             </Routes>
