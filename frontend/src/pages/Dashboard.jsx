@@ -127,10 +127,10 @@ function Dashboard() {
                     <button
                         className="dashboard-action"
                         onClick={() => {
-                            // Settings will be implemented later
+                            navigate("/profile");
                         }}
                     >
-                        ⚙ Settings
+                        ⚙ Profile
                     </button>
 
                     <button
@@ -164,28 +164,48 @@ function Dashboard() {
 
             <section className="add-transaction-section">
 
-                <Link
-                    to="/transactions/add"
-                    className="add-transaction-button"
-                >
+                <div className="dashboard-priority-actions">
+                    <Link
+                        to="/transactions/add"
+                        className="add-transaction-button"
+                    >
 
-                    <span className="add-transaction-icon">
-                        +
-                    </span>
+                        <span className="add-transaction-icon">
+                            +
+                        </span>
 
-                    <div>
+                        <div>
 
-                        <strong>
-                            Add Transaction
-                        </strong>
+                            <strong>
+                                Add Transaction
+                            </strong>
 
-                        <p>
-                            Record your income or spending
-                        </p>
+                            <p>
+                                Record your income or spending
+                            </p>
 
-                    </div>
+                        </div>
+                    </Link>
 
-                </Link>
+                    <Link
+                        to="/planner"
+                        className="add-transaction-button planner-button"
+                    >
+                        <span className="add-transaction-icon">
+                            📅
+                        </span>
+
+                        <div>
+                            <strong>
+                                View Your Planners
+                            </strong>
+
+                            <p>
+                                Plan and manage your budget
+                            </p>
+                        </div>
+                    </Link>
+                </div>
 
             </section>
 
@@ -308,54 +328,7 @@ function Dashboard() {
                 <div className="quick-actions">
 
                     <Link
-                        to="/planner"
-                        className="quick-action-card"
-                    >
-
-                        <div className="quick-action-icon">
-                            📅
-                        </div>
-
-                        <div>
-
-                            <h3>
-                                Planner
-                            </h3>
-
-                            <p>
-                                Plan and manage your budget
-                            </p>
-
-                        </div>
-
-                    </Link>
-
-
-                    <Link
-                        to="/transactions/add"
-                        className="quick-action-card"
-                    >
-
-                        <div className="quick-action-icon">
-                            +
-                        </div>
-
-                        <div>
-
-                            <h3>
-                                Add Transaction
-                            </h3>
-
-                            <p>
-                                Record income or expense
-                            </p>
-
-                        </div>
-
-                    </Link>
-
-                    <Link
-                        to="/transactions"
+                        to="/transactions/all"
                         className="quick-action-card"
                     >
 

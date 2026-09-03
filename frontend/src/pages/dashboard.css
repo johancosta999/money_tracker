@@ -670,8 +670,14 @@
     margin-bottom: 30px;
 }
 
+.dashboard-priority-actions {
+    display: flex;
+    gap: 25px;
+}
+
 .add-transaction-button {
     width: 100%;
+    flex: 1;
 
     min-height: 95px;
 
@@ -752,6 +758,13 @@
     font-size: 12px;
 
     color: #858a91;
+}
+
+@media (max-width: 650px) {
+    .dashboard-priority-actions {
+        flex-direction: column;
+        gap: 20px;
+    }
 }
 
 
