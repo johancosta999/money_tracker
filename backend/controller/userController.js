@@ -1,4 +1,5 @@
 const User = require('../model/userModel')
+const bcrypt = require('bcryptjs')
 
 const getUsers = async(req, res) => {
     try{
@@ -48,16 +49,27 @@ const updateUser = async(req, res) => {
         //get the id 
         const { id } = req.params;
 
-        // update the user with new data from req.body
+        if (id !== req.userId) {
+            return res.status(403).json({
+                message: "You can only update your own profile"
+            });
+        }
+
+        const updates = { ...req.body };
+
+        if (updates.password) {
+            updates.password = await bcrypt.hash(updates.password, 10);
+        }
+
         const user = await User.findByIdAndUpdate(
             id,
-            req.body,
-            { new: true, runValidators: true } //return updated doc, validate schema
+            updates,
+            { new: true, runValidators: true, select: "-password" }
         );
 
         //if cant find the user
         if(!user) {
-            res.status(400).json({
+            return res.status(400).json({
                 message : "Coundn't find the user"
             });
         }

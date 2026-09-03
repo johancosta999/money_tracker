@@ -9,6 +9,8 @@ import PlannerDetails from "./pages/PlannerDetails";
 import Transactions from "./pages/Transactions";
 import ProtectedRoute from "./components/ProtectedRoute";
 import useAuth from "./context/useAuth";
+import AllTransactions from "./pages/AllTransactions";
+import Profile from "./pages/Profile";
 
 function PublicRoute({ children }) {
     const { user, isLoading } = useAuth();
@@ -66,6 +68,16 @@ function App() {
                 <Route
                     path="/planner/:id"
                     element={<ProtectedRoute><PlannerDetails /></ProtectedRoute>}
+                />
+
+                <Route
+                    path="/transactions/all"
+                    element={<ProtectedRoute><AllTransactions /></ProtectedRoute>}
+                />
+
+                <Route
+                    path="/profile"
+                    element={<ProtectedRoute><Profile /></ProtectedRoute>}
                 />
 
             </Routes>

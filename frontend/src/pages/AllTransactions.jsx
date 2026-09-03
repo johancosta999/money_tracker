@@ -64,20 +64,14 @@ function Transactions() {
                     <Link to="/dashboard" className="dashboard-action">
                         ← Dashboard
                     </Link>
+                    <Link to="/transactions/add" className="dashboard-action">
+                        + Add
+                    </Link>
                 </div>
+
             </header>
 
             {error && <div className="dashboard-error">{error}</div>}
-
-            <section className="add-transaction-section">
-                <Link to="/transactions/add" className="add-transaction-button">
-                    <span className="add-transaction-icon">+</span>
-                    <div>
-                        <strong>Add Transaction</strong>
-                        <p>Record your next income or spending</p>
-                    </div>
-                </Link>
-            </section>
 
             <section className="dashboard-section">
                 <div className="section-heading">
