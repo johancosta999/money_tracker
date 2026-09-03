@@ -30,7 +30,7 @@ function App() {
 
                 <Route
                     path="/"
-                    element={<LandingPage />}
+                    element={<PublicRoute><LandingPage /></PublicRoute>}
                 />
 
                 <Route
