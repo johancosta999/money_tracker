@@ -10,8 +10,7 @@ const defaultCategories = [
     "Bills",
     "Sanitoring",
     "Sports",
-    "Debt",
-    "Others"
+    "Debt"
 ];
 
 function AddTransaction() {
