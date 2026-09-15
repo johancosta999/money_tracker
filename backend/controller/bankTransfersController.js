@@ -22,9 +22,9 @@ const createBankTransfer = async(req, res) => {
         console.log('Counldnt create transfer');
         res.status(500).json({
             message: 'Counldnt create transfer',
-            error: message.error
+            error: error.message
         })
-        process.exit(1);
+       
     }
 };
 
@@ -45,10 +45,9 @@ const getAllBankTransactions = async(req, res) => {
     } catch(error) {
         res.status(500).json({
             message : 'Unable to get all transactions',
-            error: message.error
+            error: error.message
         });
 
-        process.exit(1);
     }
 };
 
@@ -72,10 +71,9 @@ const getBankTransaction = async(req, res) => {
     } catch(error) {
         res.status(500).json({
             message: 'Unable to get to the transaction',
-            error: message.error
+            error: error.message
         })
 
-        process.exit(1)
     }
 };
 
@@ -85,7 +83,7 @@ const updateBankTransaction = async(req, res) => {
 
         const updateTransaction = await bankTransfer.findByIdAndUpdate({
             _id:id,
-            userId: userId
+            userId: req.userId
         },
         req.body,
         {
@@ -105,10 +103,9 @@ const updateBankTransaction = async(req, res) => {
     } catch (error) {
         res.status(500).json({
             message: 'Unable to update transaction',
-            error: message.error
+            error: error.message
         })
 
-        process.exit(1)
     }
 };
 
@@ -118,7 +115,7 @@ const deleteBankTransaction = async(req, res) => {
 
         const bankTransaction = await bankTransfer.findByIdAndDelete({
             _id: id,
-            userId: userId
+            userId: req.userId
         })
 
         if(!bankTransaction) {
@@ -135,10 +132,9 @@ const deleteBankTransaction = async(req, res) => {
     } catch(error) {
         res.status(500).json({
             message: 'Unable to delete transaction',
-            error: message.error
+            error: error.message
         })
 
-        process.exit(1)
     }
 }
 

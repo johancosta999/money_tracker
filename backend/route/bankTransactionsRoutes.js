@@ -10,10 +10,10 @@ const {
     deleteBankTransaction
 } = require('../controller/bankTransfersController')
 
-router.post('/create-transaction', createBankTransfer, protect);
-router.get('/bank-transactions', getAllBankTransactions, protect);
-router.get('/bank-transaction/:id', getBankTransaction, protect);
-router.put('/update-transaction/:id', updateBankTransaction, protect);
-router.delete('/delete-transaction/:id', deleteBankTransaction, protect);
+router.post('/create-transaction',protect, createBankTransfer);
+router.get('/bank-transactions', protect, getAllBankTransactions);
+router.get('/bank-transaction/:id', protect, getBankTransaction);
+router.put('/update-transaction/:id', protect, updateBankTransaction);
+router.delete('/delete-transaction/:id', protect, deleteBankTransaction);
 
 module.exports= router;
