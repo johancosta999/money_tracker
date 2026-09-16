@@ -350,6 +350,29 @@ function Dashboard() {
 
                     </Link>
 
+                    <Link
+                        to="/bank-transactions"
+                        className="quick-action-card"
+                    >
+
+                        <div className="quick-action-icon">
+                            🏦
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Bank transactions
+                            </h3>
+
+                            <p>
+                                View all of your deposits and withdraws from your bank.
+                            </p>
+
+                        </div>
+
+                    </Link>
+
                 </div>
 
             </section>

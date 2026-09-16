@@ -562,6 +562,14 @@
     font-size: 14px;
 
     font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+.bank-transaction .transaction-icon {
+    font-size: 20px;
+    font-weight: 600;
 }
 
 
@@ -659,6 +667,21 @@
 
     .recent-transaction strong {
         font-size: 12px;
+    }
+
+    .bank-transaction {
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .bank-transaction .transaction-left {
+        min-width: 0;
+    }
+
+    .bank-transaction h3 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }
 
