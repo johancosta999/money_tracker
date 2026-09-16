@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import useAuth from "./context/useAuth";
 import AllTransactions from "./pages/AllTransactions";
 import Profile from "./pages/Profile";
+import BankTransactions from "./pages/bankTransactions";
 
 function PublicRoute({ children }) {
     const { user, isLoading } = useAuth();
@@ -78,6 +79,11 @@ function App() {
                 <Route
                     path="/profile"
                     element={<ProtectedRoute><Profile /></ProtectedRoute>}
+                />
+
+                <Route
+                    path="/bank-transactions"
+                    element={<ProtectedRoute><BankTransactions /></ProtectedRoute>}
                 />
 
             </Routes>
