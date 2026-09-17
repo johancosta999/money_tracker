@@ -11,7 +11,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import useAuth from "./context/useAuth";
 import AllTransactions from "./pages/AllTransactions";
 import Profile from "./pages/Profile";
-import BankTransactions from "./pages/bankTransactions";
+import BankTransactions from "./pages/BankTransactions";
 import AddBankTransaction from "./pages/AddBankTransaction";
 
 function PublicRoute({ children }) {
