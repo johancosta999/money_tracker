@@ -314,6 +314,10 @@
     color: #4d9966;
 }
 
+.type-button.transfer-type.active {
+    color: #3e7cc4;
+}
+
 
 /* =========================
    Submit Button

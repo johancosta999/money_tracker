@@ -154,7 +154,7 @@ function AddBankTransaction() {
                 type="button"
                 className={
                   formData.type === "Transfer"
-                    ? "type-button active expense-type"
+                    ? "type-button active transfer-type"
                     : "type-button"
                 }
                 onClick={() => handleTypeChange("Transfer")}
