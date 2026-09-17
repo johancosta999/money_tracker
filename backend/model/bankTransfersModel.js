@@ -9,7 +9,7 @@ const bankTransfersSchema = new mongoose.Schema({
 
     type : {
         type: String,
-        enum: ["Deposit", "Withdraw"],
+        enum: ["Deposit", "Withdraw", "Transfer"],
         required: true
     },
 

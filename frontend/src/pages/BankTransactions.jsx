@@ -113,25 +113,37 @@ function BankTransactions() {
         ) : (
           <div className="recent-transactions">
             {transactions.map((transaction) => {
-              const isDeposit = transaction.type?.toLowerCase() === "deposit";
+              const transactionType = transaction.type?.toLowerCase();
+              const isDeposit = transactionType === "deposit";
+              const isTransfer = transactionType === "transfer";
+              const transactionLabel = isDeposit
+                ? "Deposit"
+                : isTransfer
+                  ? "Transfer"
+                  : "Withdraw";
+              const transactionClass = isDeposit
+                ? "income"
+                : isTransfer
+                  ? "transfer"
+                  : "expense";
 
               return (
                 <div className="recent-transaction bank-transaction" key={transaction._id}>
                   <div className="transaction-left">
-                    <div className={`transaction-icon ${isDeposit ? "income-icon" : "expense-icon"}`}>
-                      {isDeposit ? "↑" : "↓"}
+                    <div className={`transaction-icon ${isDeposit ? "income-icon" : isTransfer ? "transfer-icon" : "expense-icon"}`}>
+                      {isDeposit ? "↑" : isTransfer ? "→" : "↓"}
                     </div>
 
                     <div>
                       <h3>{transaction.description || "Bank Transaction"}</h3>
                       <p>
-                        {isDeposit ? "Deposit" : "Withdraw"} • {formatDate(transaction.createdAt)}
+                        {transactionLabel} • {formatDate(transaction.createdAt)}
                       </p>
                     </div>
                   </div>
 
-                  <strong className={isDeposit ? "income" : "expense"}>
-                    {isDeposit ? "+" : "-"}
+                  <strong className={transactionClass}>
+                    {isDeposit ? "+" : isTransfer ? "" : "-"}
                     {formatCurrency(transaction.amount)}
                   </strong>
                 </div>

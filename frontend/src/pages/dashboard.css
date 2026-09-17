@@ -332,6 +332,10 @@
     color: #9a6868;
 }
 
+.transfer-icon {
+    color: #b58a4a;
+}
+
 
 .summary-card p {
     margin-bottom: 7px;
@@ -580,6 +584,10 @@
 
 .expense {
     color: #9a6868;
+}
+
+.transfer {
+    color: #b58a4a;
 }
 
 

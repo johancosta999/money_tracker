@@ -149,6 +149,18 @@ function AddBankTransaction() {
               >
                 ↓ Withdraw
               </button>
+
+              <button
+                type="button"
+                className={
+                  formData.type === "Transfer"
+                    ? "type-button active expense-type"
+                    : "type-button"
+                }
+                onClick={() => handleTypeChange("Transfer")}
+              >
+                → Transfer
+              </button>
             </div>
           </div>
 
