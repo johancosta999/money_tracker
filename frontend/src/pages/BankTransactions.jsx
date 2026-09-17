@@ -84,7 +84,7 @@ function BankTransactions() {
             ← Dashboard
           </Link>
 
-          <Link to="/bank/add" className="dashboard-action">
+          <Link to="/create/bank-transactions" className="dashboard-action">
             + Add Bank Transaction
           </Link>
         </div>

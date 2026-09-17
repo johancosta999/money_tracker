@@ -12,6 +12,7 @@ import useAuth from "./context/useAuth";
 import AllTransactions from "./pages/AllTransactions";
 import Profile from "./pages/Profile";
 import BankTransactions from "./pages/bankTransactions";
+import AddBankTransaction from "./pages/AddBankTransaction";
 
 function PublicRoute({ children }) {
     const { user, isLoading } = useAuth();
@@ -84,6 +85,11 @@ function App() {
                 <Route
                     path="/bank-transactions"
                     element={<ProtectedRoute><BankTransactions /></ProtectedRoute>}
+                />
+
+                <Route
+                    path="/create/bank-transactions"
+                    element={<ProtectedRoute><AddBankTransaction /></ProtectedRoute>}
                 />
 
             </Routes>
