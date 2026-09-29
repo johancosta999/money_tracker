@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import api, { getErrorMessage } from "../services/api";
 import "./PlannerDetails.css";
 
 function PlannerDetails() {
     const { id } = useParams();
-    const navigate = useNavigate();
 
     const [planner, setPlanner] = useState(null);
     const [weeklySummary, setWeeklySummary] = useState([]);
@@ -18,38 +18,15 @@ function PlannerDetails() {
     const [weekBudget, setWeekBudget] = useState("");
     const [savingWeek, setSavingWeek] = useState(false);
 
-    const token = localStorage.getItem("token");
-
     // =============================================
     // FETCH PLANNER SUMMARY
     // =============================================
 
     const fetchPlannerSummary = async (ignore) => {
-        if (!token) {
-            navigate("/login");
-            return;
-        }
-
         try {
             setError("");
 
-            const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/plan/${id}/summary`,
-                {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(
-                    data.message || "Couldn't load planner"
-                );
-            }
+            const { data } = await api.get(`/plan/${id}/summary`);
 
             // Ignore stale responses (e.g. id changed before this resolved)
             if (ignore?.current) {
@@ -65,7 +42,7 @@ function PlannerDetails() {
             if (ignore?.current) {
                 return;
             }
-            setError(error.message);
+            setError(getErrorMessage(error, "Couldn't load planner"));
         } finally {
             if (!ignore?.current) {
                 setLoading(false);
@@ -118,27 +95,9 @@ function PlannerDetails() {
         setError("");
 
         try {
-            const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/plan/${id}/weeks/${weekId}`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        budget: Number(weekBudget)
-                    })
-                }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(
-                    data.message || "Couldn't update weekly budget"
-                );
-            }
+            await api.put(`/plan/${id}/weeks/${weekId}`, {
+                budget: Number(weekBudget)
+            });
 
             setEditingWeek(null);
             setWeekBudget("");
@@ -147,7 +106,7 @@ function PlannerDetails() {
             await fetchPlannerSummary();
 
         } catch (error) {
-            setError(error.message);
+            setError(getErrorMessage(error, "Couldn't update weekly budget"));
         } finally {
             setSavingWeek(false);
         }

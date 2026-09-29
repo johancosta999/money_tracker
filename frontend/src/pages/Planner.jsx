@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api, { getErrorMessage } from "../services/api";
 import "./Planner.css";
 
 function Planner() {
@@ -39,31 +40,8 @@ function Planner() {
     // =====================================================
 
     const fetchPlans = async (ignore) => {
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-            navigate("/login");
-            return;
-        }
-
         try {
-            const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/plan`,
-                {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(
-                    data.message || "Couldn't load planners"
-                );
-            }
+            const { data } = await api.get("/plan");
 
             // Ignore stale responses if the effect re-ran / unmounted
             if (ignore?.current) {
@@ -75,7 +53,7 @@ function Planner() {
             if (ignore?.current) {
                 return;
             }
-            setError(error.message);
+            setError(getErrorMessage(error, "Couldn't load planners"));
         } finally {
             if (!ignore?.current) {
                 setLoading(false);
@@ -185,41 +163,16 @@ function Planner() {
             return;
         }
 
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-            navigate("/login");
-            return;
-        }
-
         setSaving(true);
 
         try {
-            const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/plan`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        name: formData.name.trim(),
-                        type: "monthly",
-                        startDate: formData.startDate,
-                        totalBudget: Number(formData.totalBudget),
-                        categories: formData.categories
-                    })
-                }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(
-                    data.message || "Couldn't create planner"
-                );
-            }
+            const { data } = await api.post("/plan", {
+                name: formData.name.trim(),
+                type: "monthly",
+                startDate: formData.startDate,
+                totalBudget: Number(formData.totalBudget),
+                categories: formData.categories
+            });
 
             setSuccess("Planner created successfully!");
 
@@ -249,7 +202,7 @@ function Planner() {
             }, 1000);
 
         } catch (error) {
-            setError(error.message);
+            setError(getErrorMessage(error, "Couldn't create planner"));
         } finally {
             setSaving(false);
         }

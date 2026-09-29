@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api, { getErrorMessage } from "../services/api";
 import "./dashboard.css";
 
 function Transactions() {
@@ -10,30 +11,12 @@ function Transactions() {
 
     useEffect(() => {
         const fetchTransactions = async () => {
-            const token = localStorage.getItem("token");
-
-            if (!token) {
-                navigate("/login");
-                return;
-            }
-
             try {
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/transactions`, {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || "Couldn't load transactions");
-                }
+                const { data } = await api.get("/transactions");
 
                 setTransactions(Array.isArray(data) ? data : []);
             } catch (fetchError) {
-                setError(fetchError.message);
+                setError(getErrorMessage(fetchError, "Couldn't load transactions"));
             } finally {
                 setLoading(false);
             }

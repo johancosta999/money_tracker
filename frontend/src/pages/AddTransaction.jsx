@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api, { getErrorMessage } from "../services/api";
 import "./AddTransaction.css";
 
 const defaultCategories = [
@@ -43,26 +44,8 @@ function AddTransaction() {
 
     useEffect(() => {
         const fetchPlans = async () => {
-            const token = localStorage.getItem("token");
-
-            if (!token) {
-                navigate("/login");
-                return;
-            }
-
             try {
-                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/plan`, {
-                    method: "GET",
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.message || "Couldn't load planners");
-                }
+                const { data } = await api.get("/plan");
 
                 const sortedPlans = [...data].sort(
                     (a, b) => new Date(b.startDate) - new Date(a.startDate)
@@ -86,14 +69,14 @@ function AddTransaction() {
                     }));
                 }
             } catch (fetchError) {
-                setError(fetchError.message);
+                setError(getErrorMessage(fetchError, "Couldn't load planners"));
             } finally {
                 setLoadingPlans(false);
             }
         };
 
         fetchPlans();
-    }, [navigate]);
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -137,41 +120,18 @@ function AddTransaction() {
             return;
         }
 
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-            navigate("/login");
-            return;
-        }
-
         setLoading(true);
 
         try {
-            const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/transactions`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
-                        title: formData.title.trim(),
-                        amount: Number(formData.amount),
-                        type: formData.type,
-                        category: formData.category,
-                        date: formData.date,
-                        description: formData.description.trim(),
-                        plannerId: selectedPlannerId
-                    })
-                }
-            );
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || "Couldn't create transaction");
-            }
+            await api.post("/transactions", {
+                title: formData.title.trim(),
+                amount: Number(formData.amount),
+                type: formData.type,
+                category: formData.category,
+                date: formData.date,
+                description: formData.description.trim(),
+                plannerId: selectedPlannerId
+            });
 
             setSuccess("Transaction added successfully!");
 
@@ -179,7 +139,7 @@ function AddTransaction() {
                 navigate("/transactions");
             }, 800);
         } catch (submitError) {
-            setError(submitError.message);
+            setError(getErrorMessage(submitError, "Couldn't create transaction"));
         } finally {
             setLoading(false);
         }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../context/useAuth";
+import api, { getErrorMessage } from "../services/api";
 import "./dashboard.css";
 
 function Dashboard() {
@@ -18,30 +19,8 @@ function Dashboard() {
 
   useEffect(() => {
     const fetchDashboard = async () => {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-
       try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/dashboard/summary`,
-          {
-            method: "GET",
-
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.message || "Couldn't load dashboard");
-        }
+        const { data } = await api.get("/dashboard/summary");
 
         setSummary({
           totalIncome: data.totalIncome,
@@ -49,14 +28,14 @@ function Dashboard() {
           balance: data.balance,
         });
       } catch (error) {
-        setError(error.message);
+        setError(getErrorMessage(error, "Couldn't load dashboard"));
       } finally {
         setLoading(false);
       }
     };
 
     fetchDashboard();
-  }, [navigate]);
+  }, []);
 
   // Logout
   const handleLogout = () => {

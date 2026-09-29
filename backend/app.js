@@ -6,8 +6,6 @@ require("dotenv").config();
 
 const app = express();
 
-connectDB();
-
 const allowedOrigins = [
     "http://localhost:5173",
     "https://money-tracker-johan-183b.vercel.app", // preview
@@ -46,8 +44,16 @@ app.get("/", (req, res) => {
     });
 });
 
+// Lightweight endpoint for uptime pings / platform health checks
+app.get("/health", (req, res) => {
+    res.status(200).json({ status: "ok" });
+});
+
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+// Only accept traffic once the database is ready
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
 });

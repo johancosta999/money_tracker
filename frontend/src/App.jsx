@@ -15,13 +15,10 @@ import BankTransactions from "./pages/BankTransactions";
 import AddBankTransaction from "./pages/AddBankTransaction";
 
 function PublicRoute({ children }) {
-    const { user, isLoading } = useAuth();
+    const { token } = useAuth();
 
-    if (isLoading) {
-        return <div>Checking authentication...</div>;
-    }
-
-    return user ? <Navigate to="/dashboard" replace /> : children;
+    // Never block public pages on the network; a valid token is enough to redirect
+    return token ? <Navigate to="/dashboard" replace /> : children;
 }
 
 function App() {

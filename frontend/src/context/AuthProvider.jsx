@@ -1,36 +1,86 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AuthContext from "./AuthContext";
-import api from "../services/api";
+import api, { AUTH_LOGOUT_EVENT } from "../services/api";
+
+// Reads the JWT payload locally so we can skip the network when it's already expired
+function isTokenValid(token) {
+    if (!token) {
+        return false;
+    }
+
+    try {
+        const payload = JSON.parse(
+            atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))
+        );
+        return !payload.exp || payload.exp * 1000 > Date.now();
+    } catch {
+        return false;
+    }
+}
+
+function readCachedUser() {
+    try {
+        return JSON.parse(localStorage.getItem("user"));
+    } catch {
+        return null;
+    }
+}
+
+function clearStorage() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+}
 
 function AuthProvider({ children }) {
 
-    const [user, setUser] = useState(null);
-    const [token, setToken] = useState(() => localStorage.getItem("token"));
-    const [isLoading, setIsLoading] = useState(() => Boolean(localStorage.getItem("token")));
-
-    useEffect(() => {
+    const [token, setToken] = useState(() => {
         const storedToken = localStorage.getItem("token");
 
-        if (!storedToken) {
+        if (!isTokenValid(storedToken)) {
+            clearStorage();
+            return null;
+        }
+
+        return storedToken;
+    });
+
+    const [user, setUser] = useState(() => (token ? readCachedUser() : null));
+
+    // Only block rendering when we have a valid token but no cached user to show
+    const [isLoading, setIsLoading] = useState(() => Boolean(token) && !user);
+
+
+    const logout = useCallback(() => {
+        clearStorage();
+        setUser(null);
+        setToken(null);
+    }, []);
+
+
+    // Revalidate the session in the background
+    useEffect(() => {
+        if (!token) {
             return;
         }
 
         api.get("/auth/me")
             .then(({ data }) => {
                 setUser(data.user);
-                setToken(storedToken);
                 localStorage.setItem("user", JSON.stringify(data.user));
             })
-            .catch((error) => {
-                if (error.response?.status === 401 || error.response?.status === 403) {
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("user");
-                    setToken(null);
-                    setUser(null);
-                }
+            .catch(() => {
+                // 401s are handled by the api interceptor; network errors keep the cached session
             })
             .finally(() => setIsLoading(false));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+
+    // The api interceptor fires this when any request returns 401
+    useEffect(() => {
+        window.addEventListener(AUTH_LOGOUT_EVENT, logout);
+        return () => window.removeEventListener(AUTH_LOGOUT_EVENT, logout);
+    }, [logout]);
 
 
     const login = (userData, jwtToken) => {
@@ -47,16 +97,7 @@ function AuthProvider({ children }) {
 
         setUser(userData);
         setToken(jwtToken);
-    };
-
-
-    const logout = () => {
-
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-
-        setUser(null);
-        setToken(null);
+        setIsLoading(false);
     };
 
 

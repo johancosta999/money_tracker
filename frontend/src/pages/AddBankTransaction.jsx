@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import api, { getErrorMessage } from "../services/api";
 import "./AddTransaction.css";
 
 function AddBankTransaction() {
@@ -42,43 +43,16 @@ function AddBankTransaction() {
       return;
     }
 
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/bank/create-transaction`,
+      await api.post("/bank/create-transaction", {
+        type: formData.type,
 
-        {
-          method: "POST",
+        amount: Number(formData.amount),
 
-          headers: {
-            "Content-Type": "application/json",
-
-            Authorization: `Bearer ${token}`,
-          },
-
-          body: JSON.stringify({
-            type: formData.type,
-
-            amount: Number(formData.amount),
-
-            description: formData.description,
-          }),
-        },
-      );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Couldn't create bank transaction");
-      }
+        description: formData.description,
+      });
 
       setSuccess("Bank transaction added successfully");
 
@@ -86,7 +60,7 @@ function AddBankTransaction() {
         navigate("/bank-transactions");
       }, 800);
     } catch (error) {
-      setError(error.message);
+      setError(getErrorMessage(error, "Couldn't create bank transaction"));
     } finally {
       setLoading(false);
     }

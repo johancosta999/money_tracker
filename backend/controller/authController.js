@@ -101,7 +101,7 @@ const login = async(req, res) => {
 
 const getMe = async(req, res) => {
     try {
-        const user = await User.findById(req.userId).select("-password");
+        const user = await User.findById(req.userId).select("-password").lean();
 
         if(!user){
             return res.status(404).json({
