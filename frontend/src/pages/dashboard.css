@@ -238,6 +238,14 @@
     color: #9a9ea4;
 }
 
+.balance-card .balance-bank-breakdown {
+    margin: 12px 0 0;
+
+    font-size: 11px;
+
+    color: #9a9ea4;
+}
+
 
 /* =========================
    Balance Decoration
@@ -297,6 +305,30 @@
     box-shadow:
         10px 10px 20px rgba(163, 165, 170, 0.5),
         -10px -10px 20px rgba(255, 255, 255, 0.9);
+}
+
+
+.summary-card-link {
+    text-decoration: none;
+    color: inherit;
+
+    transition: 0.2s ease;
+}
+
+.summary-card-link:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        12px 12px 24px rgba(163, 165, 170, 0.55),
+        -12px -12px 24px rgba(255, 255, 255, 0.95);
+}
+
+.summary-card-link:active {
+    transform: translateY(1px);
+
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 165, 170, 0.45),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
 }
 
 
@@ -574,6 +606,39 @@
 .bank-transaction .transaction-icon {
     font-size: 20px;
     font-weight: 600;
+}
+
+
+.bank-amount {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+
+    gap: 6px;
+}
+
+
+.balance-effect-tag {
+    padding: 4px 9px;
+
+    border-radius: 9px;
+
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+
+    color: #a0a3a8;
+    background: #e8e9ed;
+
+    box-shadow:
+        inset 2px 2px 4px rgba(163, 165, 170, 0.35),
+        inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+}
+
+
+.balance-effect-tag.affects {
+    color: #5c6068;
 }
 
 

@@ -318,6 +318,66 @@
     color: #3e7cc4;
 }
 
+.type-button.own-source.active {
+    color: #5c6068;
+}
+
+.type-button:disabled {
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* =========================
+   Balance Effect Hint
+========================= */
+
+.balance-effect-hint {
+    margin: -6px 0 0;
+
+    padding: 12px 16px;
+
+    border-radius: 13px;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    background: #e8e9ed;
+
+    box-shadow:
+        inset 3px 3px 6px rgba(163, 165, 170, 0.35),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+}
+
+.balance-effect-hint::before {
+    margin-right: 8px;
+    font-weight: 700;
+}
+
+.balance-effect-hint.increase-effect {
+    color: #4d9966;
+}
+
+.balance-effect-hint.increase-effect::before {
+    content: "+";
+}
+
+.balance-effect-hint.decrease-effect {
+    color: #9a6868;
+}
+
+.balance-effect-hint.decrease-effect::before {
+    content: "−";
+}
+
+.balance-effect-hint.neutral-effect {
+    color: #858a91;
+}
+
+.balance-effect-hint.neutral-effect::before {
+    content: "=";
+}
+
 
 /* =========================
    Submit Button

@@ -3,12 +3,40 @@ import { Link, useNavigate } from "react-router-dom";
 import api, { getErrorMessage } from "../services/api";
 import "./AddTransaction.css";
 
+// Labels for the "whose money" choice, per transaction type
+const sourceOptions = {
+  Deposit: {
+    own: "My own money",
+    external: "From someone else",
+  },
+  Transfer: {
+    own: "To my own account",
+    external: "To someone else",
+  },
+};
+
+const getBalanceEffect = (type, external) => {
+  if (type === "Withdraw") {
+    return "Doesn't change your balance. Log it as an expense when you spend it.";
+  }
+
+  if (!external) {
+    return "Doesn't change your balance. You're only moving your own money.";
+  }
+
+  return type === "Deposit"
+    ? "Increases your current balance."
+    : "Decreases your current balance.";
+};
+
 function AddBankTransaction() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     type: "Deposit",
     amount: "",
+    external: false,
+    date: new Date().toISOString().split("T")[0],
     description: "",
   });
 
@@ -32,6 +60,21 @@ function AddBankTransaction() {
     });
   };
 
+  const handleSourceChange = (external) => {
+    setFormData({
+      ...formData,
+      external,
+    });
+  };
+
+  const isWithdraw = formData.type === "Withdraw";
+  const affectsBalance = !isWithdraw && formData.external;
+  const effectClass = !affectsBalance
+    ? "neutral-effect"
+    : formData.type === "Deposit"
+      ? "increase-effect"
+      : "decrease-effect";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -50,6 +93,10 @@ function AddBankTransaction() {
         type: formData.type,
 
         amount: Number(formData.amount),
+
+        external: affectsBalance,
+
+        date: formData.date,
 
         description: formData.description,
       });
@@ -82,7 +129,7 @@ function AddBankTransaction() {
 
               <h1>Add Bank Transaction</h1>
 
-              <p>Record deposits and withdrawals.</p>
+              <p>Record deposits, withdrawals and transfers.</p>
             </div>
           </div>
         </div>
@@ -138,17 +185,70 @@ function AddBankTransaction() {
             </div>
           </div>
 
-          <div className="input-group">
-            <label>Amount</label>
+          {!isWithdraw && (
+            <div className="input-group">
+              <label>Whose Money?</label>
 
-            <div className="amount-input">
-              <span>LKR</span>
+              <div className="type-selector">
+                <button
+                  type="button"
+                  className={
+                    !formData.external
+                      ? "type-button active own-source"
+                      : "type-button"
+                  }
+                  onClick={() => handleSourceChange(false)}
+                  disabled={loading}
+                >
+                  ⇄ {sourceOptions[formData.type].own}
+                </button>
+
+                <button
+                  type="button"
+                  className={
+                    formData.external
+                      ? `type-button active ${formData.type === "Deposit" ? "income-type" : "expense-type"}`
+                      : "type-button"
+                  }
+                  onClick={() => handleSourceChange(true)}
+                  disabled={loading}
+                >
+                  {formData.type === "Deposit" ? "↓" : "↑"}{" "}
+                  {sourceOptions[formData.type].external}
+                </button>
+              </div>
+            </div>
+          )}
+
+          <p className={`balance-effect-hint ${effectClass}`}>
+            {getBalanceEffect(formData.type, formData.external)}
+          </p>
+
+          <div className="form-row">
+            <div className="input-group">
+              <label>Amount</label>
+
+              <div className="amount-input">
+                <span>LKR</span>
+
+                <input
+                  type="number"
+                  name="amount"
+                  placeholder="0.00"
+                  value={formData.amount}
+                  onChange={handleChange}
+                  disabled={loading}
+                />
+              </div>
+            </div>
+
+            <div className="input-group">
+              <label>Date</label>
 
               <input
-                type="number"
-                name="amount"
-                placeholder="0.00"
-                value={formData.amount}
+                type="date"
+                name="date"
+                value={formData.date}
                 onChange={handleChange}
                 disabled={loading}
               />

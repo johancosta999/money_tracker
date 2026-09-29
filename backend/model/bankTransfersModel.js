@@ -15,7 +15,20 @@ const bankTransfersSchema = new mongoose.Schema({
 
     amount: {
         type: Number,
-        required: true
+        required: true,
+        min: 0.01
+    },
+
+    // true = money came from / went to someone else (affects current balance)
+    // false = moving your own money (no effect on current balance)
+    external: {
+        type: Boolean,
+        default: false
+    },
+
+    date: {
+        type: Date,
+        default: Date.now
     },
 
     description : {
