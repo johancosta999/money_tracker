@@ -1,18 +1,23 @@
 const bankTransfer = require('../model/bankTransfersModel')
 
+// Fields a user is allowed to set on a bank transaction
+const pickEditableFields = (body) => {
+    const fields = {};
+    ['type', 'amount', 'description', 'external', 'date'].forEach((key) => {
+        if (body[key] !== undefined) fields[key] = body[key];
+    });
+
+    // Withdrawals only move your own money, so they never affect the balance
+    if (fields.type === 'Withdraw') fields.external = false;
+
+    return fields;
+};
+
 const createBankTransfer = async(req, res) => {
     try{
-        const {
-            type,
-            amount,
-            description
-        } = req.body;
-
         const newTransfer = new bankTransfer({
-            userId : req.userId,
-            type,
-            amount,
-            description
+            ...pickEditableFields(req.body),
+            userId : req.userId
         });
 
         const transfer = await newTransfer.save()
@@ -81,11 +86,11 @@ const updateBankTransaction = async(req, res) => {
     try{
         const { id } = req.params;
 
-        const updateTransaction = await bankTransfer.findByIdAndUpdate({
+        const updateTransaction = await bankTransfer.findOneAndUpdate({
             _id:id,
             userId: req.userId
         },
-        req.body,
+        pickEditableFields(req.body),
         {
             new: true,
             runValidators: true
@@ -113,7 +118,7 @@ const deleteBankTransaction = async(req, res) => {
     try {
         const { id } = req.params;
 
-        const bankTransaction = await bankTransfer.findByIdAndDelete({
+        const bankTransaction = await bankTransfer.findOneAndDelete({
             _id: id,
             userId: req.userId
         })

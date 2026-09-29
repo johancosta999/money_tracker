@@ -11,6 +11,9 @@ function Dashboard() {
   const [summary, setSummary] = useState({
     totalIncome: 0,
     totalExpense: 0,
+    bankIn: 0,
+    bankOut: 0,
+    bankNet: 0,
     balance: 0,
   });
 
@@ -25,6 +28,9 @@ function Dashboard() {
         setSummary({
           totalIncome: data.totalIncome,
           totalExpense: data.totalExpense,
+          bankIn: data.bankIn || 0,
+          bankOut: data.bankOut || 0,
+          bankNet: data.bankNet || 0,
           balance: data.balance,
         });
       } catch (error) {
@@ -100,6 +106,16 @@ function Dashboard() {
             </div>
           </Link>
 
+          <Link to="/create/bank-transactions" className="add-transaction-button">
+            <span className="add-transaction-icon">🏦</span>
+
+            <div>
+              <strong>Add Bank Transaction</strong>
+
+              <p>Record deposits, withdrawals & transfers</p>
+            </div>
+          </Link>
+
           <Link to="/planner" className="add-transaction-button planner-button">
             <span className="add-transaction-icon">📅</span>
 
@@ -122,7 +138,18 @@ function Dashboard() {
 
           <h2>Rs. {summary.balance.toLocaleString()}</h2>
 
-          <span className="balance-label">INCOME − EXPENSES</span>
+          <span className="balance-label">
+            {summary.bankIn || summary.bankOut
+              ? "INCOME − EXPENSES ± BANK"
+              : "INCOME − EXPENSES"}
+          </span>
+
+          {(summary.bankIn > 0 || summary.bankOut > 0) && (
+            <p className="balance-bank-breakdown">
+              Bank: +Rs. {summary.bankIn.toLocaleString()} received · −Rs.{" "}
+              {summary.bankOut.toLocaleString()} sent
+            </p>
+          )}
         </div>
       </section>
 
@@ -151,15 +178,26 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="summary-card">
-          <div className="summary-icon">=</div>
+        <Link to="/bank-transactions" className="summary-card summary-card-link">
+          <div className="summary-icon">🏦</div>
 
           <div>
-            <p>Net Balance</p>
+            <p>Bank Transactions</p>
 
-            <h3>Rs. {summary.balance.toLocaleString()}</h3>
+            <h3
+              className={
+                summary.bankNet > 0
+                  ? "income"
+                  : summary.bankNet < 0
+                    ? "expense"
+                    : ""
+              }
+            >
+              {summary.bankNet > 0 ? "+" : summary.bankNet < 0 ? "−" : ""}
+              Rs. {Math.abs(summary.bankNet).toLocaleString()}
+            </h3>
           </div>
-        </div>
+        </Link>
       </section>
 
       {/* =========================

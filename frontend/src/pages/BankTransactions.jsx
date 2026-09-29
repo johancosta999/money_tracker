@@ -103,6 +103,13 @@ function BankTransactions() {
                 : isTransfer
                   ? "transfer"
                   : "expense";
+              const affectsBalance = !!transaction.external && (isDeposit || isTransfer);
+              const sourceLabel = isDeposit
+                ? transaction.external ? "From someone else" : "Own money"
+                : isTransfer
+                  ? transaction.external ? "To someone else" : "To own account"
+                  : "Cash in hand";
+              const amountSign = affectsBalance ? (isDeposit ? "+" : "−") : "";
 
               return (
                 <div className="recent-transaction bank-transaction" key={transaction._id}>
@@ -114,15 +121,22 @@ function BankTransactions() {
                     <div>
                       <h3>{transaction.description || "Bank Transaction"}</h3>
                       <p>
-                        {transactionLabel} • {formatDate(transaction.createdAt)}
+                        {transactionLabel} • {sourceLabel} •{" "}
+                        {formatDate(transaction.date || transaction.createdAt)}
                       </p>
                     </div>
                   </div>
 
-                  <strong className={transactionClass}>
-                    {isDeposit ? "+" : isTransfer ? "" : "-"}
-                    {formatCurrency(transaction.amount)}
-                  </strong>
+                  <div className="bank-amount">
+                    <strong className={transactionClass}>
+                      {amountSign}
+                      {formatCurrency(transaction.amount)}
+                    </strong>
+
+                    {/* <span className={`balance-effect-tag ${affectsBalance ? "affects" : ""}`}>
+                      {affectsBalance ? "Affects balance" : "No balance change"}
+                    </span> */}
+                  </div>
                 </div>
               );
             })}
