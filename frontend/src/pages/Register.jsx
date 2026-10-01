@@ -166,6 +166,7 @@ function Register() {
                                 setAge(e.target.value)
                             }
                             min="1"
+                            max="120"
                             required
                         />
 
@@ -180,11 +181,13 @@ function Register() {
 
                         <input
                             type="password"
-                            placeholder="Create a password"
+                            placeholder="At least 8 characters"
                             value={password}
                             onChange={(e) =>
                                 setPassword(e.target.value)
                             }
+                            minLength="8"
+                            autoComplete="new-password"
                             required
                         />
 

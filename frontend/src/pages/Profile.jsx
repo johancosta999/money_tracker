@@ -13,11 +13,16 @@ function Profile() {
   const [form, setForm] = useState({
     userName: user?.userName || "",
     email: user?.email || "",
-    password: ""
+    password: "",
+    currentPassword: ""
   });
 
+  // Changing login credentials needs the current password
+  const needsCurrentPassword =
+    Boolean(form.password) || form.email.trim().toLowerCase() !== (user?.email || "");
+
   const startEditing = () => {
-    setForm({ userName: user.userName || "", email: user.email || "", password: "" });
+    setForm({ userName: user.userName || "", email: user.email || "", password: "", currentPassword: "" });
     setError("");
     setSuccess("");
     setIsEditing(true);
@@ -37,12 +42,13 @@ function Profile() {
 
     const updates = { userName: form.userName.trim(), email: form.email.trim() };
     if (form.password) updates.password = form.password;
+    if (needsCurrentPassword) updates.currentPassword = form.currentPassword;
 
     try {
       const { data } = await api.put(`/users/${user.id || user._id}`, updates);
       const updatedUser = { ...user, id: data._id || user.id, userName: data.userName, email: data.email };
       login(updatedUser, localStorage.getItem("token"));
-      setForm((current) => ({ ...current, password: "" }));
+      setForm((current) => ({ ...current, password: "", currentPassword: "" }));
       setSuccess("Your profile has been updated.");
       setIsEditing(false);
     } catch (requestError) {
@@ -84,8 +90,14 @@ function Profile() {
               </div>
               <div className="profile-field">
                 <label htmlFor="password">Password</label>
-                {isEditing ? <input id="password" name="password" type="password" value={form.password} onChange={handleChange} placeholder="Leave blank to keep current password" autoComplete="new-password" minLength="6" /> : <p className="profile-value profile-password" aria-label="Password hidden">••••••••</p>}
+                {isEditing ? <input id="password" name="password" type="password" value={form.password} onChange={handleChange} placeholder="Leave blank to keep current password" autoComplete="new-password" minLength="8" /> : <p className="profile-value profile-password" aria-label="Password hidden">••••••••</p>}
               </div>
+              {isEditing && needsCurrentPassword && (
+                <div className="profile-field">
+                  <label htmlFor="currentPassword">Current password</label>
+                  <input id="currentPassword" name="currentPassword" type="password" value={form.currentPassword} onChange={handleChange} placeholder="Required to change email or password" autoComplete="current-password" required />
+                </div>
+              )}
             </div>
 
             <div className="profile-actions">

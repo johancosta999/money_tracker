@@ -1,117 +1,130 @@
 const User = require('../model/userModel')
+const Transaction = require('../model/transactionsModel')
+const Planner = require('../model/moneyPlanModel')
+const BankTransfer = require('../model/bankTransfersModel')
+const Budget = require('../model/budgetModel')
+const Category = require('../model/categoryModel')
 const bcrypt = require('bcryptjs')
+const { isValidEmail, isValidPassword, PASSWORD_RULE } = require('../utils/validation')
 
-const getUsers = async(req, res) => {
-    try{
-        //fetch all the users from the database
-        const users = await User.find();
+const toPublicUser = (user) => ({
+    id: user._id,
+    _id: user._id,
+    userName: user.userName,
+    email: user.email,
+    age: user.age
+});
 
-        //return the list of users 
-        res.status(200).json(users)
-        
-    } catch (error) {
-        res.status(500).json({
-            message : " Couldn't retrieve users",
-            error : error.message
-        });
-    }
-};
+// Users can only ever act on their own account
+const isOwnAccount = (req) => req.params.id === String(req.userId);
 
-const getUser = async(req, res) => {
-    try{
-        //get the user id
-        const { id } = req.params;
-
-        //fetching
-        const user = await User.findById(id);
-
-        //if cant find the user
-        if(!user) {
-            return res.status(404).json({
-                message: "User not found :(",
-                error : error.message
-            });
-        }
-
-        //respond
-        res.status(200).json(user);
-
-    } catch (error) {
-        res.status(500).json({
-            message: "Couldn't find the user you looking for :(",
-            error : error.message
-        });
-    };
-};
-
-const updateUser = async(req, res) => {
+const updateUser = async(req, res, next) => {
     try {
-        //get the id 
-        const { id } = req.params;
-
-        if (id !== req.userId) {
+        if (!isOwnAccount(req)) {
             return res.status(403).json({
                 message: "You can only update your own profile"
             });
         }
 
-        const updates = { ...req.body };
+        const user = await User.findById(req.userId).select("+password");
 
-        if (updates.password) {
-            updates.password = await bcrypt.hash(updates.password, 10);
-        }
-
-        const user = await User.findByIdAndUpdate(
-            id,
-            updates,
-            { new: true, runValidators: true, select: "-password" }
-        );
-
-        //if cant find the user
         if(!user) {
-            return res.status(400).json({
-                message : "Coundn't find the user"
+            return res.status(404).json({
+                message : "User not found"
             });
         }
 
-        //respond
-        res.status(200).json(user);
+        const { userName, email, password, currentPassword } = req.body;
+
+        if (userName !== undefined) {
+            const trimmed = String(userName).trim();
+            if (!trimmed) {
+                return res.status(400).json({ message: "Username cannot be empty" });
+            }
+            user.userName = trimmed;
+        }
+
+        const emailChanged = email !== undefined
+            && String(email).trim().toLowerCase() !== user.email;
+
+        // Changing login credentials needs the current password
+        if (emailChanged || password) {
+            const isCorrect = await bcrypt.compare(String(currentPassword || ""), user.password);
+            if (!isCorrect) {
+                return res.status(400).json({
+                    message: "Current password is incorrect"
+                });
+            }
+        }
+
+        if (emailChanged) {
+            const normalized = String(email).trim().toLowerCase();
+            if (!isValidEmail(normalized)) {
+                return res.status(400).json({ message: "Please enter a valid email address" });
+            }
+            if (await User.exists({ email: normalized })) {
+                return res.status(400).json({ message: "That email is already in use" });
+            }
+            user.email = normalized;
+        }
+
+        if (password) {
+            if (!isValidPassword(password)) {
+                return res.status(400).json({ message: PASSWORD_RULE });
+            }
+            user.password = await bcrypt.hash(String(password), 10);
+        }
+
+        await user.save();
+
+        res.status(200).json(toPublicUser(user));
 
     } catch (error) {
-        res.status(500).json({
-            message : "Could't upate the user",
-            error : error.message
-        })
+        next(error);
     };
 };
 
-const deleteUser = async(req, res) => {
+const deleteUser = async(req, res, next) => {
     try {
-        //get the id 
-        const { id } = req.params;
-
-        //delete
-        const user = await User.findByIdAndDelete(id);
-
-        //if cant find the user 
-        if(!user) {
-            return res.status(404).json({
-                message : "Coudn't find the user",
+        if (!isOwnAccount(req)) {
+            return res.status(403).json({
+                message: "You can only delete your own account"
             });
         }
 
-        //respon
+        const user = await User.findById(req.userId).select("+password");
+
+        if(!user) {
+            return res.status(404).json({
+                message : "User not found",
+            });
+        }
+
+        const isCorrect = await bcrypt.compare(String(req.body?.password || ""), user.password);
+        if (!isCorrect) {
+            return res.status(400).json({
+                message: "Password is incorrect"
+            });
+        }
+
+        // Remove everything the user owns before the account itself
+        await Promise.all([
+            Transaction.deleteMany({ user: user._id }),
+            Planner.deleteMany({ userId: user._id }),
+            BankTransfer.deleteMany({ userId: user._id }),
+            Budget.deleteMany({ userId: user._id }),
+            Category.deleteMany({ userId: user._id, isDefault: false })
+        ]);
+
+        await user.deleteOne();
+
         res.status(200).json({
-            message : "User deleted successfully",
-            deletedUser: user
+            message : "Account deleted successfully"
         });
 
     } catch (error){
-        res.status(500).json({
-            message : "Coouldn't delete the user.",
-            error : error.message
-        })
+        next(error);
     };
 }
 
-module.exports = { getUsers, getUser, updateUser, deleteUser }
+module.exports = { updateUser, deleteUser }

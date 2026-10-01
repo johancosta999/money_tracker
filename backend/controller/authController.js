@@ -1,10 +1,30 @@
 const User = require("../model/userModel")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken");
+const { isValidEmail, isValidPassword, PASSWORD_RULE } = require("../utils/validation")
 
-const register = async(req, res) => {
+const register = async(req, res, next) => {
     try {
-        const { userName, email, password, age } = req.body;
+        const userName = String(req.body.userName ?? "").trim();
+        const email = String(req.body.email ?? "").trim().toLowerCase();
+        const password = req.body.password;
+        const age = Number(req.body.age);
+
+        if (!userName) {
+            return res.status(400).json({ message: "Username is required" });
+        }
+
+        if (!isValidEmail(email)) {
+            return res.status(400).json({ message: "Please enter a valid email address" });
+        }
+
+        if (!isValidPassword(password)) {
+            return res.status(400).json({ message: PASSWORD_RULE });
+        }
+
+        if (!Number.isInteger(age) || age < 1 || age > 120) {
+            return res.status(400).json({ message: "Please enter a valid age" });
+        }
 
         //check if user already exists
         const existingUser = await User.findOne({ email });
@@ -18,7 +38,7 @@ const register = async(req, res) => {
         //hash password
         const hashPassword = await bcrypt.hash(password, 10)
 
-        //create user 
+        //create user
         const newUser = new User({
             userName,
             email,
@@ -38,19 +58,17 @@ const register = async(req, res) => {
         });
 
     } catch (error){
-        res.status(500).json({
-            message : "Couldn't register the user",
-            error : error.message
-        })
+        next(error);
     }
 };
 
-const login = async(req, res) => {
+const login = async(req, res, next) => {
     try{
-        const { email, password } = req.body;
+        const email = String(req.body.email ?? "").trim().toLowerCase();
+        const password = String(req.body.password ?? "");
 
         // Find user
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select("+password");
 
         if (!user) {
             return res.status(400).json({
@@ -77,7 +95,7 @@ const login = async(req, res) => {
             },
             process.env.JWT_SECRET,
             {
-                expiresIn: "1d"
+                expiresIn: "30d"
             }
         );
 
@@ -92,16 +110,13 @@ const login = async(req, res) => {
             }
         });
     } catch(error) {
-        res.status(500).json({
-            message : "Couldn't log the user",
-            error : error.message
-        })
+        next(error);
     }
 }
 
-const getMe = async(req, res) => {
+const getMe = async(req, res, next) => {
     try {
-        const user = await User.findById(req.userId).select("-password").lean();
+        const user = await User.findById(req.userId).lean();
 
         if(!user){
             return res.status(404).json({
@@ -114,10 +129,7 @@ const getMe = async(req, res) => {
         });
 
     } catch (error) {
-        res.status(500).json({
-            message : "Error getting user",
-            error : error.message 
-        })
+        next(error);
     }
 
 }

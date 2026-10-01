@@ -1,5 +1,6 @@
 const Transaction = require("../model/transactionsModel");
 const Planner = require("../model/moneyPlanModel")
+const { isValidAmount } = require("../utils/validation")
 
 // =====================================================
 // CREATE TRANSACTION
@@ -36,6 +37,12 @@ const createTransaction = async (req, res) => {
                 message: "All required fields must be provided"
             });
 
+        }
+
+        if (!isValidAmount(amount)) {
+            return res.status(400).json({
+                message: "Amount must be a positive number"
+            });
         }
 
 
@@ -171,13 +178,12 @@ const createTransaction = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
         res.status(500).json({
 
             message: "Couldn't create transaction",
 
-            error: error.message
 
         });
 
@@ -223,13 +229,12 @@ const getTransactions = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
         res.status(500).json({
 
             message: "Couldn't get transactions",
 
-            error: error.message
 
         });
 
@@ -275,13 +280,12 @@ const getTransaction = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
         res.status(500).json({
 
             message: "Couldn't get transaction",
 
-            error: error.message
 
         });
 
@@ -373,6 +377,11 @@ const updateTransaction = async (req, res) => {
         }
 
         if (amount !== undefined) {
+            if (!isValidAmount(amount)) {
+                return res.status(400).json({
+                    message: "Amount must be a positive number"
+                });
+            }
             transaction.amount =
                 Number(amount);
         }
@@ -471,14 +480,13 @@ const updateTransaction = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
         res.status(500).json({
 
             message:
                 "Couldn't update transaction",
 
-            error: error.message
 
         });
 
@@ -514,11 +522,10 @@ const deleteTransaction = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).json({
             message:
                 "Couldn't delete transaction",
-            error: error.message
         });
     }
 
