@@ -1,5 +1,9 @@
 const Transaction = require("../model/transactionsModel");
 const Planner = require("../model/moneyPlanModel")
+const { isValidAmount } = require("../utils/validation")
+
+// Note: 500 responses only send a generic message. The real error is logged
+// with console.error on the server, so database details never reach the browser.
 
 // =====================================================
 // CREATE TRANSACTION
@@ -36,6 +40,13 @@ const createTransaction = async (req, res) => {
                 message: "All required fields must be provided"
             });
 
+        }
+
+        // Amount must be a positive number; the type (income/expense) gives the direction
+        if (!isValidAmount(amount)) {
+            return res.status(400).json({
+                message: "Amount must be a positive number"
+            });
         }
 
 
@@ -171,13 +182,12 @@ const createTransaction = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
         res.status(500).json({
 
             message: "Couldn't create transaction",
 
-            error: error.message
 
         });
 
@@ -223,13 +233,12 @@ const getTransactions = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
         res.status(500).json({
 
             message: "Couldn't get transactions",
 
-            error: error.message
 
         });
 
@@ -275,13 +284,12 @@ const getTransaction = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
         res.status(500).json({
 
             message: "Couldn't get transaction",
 
-            error: error.message
 
         });
 
@@ -373,6 +381,12 @@ const updateTransaction = async (req, res) => {
         }
 
         if (amount !== undefined) {
+            // Same rule as when creating a transaction
+            if (!isValidAmount(amount)) {
+                return res.status(400).json({
+                    message: "Amount must be a positive number"
+                });
+            }
             transaction.amount =
                 Number(amount);
         }
@@ -471,14 +485,13 @@ const updateTransaction = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
         res.status(500).json({
 
             message:
                 "Couldn't update transaction",
 
-            error: error.message
 
         });
 
@@ -514,11 +527,10 @@ const deleteTransaction = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).json({
             message:
                 "Couldn't delete transaction",
-            error: error.message
         });
     }
 

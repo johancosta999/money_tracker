@@ -1,10 +1,34 @@
 const User = require("../model/userModel")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken");
+const { isValidEmail, isValidPassword, PASSWORD_RULE } = require("../utils/validation")
 
-const register = async(req, res) => {
+const register = async(req, res, next) => {
     try {
-        const { userName, email, password, age } = req.body;
+        // Force inputs into plain strings/numbers. This blocks NoSQL injection,
+        // e.g. sending { "$ne": null } as the email to match any user.
+        // Emails are lowercased so "Alice@X.com" and "alice@x.com" are the same account.
+        const userName = String(req.body.userName ?? "").trim();
+        const email = String(req.body.email ?? "").trim().toLowerCase();
+        const password = req.body.password;
+        const age = Number(req.body.age);
+
+        // Validate everything on the server too; the browser form can be bypassed
+        if (!userName) {
+            return res.status(400).json({ message: "Username is required" });
+        }
+
+        if (!isValidEmail(email)) {
+            return res.status(400).json({ message: "Please enter a valid email address" });
+        }
+
+        if (!isValidPassword(password)) {
+            return res.status(400).json({ message: PASSWORD_RULE });
+        }
+
+        if (!Number.isInteger(age) || age < 1 || age > 120) {
+            return res.status(400).json({ message: "Please enter a valid age" });
+        }
 
         //check if user already exists
         const existingUser = await User.findOne({ email });
@@ -18,7 +42,7 @@ const register = async(req, res) => {
         //hash password
         const hashPassword = await bcrypt.hash(password, 10)
 
-        //create user 
+        //create user
         const newUser = new User({
             userName,
             email,
@@ -38,19 +62,20 @@ const register = async(req, res) => {
         });
 
     } catch (error){
-        res.status(500).json({
-            message : "Couldn't register the user",
-            error : error.message
-        })
+        // Unexpected errors go to the central error handler in app.js
+        next(error);
     }
 };
 
-const login = async(req, res) => {
+const login = async(req, res, next) => {
     try{
-        const { email, password } = req.body;
+        // Same as register: plain strings only (blocks NoSQL injection), lowercase email
+        const email = String(req.body.email ?? "").trim().toLowerCase();
+        const password = String(req.body.password ?? "");
 
-        // Find user
-        const user = await User.findOne({ email });
+        // Find user. The password hash is hidden by default (select: false
+        // in the model), so it has to be requested here to compare it.
+        const user = await User.findOne({ email }).select("+password");
 
         if (!user) {
             return res.status(400).json({
@@ -70,14 +95,15 @@ const login = async(req, res) => {
             });
         }
 
-        // Create JWT
+        // Create JWT. Lasts 30 days so people using the installed
+        // phone app don't have to log in again every day.
         const token = jwt.sign(
             {
                 userId: user._id
             },
             process.env.JWT_SECRET,
             {
-                expiresIn: "1d"
+                expiresIn: "30d"
             }
         );
 
@@ -92,16 +118,15 @@ const login = async(req, res) => {
             }
         });
     } catch(error) {
-        res.status(500).json({
-            message : "Couldn't log the user",
-            error : error.message
-        })
+        // Unexpected errors go to the central error handler in app.js
+        next(error);
     }
 }
 
-const getMe = async(req, res) => {
+const getMe = async(req, res, next) => {
     try {
-        const user = await User.findById(req.userId).select("-password").lean();
+        // No .select("-password") needed: the model hides the password by default
+        const user = await User.findById(req.userId).lean();
 
         if(!user){
             return res.status(404).json({
@@ -114,10 +139,8 @@ const getMe = async(req, res) => {
         });
 
     } catch (error) {
-        res.status(500).json({
-            message : "Error getting user",
-            error : error.message 
-        })
+        // Unexpected errors go to the central error handler in app.js
+        next(error);
     }
 
 }

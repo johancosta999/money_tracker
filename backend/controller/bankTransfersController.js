@@ -1,5 +1,8 @@
 const bankTransfer = require('../model/bankTransfersModel')
 
+// Note: 500 responses only send a generic message. The real error is logged
+// with console.error on the server, so database details never reach the browser.
+
 // Fields a user is allowed to set on a bank transaction
 const pickEditableFields = (body) => {
     const fields = {};
@@ -24,10 +27,10 @@ const createBankTransfer = async(req, res) => {
         res.status(200).json(transfer)
 
     } catch (error) {
+        console.error(error);
         console.log('Counldnt create transfer');
         res.status(500).json({
             message: 'Counldnt create transfer',
-            error: error.message
         })
        
     }
@@ -48,9 +51,9 @@ const getAllBankTransactions = async(req, res) => {
         res.status(201).json(bankTransaction)
 
     } catch(error) {
+        console.error(error);
         res.status(500).json({
             message : 'Unable to get all transactions',
-            error: error.message
         });
 
     }
@@ -74,9 +77,9 @@ const getBankTransaction = async(req, res) => {
         res.status(200).json(transaction)
 
     } catch(error) {
+        console.error(error);
         res.status(500).json({
             message: 'Unable to get to the transaction',
-            error: error.message
         })
 
     }
@@ -106,9 +109,9 @@ const updateBankTransaction = async(req, res) => {
         res.status(200).json(updateTransaction)
 
     } catch (error) {
+        console.error(error);
         res.status(500).json({
             message: 'Unable to update transaction',
-            error: error.message
         })
 
     }
@@ -135,9 +138,9 @@ const deleteBankTransaction = async(req, res) => {
         })
 
     } catch(error) {
+        console.error(error);
         res.status(500).json({
             message: 'Unable to delete transaction',
-            error: error.message
         })
 
     }

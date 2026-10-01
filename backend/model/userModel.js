@@ -20,6 +20,9 @@ const userSchema = new mongoose.Schema(
         password: {
             type: String,
             required: true,
+            // Never returned by queries unless asked for with .select("+password"),
+            // so the hash can't accidentally be sent to the browser
+            select: false
         },
 
         age: {

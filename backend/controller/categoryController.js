@@ -1,5 +1,8 @@
 const Category = require("../model/categoryModel")
 
+// Note: 500 responses only send a generic message. The real error is logged
+// with console.error on the server, so database details never reach the browser.
+
 const createCategory = async(req, res) => {
     try{
         const { title } = req.body;
@@ -14,9 +17,9 @@ const createCategory = async(req, res) => {
         res.status(201).json(savedCategory)
 
     } catch (error) {
+        console.error(error);
         res.status(500).json({
             message : "Couldn't create the category",
-            error : error.message
         })
     }
 };
@@ -41,9 +44,9 @@ const getCategories = async(req, res) => {
         })
 
     } catch (error){
+        console.error(error);
         res.status(500).json({
             message : "Couldn't get categories",
-            error : error.message
         })
     }
 };
@@ -71,9 +74,9 @@ const getCategory = async(req, res) => {
         })
 
     } catch (error) {
+        console.error(error);
         res.status(500).json({
             message : "Could't load category",
-            error : error.message
         })
     }
 };
@@ -102,9 +105,9 @@ const updateCategory = async (req, res) => {
         res.status(200).json(updatedCategory)
 
     } catch (error) {
+        console.error(error);
         res.status(500).json({
             message : "Couldn't update category",
-            error : error.message
         })
     }
 };
@@ -130,9 +133,9 @@ const deleteCategory = async(req, res) => {
         })
 
     } catch(error) {
+        console.error(error);
         res.status(500).json({
             message : "Couldn't delete category",
-            error : error.message
         })
     }
 }

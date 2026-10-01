@@ -1,8 +1,17 @@
 const Budget = require("../model/budgetModel")
+const { isValidAmount } = require("../utils/validation")
+
+// Note: 500 responses only send a generic message. The real error is logged
+// with console.error on the server, so database details never reach the browser.
 
 const createBudget = async(req, res) => {
     try {
         const { title, amount, duration } = req.body;
+
+        // Budgets must be a positive number
+        if (!isValidAmount(amount)) {
+            return res.status(400).json({ message: "Amount must be a positive number" });
+        }
 
         const newBudget = new Budget({
             userId : req.userId,
@@ -15,9 +24,9 @@ const createBudget = async(req, res) => {
         res.status(201).json(budget)
 
     } catch(error){
+        console.error(error);
         res.status(500).json({
             message : "Couldn't create budget.",
-            error : message.error
         });
     }
 };
@@ -37,9 +46,9 @@ const getBudgets = async(req, res) => {
         res.status(200).json(budget)
 
     } catch(error) {
-        res.staus(500).json({
+        console.error(error);
+        res.status(500).json({
             message : "Couldn't get budgets",
-            error : message.error
         })
     }
 };
@@ -62,9 +71,9 @@ const getBudget = async(req, res) => {
         res.status(200).json(findBudget);
 
     } catch(error){
+        console.error(error);
         res.status(500).json({
             message : "Couldnt get the budget",
-            error : message.error
         })
     }
 };
@@ -73,11 +82,23 @@ const updateBudget = async(req, res) => {
     try {
         const { id } = req.params;
 
+        // Only these fields are editable; userId must never change.
+        // Passing req.body straight to the update would let a user send
+        // { userId: "<someone else>" } and move the budget to another account.
+        const updates = {};
+        ["title", "amount", "duration"].forEach((key) => {
+            if (req.body[key] !== undefined) updates[key] = req.body[key];
+        });
+
+        if (updates.amount !== undefined && !isValidAmount(updates.amount)) {
+            return res.status(400).json({ message: "Amount must be a positive number" });
+        }
+
         const updatedBudget = await Budget.findOneAndUpdate({
-                _id : id, 
+                _id : id,
                 userId : req.userId
             },
-            req.body,
+            updates,
             { new: true, runValidators: true }
         );
 
@@ -90,9 +111,9 @@ const updateBudget = async(req, res) => {
         res.status(200).json(updatedBudget)
 
     } catch(error) {
+        console.error(error);
         res.status(500).json({
             message : "Couldn't update user",
-            error : message.error
         })
     }
 };
@@ -115,9 +136,9 @@ const deleteBudget = async(req, res) => {
         res.status(200).json({deletedBudget})
 
     } catch(error) {
+        console.error(error);
         res.status(500).json({
             message : "Couldn' t delete the budget",
-            error : message.error
         })
     }
 };

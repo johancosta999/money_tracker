@@ -10,9 +10,10 @@ const protect = async(req, res, next) => {
             })
         }
 
-        const token = authHeader.split(" ")[1];
+        // Header must look exactly like "Bearer <token>"
+        const [scheme, token] = authHeader.split(" ");
 
-        if(!token) {
+        if(scheme !== "Bearer" || !token) {
             return res.status(401).json({
                 message : "Invalid authorization format"
             })
@@ -28,9 +29,9 @@ const protect = async(req, res, next) => {
         next()
 
     } catch (error) {
+        // Don't send error.message: it reveals why the token failed (expired, bad signature, etc.)
         return res.status(401).json({
-            message : "Invalid token or expired authorization",
-            error : error.message
+            message : "Invalid token or expired authorization"
         })
     }
 }

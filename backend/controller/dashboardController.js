@@ -1,6 +1,9 @@
 const Transaction = require("../model/transactionsModel");
 const BankTransfer = require("../model/bankTransfersModel");
 
+// Note: 500 responses only send a generic message. The real error is logged
+// with console.error on the server, so database details never reach the browser.
+
 const getDashboardSummary = async (req, res) => {
     try {
 
@@ -62,10 +65,10 @@ const getDashboardSummary = async (req, res) => {
         });
 
     } catch (error) {
+        console.error(error);
 
         res.status(500).json({
             message: "Couldn't get dashboard summary",
-            error: error.message
         });
 
     }

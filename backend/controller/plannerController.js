@@ -1,5 +1,9 @@
 const Planner = require("../model/moneyPlanModel")
 const Transaction = require("../model/transactionsModel")
+const { isValidAmount } = require("../utils/validation")
+
+// Note: 500 responses only send a generic message. The real error is logged
+// with console.error on the server, so database details never reach the browser.
 
 // =====================================================
 // CREATE MONTHLY PLANNER
@@ -19,6 +23,13 @@ const createPlan = async (req, res) => {
         if (!name || !startDate || totalBudget === undefined) {
             return res.status(400).json({
                 message: "Name, start date and total budget are required"
+            });
+        }
+
+        // Total budget must be a positive number (no negatives, zero or text)
+        if (!isValidAmount(totalBudget)) {
+            return res.status(400).json({
+                message: "Total budget must be a positive number"
             });
         }
 
@@ -143,11 +154,10 @@ const createPlan = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
         res.status(500).json({
             message: "Couldn't create planner",
-            error: error.message
         });
 
     }
@@ -169,9 +179,9 @@ const getPlans = async(req, res) => {
         res.status(200).json(plans)
 
     } catch(error) {
+        console.error(error);
         res.status(500).json({
             message : "Couldn't get plans",
-            error : error.message
         })
     }
 };
@@ -194,9 +204,9 @@ const getPlan = async(req, res) => {
         res.status(200).json(plan)
 
     } catch(error){
+        console.error(error);
         res.status(500).json({
             message : "Couldn'y get the plan",
-            error : error.message
         })
     }
 };
@@ -237,6 +247,12 @@ const updatePlan = async (req, res) => {
 
 
         if (totalBudget !== undefined) {
+            // Same rule as when creating a planner
+            if (!isValidAmount(totalBudget)) {
+                return res.status(400).json({
+                    message: "Total budget must be a positive number"
+                });
+            }
             planner.totalBudget = Number(totalBudget);
         }
 
@@ -257,11 +273,10 @@ const updatePlan = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
         res.status(500).json({
             message: "Couldn't update planner",
-            error: error.message
         });
 
     }
@@ -308,11 +323,10 @@ const deletePlan = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
         res.status(500).json({
             message: "Couldn't delete planner",
-            error: error.message
         });
 
     }
@@ -442,11 +456,10 @@ const updateWeekBudget = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
         res.status(500).json({
             message: "Couldn't update weekly budget",
-            error: error.message
         });
 
     }
@@ -551,11 +564,10 @@ const getPlanSummary = async (req, res) => {
 
     } catch (error) {
 
-        console.log(error);
+        console.error(error);
 
         res.status(500).json({
             message: "Couldn't get planner summary",
-            error: error.message
         });
 
     }
