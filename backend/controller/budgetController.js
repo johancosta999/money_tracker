@@ -1,10 +1,14 @@
 const Budget = require("../model/budgetModel")
 const { isValidAmount } = require("../utils/validation")
 
+// Note: 500 responses only send a generic message. The real error is logged
+// with console.error on the server, so database details never reach the browser.
+
 const createBudget = async(req, res) => {
     try {
         const { title, amount, duration } = req.body;
 
+        // Budgets must be a positive number
         if (!isValidAmount(amount)) {
             return res.status(400).json({ message: "Amount must be a positive number" });
         }
@@ -78,7 +82,9 @@ const updateBudget = async(req, res) => {
     try {
         const { id } = req.params;
 
-        // Only these fields are editable; userId must never change
+        // Only these fields are editable; userId must never change.
+        // Passing req.body straight to the update would let a user send
+        // { userId: "<someone else>" } and move the budget to another account.
         const updates = {};
         ["title", "amount", "duration"].forEach((key) => {
             if (req.body[key] !== undefined) updates[key] = req.body[key];

@@ -1,5 +1,8 @@
 const Category = require("../model/categoryModel")
 
+// Note: 500 responses only send a generic message. The real error is logged
+// with console.error on the server, so database details never reach the browser.
+
 const createCategory = async(req, res) => {
     try{
         const { title } = req.body;

@@ -7,6 +7,7 @@ const Category = require('../model/categoryModel')
 const bcrypt = require('bcryptjs')
 const { isValidEmail, isValidPassword, PASSWORD_RULE } = require('../utils/validation')
 
+// Only the safe fields that are OK to send back to the browser (never the password hash)
 const toPublicUser = (user) => ({
     id: user._id,
     _id: user._id,
@@ -15,17 +16,24 @@ const toPublicUser = (user) => ({
     age: user.age
 });
 
-// Users can only ever act on their own account
+// Users can only ever act on their own account.
+// req.userId comes from the verified JWT, so it can't be faked like the URL id can.
 const isOwnAccount = (req) => req.params.id === String(req.userId);
 
+// PUT /api/users/:id
+// Only userName, email and password can be changed. Anything else in the body
+// (e.g. _id, age, extra fields) is ignored, so users can't edit fields they shouldn't.
 const updateUser = async(req, res, next) => {
     try {
+        // Block editing someone else's profile
         if (!isOwnAccount(req)) {
             return res.status(403).json({
                 message: "You can only update your own profile"
             });
         }
 
+        // The password is hidden by default (select: false in the model),
+        // so ask for it explicitly to check the current password below
         const user = await User.findById(req.userId).select("+password");
 
         if(!user) {
@@ -36,6 +44,7 @@ const updateUser = async(req, res, next) => {
 
         const { userName, email, password, currentPassword } = req.body;
 
+        // String() guards against objects being sent instead of text
         if (userName !== undefined) {
             const trimmed = String(userName).trim();
             if (!trimmed) {
@@ -44,10 +53,12 @@ const updateUser = async(req, res, next) => {
             user.userName = trimmed;
         }
 
+        // Emails are stored lowercase, so compare the same way
         const emailChanged = email !== undefined
             && String(email).trim().toLowerCase() !== user.email;
 
-        // Changing login credentials needs the current password
+        // Changing login credentials needs the current password, so someone
+        // using a stolen token or an unlocked phone can't take over the account
         if (emailChanged || password) {
             const isCorrect = await bcrypt.compare(String(currentPassword || ""), user.password);
             if (!isCorrect) {
@@ -62,12 +73,14 @@ const updateUser = async(req, res, next) => {
             if (!isValidEmail(normalized)) {
                 return res.status(400).json({ message: "Please enter a valid email address" });
             }
+            // Don't allow switching to an email another account already uses
             if (await User.exists({ email: normalized })) {
                 return res.status(400).json({ message: "That email is already in use" });
             }
             user.email = normalized;
         }
 
+        // New passwords must follow the same rules as sign-up, and are always stored hashed
         if (password) {
             if (!isValidPassword(password)) {
                 return res.status(400).json({ message: PASSWORD_RULE });
@@ -80,12 +93,16 @@ const updateUser = async(req, res, next) => {
         res.status(200).json(toPublicUser(user));
 
     } catch (error) {
+        // Unexpected errors go to the central error handler in app.js
         next(error);
     };
 };
 
+// DELETE /api/users/:id   body: { password }
+// Deletes the user's own account and all of their data.
 const deleteUser = async(req, res, next) => {
     try {
+        // Block deleting someone else's account
         if (!isOwnAccount(req)) {
             return res.status(403).json({
                 message: "You can only delete your own account"
@@ -100,6 +117,7 @@ const deleteUser = async(req, res, next) => {
             });
         }
 
+        // Confirm with the password so an account can't be deleted by accident or with a stolen token
         const isCorrect = await bcrypt.compare(String(req.body?.password || ""), user.password);
         if (!isCorrect) {
             return res.status(400).json({
@@ -107,7 +125,9 @@ const deleteUser = async(req, res, next) => {
             });
         }
 
-        // Remove everything the user owns before the account itself
+        // Remove everything the user owns before the account itself,
+        // so no orphaned financial data is left in the database.
+        // Default categories are shared by everyone, so only custom ones are removed.
         await Promise.all([
             Transaction.deleteMany({ user: user._id }),
             Planner.deleteMany({ userId: user._id }),
@@ -123,6 +143,7 @@ const deleteUser = async(req, res, next) => {
         });
 
     } catch (error){
+        // Unexpected errors go to the central error handler in app.js
         next(error);
     };
 }

@@ -10,6 +10,7 @@ const protect = async(req, res, next) => {
             })
         }
 
+        // Header must look exactly like "Bearer <token>"
         const [scheme, token] = authHeader.split(" ");
 
         if(scheme !== "Bearer" || !token) {
@@ -28,6 +29,7 @@ const protect = async(req, res, next) => {
         next()
 
     } catch (error) {
+        // Don't send error.message: it reveals why the token failed (expired, bad signature, etc.)
         return res.status(401).json({
             message : "Invalid token or expired authorization"
         })

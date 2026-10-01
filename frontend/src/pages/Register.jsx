@@ -165,6 +165,7 @@ function Register() {
                             onChange={(e) =>
                                 setAge(e.target.value)
                             }
+                            // Same age range the backend accepts
                             min="1"
                             max="120"
                             required
@@ -186,7 +187,9 @@ function Register() {
                             onChange={(e) =>
                                 setPassword(e.target.value)
                             }
+                            // Matches the backend's 8-character password rule
                             minLength="8"
+                            // Lets phones/browsers suggest a strong password
                             autoComplete="new-password"
                             required
                         />

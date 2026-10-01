@@ -5,11 +5,15 @@ const { isValidEmail, isValidPassword, PASSWORD_RULE } = require("../utils/valid
 
 const register = async(req, res, next) => {
     try {
+        // Force inputs into plain strings/numbers. This blocks NoSQL injection,
+        // e.g. sending { "$ne": null } as the email to match any user.
+        // Emails are lowercased so "Alice@X.com" and "alice@x.com" are the same account.
         const userName = String(req.body.userName ?? "").trim();
         const email = String(req.body.email ?? "").trim().toLowerCase();
         const password = req.body.password;
         const age = Number(req.body.age);
 
+        // Validate everything on the server too; the browser form can be bypassed
         if (!userName) {
             return res.status(400).json({ message: "Username is required" });
         }
@@ -58,16 +62,19 @@ const register = async(req, res, next) => {
         });
 
     } catch (error){
+        // Unexpected errors go to the central error handler in app.js
         next(error);
     }
 };
 
 const login = async(req, res, next) => {
     try{
+        // Same as register: plain strings only (blocks NoSQL injection), lowercase email
         const email = String(req.body.email ?? "").trim().toLowerCase();
         const password = String(req.body.password ?? "");
 
-        // Find user
+        // Find user. The password hash is hidden by default (select: false
+        // in the model), so it has to be requested here to compare it.
         const user = await User.findOne({ email }).select("+password");
 
         if (!user) {
@@ -88,7 +95,8 @@ const login = async(req, res, next) => {
             });
         }
 
-        // Create JWT
+        // Create JWT. Lasts 30 days so people using the installed
+        // phone app don't have to log in again every day.
         const token = jwt.sign(
             {
                 userId: user._id
@@ -110,12 +118,14 @@ const login = async(req, res, next) => {
             }
         });
     } catch(error) {
+        // Unexpected errors go to the central error handler in app.js
         next(error);
     }
 }
 
 const getMe = async(req, res, next) => {
     try {
+        // No .select("-password") needed: the model hides the password by default
         const user = await User.findById(req.userId).lean();
 
         if(!user){
@@ -129,6 +139,7 @@ const getMe = async(req, res, next) => {
         });
 
     } catch (error) {
+        // Unexpected errors go to the central error handler in app.js
         next(error);
     }
 

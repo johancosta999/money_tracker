@@ -17,7 +17,8 @@ function Profile() {
     currentPassword: ""
   });
 
-  // Changing login credentials needs the current password
+  // Changing login credentials needs the current password (the backend enforces this too).
+  // True when a new password is typed or the email differs from the saved one.
   const needsCurrentPassword =
     Boolean(form.password) || form.email.trim().toLowerCase() !== (user?.email || "");
 
@@ -42,12 +43,14 @@ function Profile() {
 
     const updates = { userName: form.userName.trim(), email: form.email.trim() };
     if (form.password) updates.password = form.password;
+    // Only send the current password when the backend actually needs it
     if (needsCurrentPassword) updates.currentPassword = form.currentPassword;
 
     try {
       const { data } = await api.put(`/users/${user.id || user._id}`, updates);
       const updatedUser = { ...user, id: data._id || user.id, userName: data.userName, email: data.email };
       login(updatedUser, localStorage.getItem("token"));
+      // Clear both password fields after saving so they aren't left in the form
       setForm((current) => ({ ...current, password: "", currentPassword: "" }));
       setSuccess("Your profile has been updated.");
       setIsEditing(false);
@@ -92,6 +95,7 @@ function Profile() {
                 <label htmlFor="password">Password</label>
                 {isEditing ? <input id="password" name="password" type="password" value={form.password} onChange={handleChange} placeholder="Leave blank to keep current password" autoComplete="new-password" minLength="8" /> : <p className="profile-value profile-password" aria-label="Password hidden">••••••••</p>}
               </div>
+              {/* Only shown while changing email or password; minLength 8 above matches the backend rule */}
               {isEditing && needsCurrentPassword && (
                 <div className="profile-field">
                   <label htmlFor="currentPassword">Current password</label>

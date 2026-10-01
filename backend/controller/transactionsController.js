@@ -2,6 +2,9 @@ const Transaction = require("../model/transactionsModel");
 const Planner = require("../model/moneyPlanModel")
 const { isValidAmount } = require("../utils/validation")
 
+// Note: 500 responses only send a generic message. The real error is logged
+// with console.error on the server, so database details never reach the browser.
+
 // =====================================================
 // CREATE TRANSACTION
 // =====================================================
@@ -39,6 +42,7 @@ const createTransaction = async (req, res) => {
 
         }
 
+        // Amount must be a positive number; the type (income/expense) gives the direction
         if (!isValidAmount(amount)) {
             return res.status(400).json({
                 message: "Amount must be a positive number"
@@ -377,6 +381,7 @@ const updateTransaction = async (req, res) => {
         }
 
         if (amount !== undefined) {
+            // Same rule as when creating a transaction
             if (!isValidAmount(amount)) {
                 return res.status(400).json({
                     message: "Amount must be a positive number"

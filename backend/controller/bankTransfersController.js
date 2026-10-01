@@ -1,5 +1,8 @@
 const bankTransfer = require('../model/bankTransfersModel')
 
+// Note: 500 responses only send a generic message. The real error is logged
+// with console.error on the server, so database details never reach the browser.
+
 // Fields a user is allowed to set on a bank transaction
 const pickEditableFields = (body) => {
     const fields = {};

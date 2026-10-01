@@ -2,6 +2,9 @@ const Planner = require("../model/moneyPlanModel")
 const Transaction = require("../model/transactionsModel")
 const { isValidAmount } = require("../utils/validation")
 
+// Note: 500 responses only send a generic message. The real error is logged
+// with console.error on the server, so database details never reach the browser.
+
 // =====================================================
 // CREATE MONTHLY PLANNER
 // =====================================================
@@ -23,6 +26,7 @@ const createPlan = async (req, res) => {
             });
         }
 
+        // Total budget must be a positive number (no negatives, zero or text)
         if (!isValidAmount(totalBudget)) {
             return res.status(400).json({
                 message: "Total budget must be a positive number"
@@ -243,6 +247,7 @@ const updatePlan = async (req, res) => {
 
 
         if (totalBudget !== undefined) {
+            // Same rule as when creating a planner
             if (!isValidAmount(totalBudget)) {
                 return res.status(400).json({
                     message: "Total budget must be a positive number"
