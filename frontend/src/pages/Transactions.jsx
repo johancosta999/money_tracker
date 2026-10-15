@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api, { getErrorMessage } from "../services/api";
+import FilterSelect from "../components/FilterSelect";
+import { SORT_OPTIONS, getCategoryOptions, filterAndSortTransactions } from "../utils/transactionFilters";
 import "./dashboard.css";
 
 function Transactions() {
@@ -8,6 +10,8 @@ function Transactions() {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [category, setCategory] = useState("all");
+    const [sort, setSort] = useState("newest");
 
     useEffect(() => {
         const fetchTransactions = async () => {
@@ -24,6 +28,8 @@ function Transactions() {
 
         fetchTransactions();
     }, [navigate]);
+
+    const visibleTransactions = filterAndSortTransactions(transactions, category, sort);
 
     const formatCurrency = (value) =>
         `Rs. ${Number(value || 0).toLocaleString()}`;
@@ -68,6 +74,25 @@ function Transactions() {
                     <h2>Transactions</h2>
                 </div>
 
+                {transactions.length > 0 && (
+                    <div className="filter-bar">
+                        <FilterSelect
+                            id="categoryFilter"
+                            label="Category"
+                            value={category}
+                            onChange={setCategory}
+                            options={getCategoryOptions(transactions)}
+                        />
+                        <FilterSelect
+                            id="sortOrder"
+                            label="Sort by"
+                            value={sort}
+                            onChange={setSort}
+                            options={SORT_OPTIONS}
+                        />
+                    </div>
+                )}
+
                 {loading ? (
                     <div className="planner-loading">Loading your transactions...</div>
                 ) : transactions.length === 0 ? (
@@ -76,9 +101,11 @@ function Transactions() {
                         <h3>No transactions yet</h3>
                         <p>Your spending and income will show up here.</p>
                     </div>
+                ) : visibleTransactions.length === 0 ? (
+                    <div className="filter-empty">No transactions in this category.</div>
                 ) : (
                     <div className="recent-transactions">
-                        {transactions.map((transaction) => (
+                        {visibleTransactions.map((transaction) => (
                             <div className="recent-transaction" key={transaction._id}>
                                 <div className="transaction-left">
                                     <div className="transaction-icon">

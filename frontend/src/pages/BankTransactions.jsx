@@ -2,7 +2,17 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api, { getErrorMessage } from "../services/api";
 
+import FilterSelect from "../components/FilterSelect";
+
 import "./dashboard.css";
+
+// Values match the bank transaction "type" (compared in lowercase)
+const BANK_TYPE_OPTIONS = [
+  { value: "all", label: "All types" },
+  { value: "deposit", label: "Deposits" },
+  { value: "transfer", label: "Transfers" },
+  { value: "withdraw", label: "Withdrawals" },
+];
 
 function BankTransactions() {
   const navigate = useNavigate();
@@ -12,6 +22,8 @@ function BankTransactions() {
   const [loading, setLoading] = useState(true);
 
   const [error, setError] = useState("");
+
+  const [typeFilter, setTypeFilter] = useState("all");
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -28,6 +40,13 @@ function BankTransactions() {
 
     fetchTransactions();
   }, [navigate]);
+
+  const visibleTransactions =
+    typeFilter === "all"
+      ? transactions
+      : transactions.filter(
+          (transaction) => transaction.type?.toLowerCase() === typeFilter,
+        );
 
   const formatCurrency = (value) => {
     return `Rs. ${Number(value || 0).toLocaleString()}`;
@@ -77,6 +96,18 @@ function BankTransactions() {
           <h2>Bank Transactions</h2>
         </div>
 
+        {transactions.length > 0 && (
+          <div className="filter-bar">
+            <FilterSelect
+              id="bankTypeFilter"
+              label="Type"
+              value={typeFilter}
+              onChange={setTypeFilter}
+              options={BANK_TYPE_OPTIONS}
+            />
+          </div>
+        )}
+
         {loading ? (
           <div className="planner-loading">Loading bank transactions...</div>
         ) : transactions.length === 0 ? (
@@ -87,9 +118,11 @@ function BankTransactions() {
 
             <p>Your bank transactions will appear here.</p>
           </div>
+        ) : visibleTransactions.length === 0 ? (
+          <div className="filter-empty">No bank transactions of this type.</div>
         ) : (
           <div className="recent-transactions">
-            {transactions.map((transaction) => {
+            {visibleTransactions.map((transaction) => {
               const transactionType = transaction.type?.toLowerCase();
               const isDeposit = transactionType === "deposit";
               const isTransfer = transactionType === "transfer";
