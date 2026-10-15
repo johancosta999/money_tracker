@@ -48,29 +48,7 @@ const createPlan = async (req, res) => {
         end.setDate(end.getDate() + 30);
 
 
-        // =============================================
-        // CHECK FOR OVERLAPPING PLANNERS
-        // =============================================
-
-        const overlappingPlanner = await Planner.findOne({
-            userId: req.userId,
-
-            startDate: {
-                $lt: end
-            },
-
-            endDate: {
-                $gt: start
-            }
-        });
-
-        if (overlappingPlanner) {
-
-            return res.status(400).json({
-                message: "This planner overlaps with an existing planner"
-            });
-
-        }
+        // Overlapping planners are allowed; the frontend warns the user instead.
 
 
         // =============================================

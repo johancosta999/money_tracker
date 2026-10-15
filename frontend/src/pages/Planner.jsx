@@ -224,6 +224,34 @@ function Planner() {
     };
 
     // =====================================================
+    // OVERLAPPING PLANNERS (warning only, does not block)
+    // =====================================================
+
+    const getOverlappingPlans = () => {
+        if (!formData.startDate) {
+            return [];
+        }
+
+        const newStart = new Date(formData.startDate);
+
+        if (isNaN(newStart.getTime())) {
+            return [];
+        }
+
+        // Same 30-day period the backend uses
+        const newEnd = new Date(newStart);
+        newEnd.setDate(newEnd.getDate() + 30);
+
+        return plans.filter(
+            (plan) =>
+                new Date(plan.startDate) < newEnd &&
+                new Date(plan.endDate) > newStart
+        );
+    };
+
+    const overlappingPlans = getOverlappingPlans();
+
+    // =====================================================
     // LOADING
     // =====================================================
 
@@ -433,6 +461,25 @@ function Planner() {
                             </div>
 
                         </div>
+
+                        {/* Overlap Warning */}
+
+                        {overlappingPlans.length > 0 && (
+                            <p className="overlap-warning">
+                                {overlappingPlans.length === 1
+                                    ? "⚠ A planner already exists for this time period"
+                                    : `⚠ ${overlappingPlans.length} planners already exist for this time period`
+                                }
+                                {" ("}
+                                {overlappingPlans
+                                    .map(
+                                        (plan) =>
+                                            `${plan.name}: ${formatDate(plan.startDate)} → ${formatDate(plan.endDate)}`
+                                    )
+                                    .join(", ")}
+                                {"). You can still create this planner."}
+                            </p>
+                        )}
 
                         {/* Total Budget */}
 
