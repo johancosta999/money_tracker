@@ -924,3 +924,120 @@
 @media (max-width: 600px) {
     .filter-select { flex: 1 1 100%; }
 }
+
+/* =========================
+   TRANSACTION DETAILS POP-UP
+========================= */
+
+.clickable-transaction {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.clickable-transaction:hover {
+    transform: translateY(-2px);
+}
+
+.clickable-transaction:focus-visible {
+    outline: 2px solid rgba(77, 153, 102, 0.45);
+    outline-offset: 3px;
+}
+
+.details-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: rgba(41, 45, 50, 0.35);
+}
+
+.details-card {
+    position: relative;
+    width: min(100%, 460px);
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 32px;
+    border-radius: 24px;
+    color: #292d32;
+    background: #e8e9ed;
+    box-shadow: 18px 18px 35px rgba(41, 45, 50, 0.25);
+}
+
+.details-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 12px;
+    color: #6f747b;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    background: #e8e9ed;
+    box-shadow:
+        5px 5px 10px rgba(163, 165, 170, 0.5),
+        -5px -5px 10px rgba(255, 255, 255, 0.9);
+}
+
+.details-eyebrow {
+    margin-bottom: 6px;
+    color: #6e9c7d;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.8px;
+}
+
+.details-card h2 {
+    padding-right: 44px;
+    font-size: 22px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.details-amount {
+    display: block;
+    margin: 14px 0 22px;
+    font-size: 28px;
+}
+
+.details-list {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+}
+
+.details-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    box-shadow:
+        inset 3px 3px 7px rgba(163, 165, 170, 0.3),
+        inset -3px -3px 7px rgba(255, 255, 255, 0.7);
+}
+
+.details-row dt {
+    flex-shrink: 0;
+    color: #858a91;
+    font-size: 13px;
+}
+
+.details-row dd {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+    .details-card { padding: 24px 20px; }
+    .details-row { flex-direction: column; gap: 4px; }
+    .details-row dd { text-align: left; }
+}

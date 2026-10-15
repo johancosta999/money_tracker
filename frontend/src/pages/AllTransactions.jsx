@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import api, { getErrorMessage } from "../services/api";
 import FilterSelect from "../components/FilterSelect";
 import { SORT_OPTIONS, getCategoryOptions, filterAndSortTransactions } from "../utils/transactionFilters";
+import TransactionDetailsModal from "../components/TransactionDetailsModal";
+import { getTransactionDetails } from "../utils/transactionDetails";
 import "./dashboard.css";
 
 function Transactions() {
@@ -12,6 +14,7 @@ function Transactions() {
     const [error, setError] = useState("");
     const [category, setCategory] = useState("all");
     const [sort, setSort] = useState("newest");
+    const [selectedTransaction, setSelectedTransaction] = useState(null);
 
     useEffect(() => {
         const fetchTransactions = async () => {
@@ -100,7 +103,19 @@ function Transactions() {
                 ) : (
                     <div className="recent-transactions">
                         {visibleTransactions.map((transaction) => (
-                            <div className="recent-transaction" key={transaction._id}>
+                            <div
+                                className="recent-transaction clickable-transaction"
+                                key={transaction._id}
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => setSelectedTransaction(transaction)}
+                                onKeyDown={(event) => {
+                                    if (event.key === "Enter" || event.key === " ") {
+                                        event.preventDefault();
+                                        setSelectedTransaction(transaction);
+                                    }
+                                }}
+                            >
                                 <div className="transaction-left">
                                     <div className="transaction-icon">
                                         {transaction.type === "income" ? "↑" : "↓"}
@@ -125,6 +140,13 @@ function Transactions() {
                     </div>
                 )}
             </section>
+
+            {selectedTransaction && (
+                <TransactionDetailsModal
+                    {...getTransactionDetails(selectedTransaction)}
+                    onClose={() => setSelectedTransaction(null)}
+                />
+            )}
         </div>
     );
 }

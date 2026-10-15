@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import api, { getErrorMessage } from "../services/api";
 
 import FilterSelect from "../components/FilterSelect";
+import TransactionDetailsModal from "../components/TransactionDetailsModal";
+import { formatFullDate, formatDateTime, getEditedAt } from "../utils/transactionDetails";
 
 import "./dashboard.css";
 
@@ -24,6 +26,8 @@ function BankTransactions() {
   const [error, setError] = useState("");
 
   const [typeFilter, setTypeFilter] = useState("all");
+
+  const [selectedDetails, setSelectedDetails] = useState(null);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -144,8 +148,37 @@ function BankTransactions() {
                   : "Cash in hand";
               const amountSign = affectsBalance ? (isDeposit ? "+" : "−") : "";
 
+              const openDetails = () =>
+                setSelectedDetails({
+                  eyebrow: `BANK ${transactionLabel.toUpperCase()}`,
+                  title: transaction.description || "Bank Transaction",
+                  amount: `${amountSign}${formatCurrency(transaction.amount)}`,
+                  amountClass: transactionClass,
+                  rows: [
+                    { label: "Type", value: transactionLabel },
+                    { label: "Money", value: sourceLabel },
+                    { label: "Affects balance", value: affectsBalance ? "Yes" : "No" },
+                    { label: "Date", value: formatFullDate(transaction.date || transaction.createdAt) },
+                    { label: "Description", value: transaction.description },
+                    { label: "Added on", value: formatDateTime(transaction.createdAt) },
+                    { label: "Last edited", value: getEditedAt(transaction) },
+                  ],
+                });
+
               return (
-                <div className="recent-transaction bank-transaction" key={transaction._id}>
+                <div
+                  className="recent-transaction bank-transaction clickable-transaction"
+                  key={transaction._id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={openDetails}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      openDetails();
+                    }
+                  }}
+                >
                   <div className="transaction-left">
                     <div className={`transaction-icon ${isDeposit ? "income-icon" : isTransfer ? "transfer-icon" : "expense-icon"}`}>
                       {isDeposit ? "↑" : isTransfer ? "→" : "↓"}
@@ -176,6 +209,13 @@ function BankTransactions() {
           </div>
         )}
       </section>
+
+      {selectedDetails && (
+        <TransactionDetailsModal
+          {...selectedDetails}
+          onClose={() => setSelectedDetails(null)}
+        />
+      )}
     </div>
   );
 }
