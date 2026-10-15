@@ -1,5 +1,6 @@
 const Transaction = require("../model/transactionsModel");
 const BankTransfer = require("../model/bankTransfersModel");
+const User = require("../model/userModel");
 
 // Note: 500 responses only send a generic message. The real error is logged
 // with console.error on the server, so database details never reach the browser.
@@ -7,9 +8,17 @@ const BankTransfer = require("../model/bankTransfersModel");
 const getDashboardSummary = async (req, res) => {
     try {
 
+        // If the user reset their totals, only count what was added after the reset.
+        // Older transactions still exist, they just aren't part of the totals.
+        const user = await User.findById(req.userId).select("totalsResetAt");
+        const totalsResetAt = user?.totalsResetAt || null;
+        const afterReset = totalsResetAt
+            ? { createdAt: { $gt: totalsResetAt } }
+            : {};
+
         const [transactions, bankTransactions] = await Promise.all([
-            Transaction.find({ user: req.userId }),
-            BankTransfer.find({ userId: req.userId })
+            Transaction.find({ user: req.userId, ...afterReset }),
+            BankTransfer.find({ userId: req.userId, ...afterReset })
         ]);
 
         let totalIncome = 0;
@@ -61,7 +70,8 @@ const getDashboardSummary = async (req, res) => {
             bankIn,
             bankOut,
             bankNet,
-            balance
+            balance,
+            totalsResetAt
         });
 
     } catch (error) {

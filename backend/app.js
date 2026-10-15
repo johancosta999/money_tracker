@@ -79,6 +79,8 @@ const authLimiter = rateLimit({
 app.use("/api", apiLimiter);
 app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/register", authLimiter);
+// Resetting totals checks the password, so limit guessing there too
+app.use("/api/users/:id/reset-totals", authLimiter);
 
 app.use("/api/auth", require("./route/authRoute"));
 app.use("/api/users", require("./route/userRoute"));

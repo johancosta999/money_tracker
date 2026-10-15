@@ -148,4 +148,48 @@ const deleteUser = async(req, res, next) => {
     };
 }
 
-module.exports = { updateUser, deleteUser }
+// POST /api/users/:id/reset-totals   body: { email, password }
+// Sets the dashboard totals (income, expense, bank) back to zero.
+// No transactions are deleted: the dashboard just stops counting anything created before now.
+const resetTotals = async(req, res, next) => {
+    try {
+        if (!isOwnAccount(req)) {
+            return res.status(403).json({
+                message: "You can only reset your own totals"
+            });
+        }
+
+        const user = await User.findById(req.userId).select("+password");
+
+        if(!user) {
+            return res.status(404).json({
+                message : "User not found"
+            });
+        }
+
+        // Confirm with email + password so totals can't be reset by accident or with a stolen token.
+        // One generic message, so it doesn't reveal which of the two was wrong.
+        const emailMatches = String(req.body?.email || "").trim().toLowerCase() === user.email;
+        const passwordMatches = await bcrypt.compare(String(req.body?.password || ""), user.password);
+
+        if (!emailMatches || !passwordMatches) {
+            return res.status(400).json({
+                message: "Email or password is incorrect"
+            });
+        }
+
+        user.totalsResetAt = new Date();
+        await user.save();
+
+        res.status(200).json({
+            message: "Totals reset to zero",
+            totalsResetAt: user.totalsResetAt
+        });
+
+    } catch (error) {
+        // Unexpected errors go to the central error handler in app.js
+        next(error);
+    };
+};
+
+module.exports = { updateUser, deleteUser, resetTotals }

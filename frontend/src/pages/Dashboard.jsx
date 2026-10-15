@@ -72,10 +72,10 @@ function Dashboard() {
           <button
             className="dashboard-action"
             onClick={() => {
-              navigate("/profile");
+              navigate("/settings");
             }}
           >
-            ⚙ Profile
+            ⚙ Settings
           </button>
 
           <button className="dashboard-action" onClick={handleLogout}>

@@ -3,7 +3,7 @@ const protect = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-const { updateUser, deleteUser } = require("../controller/userController");
+const { updateUser, deleteUser, resetTotals } = require("../controller/userController");
 
 // The old "list all users" and "get user by id" routes were removed: they let any
 // logged-in user see every account's email, age and password hash.
@@ -12,5 +12,6 @@ const { updateUser, deleteUser } = require("../controller/userController");
 router.use(protect);
 router.put("/:id", updateUser);
 router.delete("/:id", deleteUser);
+router.post("/:id/reset-totals", resetTotals);
 
 module.exports = router;

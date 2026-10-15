@@ -26,4 +26,17 @@
 .profile-button:disabled { cursor: wait; opacity: 0.65; }
 .profile-button-primary { color: #34784d; }
 .profile-button-secondary { color: #6f747b; }
-@media (max-width: 600px) { .profile-page { padding: 25px 18px; } .profile-card { padding: 30px 22px; border-radius: 22px; } .profile-heading { align-items: flex-start; gap: 15px; margin-bottom: 30px; } .profile-avatar { width: 58px; height: 58px; border-radius: 18px; font-size: 23px; } .profile-heading h1 { font-size: 25px; } .profile-subtitle { line-height: 1.5; } .profile-fields { grid-template-columns: 1fr; gap: 20px; } .profile-field:last-child { grid-column: auto; } .profile-actions { flex-direction: column-reverse; } .profile-button { width: 100%; } }
+@media (max-width: 600px) { .profile-page { padding: 25px 18px; } .profile-card { padding: 30px 22px; border-radius: 22px; } .profile-heading { align-items: flex-start; gap: 15px; margin-bottom: 30px; } .profile-avatar { width: 58px; height: 58px; border-radius: 18px; font-size: 23px; } .profile-heading h1 { font-size: 25px; } .profile-subtitle { line-height: 1.5; } .profile-fields { grid-template-columns: 1fr; gap: 20px; } .profile-field:last-child { grid-column: auto; } .profile-actions { flex-direction: column-reverse; } .profile-button { width: 100%; } }.reset-card { margin-top: 32px; }
+.reset-card h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; }
+.reset-eyebrow { color: #b0605f; }
+.reset-message { margin: 18px 0 0; }
+.reset-button { color: #b0605f; }
+.reset-overlay { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; background: rgba(41, 45, 50, 0.35); }
+.reset-dialog { width: min(100%, 440px); box-sizing: border-box; padding: 32px; border-radius: 24px; background: #e8e9ed; box-shadow: 18px 18px 35px rgba(41, 45, 50, 0.25); }
+.reset-dialog h2 { font-size: 22px; font-weight: 600; }
+.reset-dialog .profile-subtitle { margin-bottom: 20px; }
+.reset-dialog .profile-actions { margin-top: 24px; }
+.reset-field { margin-bottom: 16px; }
+.reset-field label { display: block; margin-bottom: 9px; color: #555a61; font-size: 13px; font-weight: 600; }
+.reset-field input { width: 100%; box-sizing: border-box; padding: 15px 16px; border: none; outline: none; border-radius: 14px; color: #292d32; font: inherit; font-size: 14px; background: #e8e9ed; box-shadow: inset 5px 5px 10px rgba(163, 165, 170, 0.5), inset -5px -5px 10px rgba(255, 255, 255, 0.9); }
+@media (max-width: 600px) { .reset-dialog { padding: 24px 20px; } .reset-dialog .profile-actions { flex-direction: column-reverse; } }

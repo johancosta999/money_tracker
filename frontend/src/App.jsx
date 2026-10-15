@@ -75,8 +75,14 @@ function App() {
                 />
 
                 <Route
-                    path="/profile"
+                    path="/settings"
                     element={<ProtectedRoute><Profile /></ProtectedRoute>}
+                />
+
+                {/* Old link: the Profile page is now called Settings */}
+                <Route
+                    path="/profile"
+                    element={<Navigate to="/settings" replace />}
                 />
 
                 <Route

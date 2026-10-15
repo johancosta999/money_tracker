@@ -28,6 +28,14 @@ const userSchema = new mongoose.Schema(
         age: {
             type: Number,
             required: true,
+        },
+
+        // When the user last reset their dashboard totals to zero.
+        // Dashboard totals only count transactions created after this time;
+        // older transactions are kept, just not added up.
+        totalsResetAt: {
+            type: Date,
+            default: null
         }
     },
 

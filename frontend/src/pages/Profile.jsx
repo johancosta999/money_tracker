@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import useAuth from "../context/useAuth";
-import api from "../services/api";
+import api, { getErrorMessage } from "../services/api";
 import "./Profile.css";
 
 function Profile() {
@@ -16,6 +16,12 @@ function Profile() {
     password: "",
     currentPassword: ""
   });
+
+  const [showResetBox, setShowResetBox] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
+  const [resetError, setResetError] = useState("");
+  const [resetSuccess, setResetSuccess] = useState("");
+  const [resetForm, setResetForm] = useState({ email: "", password: "" });
 
   // Changing login credentials needs the current password (the backend enforces this too).
   // True when a new password is typed or the email differs from the saved one.
@@ -61,6 +67,47 @@ function Profile() {
     }
   };
 
+  // ---------- Reset totals ----------
+
+  const openResetBox = () => {
+    setResetForm({ email: "", password: "" });
+    setResetError("");
+    setResetSuccess("");
+    setShowResetBox(true);
+  };
+
+  const closeResetBox = () => {
+    if (isResetting) return;
+    // Don't leave the password sitting in state after the box closes
+    setResetForm({ email: "", password: "" });
+    setShowResetBox(false);
+  };
+
+  const handleResetChange = (event) => {
+    setResetForm((current) => ({ ...current, [event.target.name]: event.target.value }));
+    setResetError("");
+  };
+
+  const handleReset = async (event) => {
+    event.preventDefault();
+    setResetError("");
+    setIsResetting(true);
+
+    try {
+      await api.post(`/users/${user.id || user._id}/reset-totals`, {
+        email: resetForm.email.trim(),
+        password: resetForm.password
+      });
+      setResetForm({ email: "", password: "" });
+      setShowResetBox(false);
+      setResetSuccess("Your totals have been reset to zero.");
+    } catch (requestError) {
+      setResetError(getErrorMessage(requestError, "We couldn't reset your totals. Please try again."));
+    } finally {
+      setIsResetting(false);
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -73,7 +120,7 @@ function Profile() {
             <div className="profile-avatar" aria-hidden="true">{(user.userName || "U").charAt(0).toUpperCase()}</div>
             <div>
               <p className="profile-eyebrow">ACCOUNT SETTINGS</p>
-              <h1 id="profile-title">Your profile</h1>
+              <h1 id="profile-title">Settings</h1>
               <p className="profile-subtitle">Keep your account details current and secure.</p>
             </div>
           </div>
@@ -112,7 +159,55 @@ function Profile() {
             </div>
           </form>
         </section>
+
+        {/* Reset totals: keeps every transaction, the dashboard just starts counting from zero again */}
+        <section className="profile-card reset-card" aria-labelledby="reset-title">
+          <p className="profile-eyebrow reset-eyebrow">DANGER ZONE</p>
+          <h2 id="reset-title">Reset totals</h2>
+          <p className="profile-subtitle">
+            Set your total income, total expense and bank totals on the dashboard back to zero.
+            Your transactions are kept, they just won't be counted in the totals anymore.
+          </p>
+
+          {resetSuccess && <div className="profile-message profile-message-success reset-message" role="status">{resetSuccess}</div>}
+
+          <div className="profile-actions">
+            <button type="button" className="profile-button reset-button" onClick={openResetBox}>Reset totals to zero</button>
+          </div>
+        </section>
       </div>
+
+      {showResetBox && (
+        <div className="reset-overlay" role="presentation" onClick={closeResetBox}>
+          <form
+            className="reset-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="reset-dialog-title"
+            onClick={(event) => event.stopPropagation()}
+            onSubmit={handleReset}
+          >
+            <h2 id="reset-dialog-title">Confirm reset</h2>
+            <p className="profile-subtitle">Enter your email and password to reset your totals to zero.</p>
+
+            {resetError && <div className="profile-message profile-message-error reset-message" role="alert">{resetError}</div>}
+
+            <div className="reset-field">
+              <label htmlFor="resetEmail">Email address</label>
+              <input id="resetEmail" name="email" type="email" value={resetForm.email} onChange={handleResetChange} autoComplete="email" required autoFocus />
+            </div>
+            <div className="reset-field">
+              <label htmlFor="resetPassword">Password</label>
+              <input id="resetPassword" name="password" type="password" value={resetForm.password} onChange={handleResetChange} autoComplete="current-password" required />
+            </div>
+
+            <div className="profile-actions">
+              <button type="button" className="profile-button profile-button-secondary" onClick={closeResetBox} disabled={isResetting}>Cancel</button>
+              <button type="submit" className="profile-button reset-button" disabled={isResetting}>{isResetting ? "Resetting..." : "Confirm reset"}</button>
+            </div>
+          </form>
+        </div>
+      )}
     </main>
   );
 }
