@@ -5,6 +5,7 @@ import api, { getErrorMessage } from "../services/api";
 import FilterSelect from "../components/FilterSelect";
 import TransactionDetailsModal from "../components/TransactionDetailsModal";
 import { formatFullDate, formatDateTime, getEditedAt } from "../utils/transactionDetails";
+import { getPlannerOptions, matchesPlanner } from "../utils/transactionFilters";
 
 import "./dashboard.css";
 
@@ -27,6 +28,8 @@ function BankTransactions() {
 
   const [typeFilter, setTypeFilter] = useState("all");
 
+  const [plannerFilter, setPlannerFilter] = useState("all");
+
   const [selectedDetails, setSelectedDetails] = useState(null);
 
   useEffect(() => {
@@ -45,12 +48,11 @@ function BankTransactions() {
     fetchTransactions();
   }, [navigate]);
 
-  const visibleTransactions =
-    typeFilter === "all"
-      ? transactions
-      : transactions.filter(
-          (transaction) => transaction.type?.toLowerCase() === typeFilter,
-        );
+  const visibleTransactions = transactions.filter(
+    (transaction) =>
+      (typeFilter === "all" || transaction.type?.toLowerCase() === typeFilter) &&
+      matchesPlanner(transaction, plannerFilter),
+  );
 
   const formatCurrency = (value) => {
     return `Rs. ${Number(value || 0).toLocaleString()}`;
@@ -109,6 +111,13 @@ function BankTransactions() {
               onChange={setTypeFilter}
               options={BANK_TYPE_OPTIONS}
             />
+            <FilterSelect
+              id="bankPlannerFilter"
+              label="Planner"
+              value={plannerFilter}
+              onChange={setPlannerFilter}
+              options={getPlannerOptions(transactions, true)}
+            />
           </div>
         )}
 
@@ -123,7 +132,7 @@ function BankTransactions() {
             <p>Your bank transactions will appear here.</p>
           </div>
         ) : visibleTransactions.length === 0 ? (
-          <div className="filter-empty">No bank transactions of this type.</div>
+          <div className="filter-empty">No bank transactions match these filters.</div>
         ) : (
           <div className="recent-transactions">
             {visibleTransactions.map((transaction) => {
@@ -158,6 +167,7 @@ function BankTransactions() {
                     { label: "Type", value: transactionLabel },
                     { label: "Money", value: sourceLabel },
                     { label: "Affects balance", value: affectsBalance ? "Yes" : "No" },
+                    { label: "Planner", value: transaction.plannerId?.name || "No planner" },
                     { label: "Date", value: formatFullDate(transaction.date || transaction.createdAt) },
                     { label: "Description", value: transaction.description },
                     { label: "Added on", value: formatDateTime(transaction.createdAt) },

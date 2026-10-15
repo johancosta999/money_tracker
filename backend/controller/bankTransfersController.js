@@ -1,4 +1,6 @@
+const mongoose = require('mongoose')
 const bankTransfer = require('../model/bankTransfersModel')
+const Planner = require('../model/moneyPlanModel')
 
 // Note: 500 responses only send a generic message. The real error is logged
 // with console.error on the server, so database details never reach the browser.
@@ -6,7 +8,7 @@ const bankTransfer = require('../model/bankTransfersModel')
 // Fields a user is allowed to set on a bank transaction
 const pickEditableFields = (body) => {
     const fields = {};
-    ['type', 'amount', 'description', 'external', 'date'].forEach((key) => {
+    ['type', 'amount', 'description', 'external', 'date', 'plannerId'].forEach((key) => {
         if (body[key] !== undefined) fields[key] = body[key];
     });
 
@@ -16,8 +18,34 @@ const pickEditableFields = (body) => {
     return fields;
 };
 
+// The planner is optional. Empty / null means "no planner".
+// Otherwise it must be one of the user's own planners, so nobody can link to someone else's.
+// Returns an error message, or null when the plannerId is OK.
+const checkPlanner = async (req) => {
+    const { plannerId } = req.body;
+
+    if (plannerId === undefined) return null;
+
+    if (plannerId === null || plannerId === '') {
+        req.body.plannerId = null;
+        return null;
+    }
+
+    if (!mongoose.isValidObjectId(plannerId)) {
+        return 'Selected planner not found';
+    }
+
+    const exists = await Planner.exists({ _id: plannerId, userId: req.userId });
+    return exists ? null : 'Selected planner not found';
+};
+
 const createBankTransfer = async(req, res) => {
     try{
+        const plannerError = await checkPlanner(req);
+        if (plannerError) {
+            return res.status(404).json({ message: plannerError });
+        }
+
         const newTransfer = new bankTransfer({
             ...pickEditableFields(req.body),
             userId : req.userId
@@ -38,9 +66,10 @@ const createBankTransfer = async(req, res) => {
 
 const getAllBankTransactions = async(req, res) => {
     try {
+        // Include the planner's name so the list can show and filter by it
         const bankTransaction = await bankTransfer.find({
             userId: req.userId
-        })
+        }).populate('plannerId', 'name')
 
         if(!bankTransaction) {
             return res.status(404).json({
@@ -88,6 +117,11 @@ const getBankTransaction = async(req, res) => {
 const updateBankTransaction = async(req, res) => {
     try{
         const { id } = req.params;
+
+        const plannerError = await checkPlanner(req);
+        if (plannerError) {
+            return res.status(404).json({ message: plannerError });
+        }
 
         const updateTransaction = await bankTransfer.findOneAndUpdate({
             _id:id,

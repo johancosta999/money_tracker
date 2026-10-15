@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api, { getErrorMessage } from "../services/api";
 import "./AddTransaction.css";
@@ -43,6 +43,39 @@ function AddBankTransaction() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  // Planner is optional for bank transactions ("" = no planner)
+  const [plannerOptions, setPlannerOptions] = useState([]);
+  const [selectedPlannerId, setSelectedPlannerId] = useState("");
+
+  useEffect(() => {
+    const ignore = { current: false };
+
+    const fetchPlanners = async () => {
+      try {
+        const { data } = await api.get("/plan");
+
+        if (ignore.current) return;
+
+        // Newest planner first
+        const sortedPlans = (Array.isArray(data) ? data : []).sort(
+          (a, b) => new Date(b.startDate) - new Date(a.startDate),
+        );
+
+        setPlannerOptions(sortedPlans);
+      } catch (fetchError) {
+        if (!ignore.current) {
+          setError(getErrorMessage(fetchError, "Couldn't load planners"));
+        }
+      }
+    };
+
+    fetchPlanners();
+
+    return () => {
+      ignore.current = true;
+    };
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -99,6 +132,8 @@ function AddBankTransaction() {
         date: formData.date,
 
         description: formData.description,
+
+        plannerId: selectedPlannerId || null,
       });
 
       setSuccess("Bank transaction added successfully");
@@ -143,6 +178,25 @@ function AddBankTransaction() {
         )}
 
         <form className="transaction-form" onSubmit={handleSubmit}>
+          <div className="input-group">
+            <label htmlFor="plannerId">Planner (optional)</label>
+
+            <select
+              id="plannerId"
+              value={selectedPlannerId}
+              onChange={(e) => setSelectedPlannerId(e.target.value)}
+              disabled={loading}
+            >
+              <option value="">No planner</option>
+
+              {plannerOptions.map((planner) => (
+                <option key={planner._id} value={planner._id}>
+                  {planner.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div className="input-group">
             <label>Transaction Type</label>
 

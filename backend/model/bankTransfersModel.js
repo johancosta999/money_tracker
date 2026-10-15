@@ -31,6 +31,13 @@ const bankTransfersSchema = new mongoose.Schema({
         default: Date.now
     },
 
+    // Optional: the planner this bank transaction belongs to (null = no planner)
+    plannerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Planner",
+        default: null
+    },
+
     description : {
         type: String,
         trim : true

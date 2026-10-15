@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api, { getErrorMessage } from "../services/api";
 import FilterSelect from "../components/FilterSelect";
-import { SORT_OPTIONS, getCategoryOptions, filterAndSortTransactions } from "../utils/transactionFilters";
+import { SORT_OPTIONS, getCategoryOptions, getPlannerOptions, filterAndSortTransactions } from "../utils/transactionFilters";
 import TransactionDetailsModal from "../components/TransactionDetailsModal";
 import { getTransactionDetails } from "../utils/transactionDetails";
 import "./dashboard.css";
@@ -13,6 +13,7 @@ function Transactions() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [category, setCategory] = useState("all");
+    const [planner, setPlanner] = useState("all");
     const [sort, setSort] = useState("newest");
     const [selectedTransaction, setSelectedTransaction] = useState(null);
 
@@ -32,7 +33,7 @@ function Transactions() {
         fetchTransactions();
     }, [navigate]);
 
-    const visibleTransactions = filterAndSortTransactions(transactions, category, sort);
+    const visibleTransactions = filterAndSortTransactions(transactions, { category, planner, sort });
 
     const formatCurrency = (value) =>
         `Rs. ${Number(value || 0).toLocaleString()}`;
@@ -81,6 +82,13 @@ function Transactions() {
                             options={getCategoryOptions(transactions)}
                         />
                         <FilterSelect
+                            id="plannerFilter"
+                            label="Planner"
+                            value={planner}
+                            onChange={setPlanner}
+                            options={getPlannerOptions(transactions)}
+                        />
+                        <FilterSelect
                             id="sortOrder"
                             label="Sort by"
                             value={sort}
@@ -99,7 +107,7 @@ function Transactions() {
                         <p>Your spending and income will show up here.</p>
                     </div>
                 ) : visibleTransactions.length === 0 ? (
-                    <div className="filter-empty">No transactions in this category.</div>
+                    <div className="filter-empty">No transactions match these filters.</div>
                 ) : (
                     <div className="recent-transactions">
                         {visibleTransactions.map((transaction) => (

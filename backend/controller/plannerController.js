@@ -1,5 +1,6 @@
 const Planner = require("../model/moneyPlanModel")
 const Transaction = require("../model/transactionsModel")
+const BankTransfer = require("../model/bankTransfersModel")
 const { isValidAmount } = require("../utils/validation")
 
 // Note: 500 responses only send a generic message. The real error is logged
@@ -289,6 +290,13 @@ const deletePlan = async (req, res) => {
             plannerId: planner._id,
             user: req.userId
         });
+
+
+        // Bank transactions are kept, they just no longer belong to a planner
+        await BankTransfer.updateMany(
+            { plannerId: planner._id, userId: req.userId },
+            { $set: { plannerId: null } }
+        );
 
 
         await planner.deleteOne();
