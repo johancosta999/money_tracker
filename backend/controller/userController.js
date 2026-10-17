@@ -4,6 +4,7 @@ const Planner = require('../model/moneyPlanModel')
 const BankTransfer = require('../model/bankTransfersModel')
 const Budget = require('../model/budgetModel')
 const Category = require('../model/categoryModel')
+const Note = require('../model/noteModel')
 const bcrypt = require('bcryptjs')
 const { isValidEmail, isValidPassword, PASSWORD_RULE } = require('../utils/validation')
 
@@ -133,7 +134,8 @@ const deleteUser = async(req, res, next) => {
             Planner.deleteMany({ userId: user._id }),
             BankTransfer.deleteMany({ userId: user._id }),
             Budget.deleteMany({ userId: user._id }),
-            Category.deleteMany({ userId: user._id, isDefault: false })
+            Category.deleteMany({ userId: user._id, isDefault: false }),
+            Note.deleteMany({ userId: user._id })
         ]);
 
         await user.deleteOne();

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../context/useAuth";
 import api, { getErrorMessage } from "../services/api";
+import NotificationBell from "../components/NotificationBell";
 import "./dashboard.css";
 
 function Dashboard() {
@@ -19,6 +20,17 @@ function Dashboard() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+
+  // Saved notes double as notifications for the header bell
+  const [notes, setNotes] = useState([]);
+
+  useEffect(() => {
+    // Loaded separately so a notes failure never blocks the dashboard
+    api
+      .get("/notes")
+      .then(({ data }) => setNotes(Array.isArray(data) ? data : []))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -81,6 +93,8 @@ function Dashboard() {
           <button className="dashboard-action" onClick={handleLogout}>
             Logout
           </button>
+
+          <NotificationBell notes={notes} />
         </div>
       </header>
 
@@ -229,6 +243,16 @@ function Dashboard() {
               <h3>Bank transactions</h3>
 
               <p>View all of your deposits and withdraws from your bank.</p>
+            </div>
+          </Link>
+
+          <Link to="/notes" className="quick-action-card">
+            <div className="quick-action-icon">📝</div>
+
+            <div>
+              <h3>Notes</h3>
+
+              <p>Keep special notes about your transactions.</p>
             </div>
           </Link>
         </div>

@@ -1,0 +1,175 @@
+/* =========================
+   Notes Page
+========================= */
+
+.notes-hint {
+    margin-bottom: 25px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    color: #4f7d5e;
+    font-size: 13px;
+    line-height: 1.5;
+    background: #e8e9ed;
+    box-shadow:
+        inset 3px 3px 7px rgba(163, 165, 170, 0.3),
+        inset -3px -3px 7px rgba(255, 255, 255, 0.7);
+}
+
+.notes-error {
+    margin-top: 20px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    color: #9a5050;
+    font-size: 13px;
+    background: rgba(154, 104, 104, 0.1);
+}
+
+
+/* =========================
+   New Note Form
+========================= */
+
+.note-form {
+    padding: 25px;
+    border-radius: 20px;
+    background: #e8e9ed;
+    box-shadow:
+        10px 10px 20px rgba(163, 165, 170, 0.5),
+        -10px -10px 20px rgba(255, 255, 255, 0.9);
+}
+
+.note-form-label {
+    display: block;
+    margin-bottom: 10px;
+    color: #858a91;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.note-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px;
+    border: none;
+    outline: none;
+    border-radius: 12px;
+    resize: vertical;
+    color: #292d32;
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    background: #e8e9ed;
+    box-shadow:
+        inset 4px 4px 8px rgba(163, 165, 170, 0.5),
+        inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+.note-input:focus-visible {
+    outline: 2px solid rgba(77, 153, 102, 0.45);
+    outline-offset: 2px;
+}
+
+.note-form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 14px;
+}
+
+.note-counter {
+    color: #9a9ea4;
+    font-size: 12px;
+}
+
+.note-submit,
+.note-delete {
+    border: none;
+    border-radius: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    background: #e8e9ed;
+    transition: 0.2s ease;
+}
+
+.note-submit {
+    padding: 12px 20px;
+    color: #34784d;
+    font-size: 14px;
+    font-weight: 600;
+    box-shadow:
+        6px 6px 12px rgba(163, 165, 170, 0.55),
+        -6px -6px 12px rgba(255, 255, 255, 0.9);
+}
+
+.note-submit:hover:not(:disabled),
+.note-delete:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.note-submit:disabled,
+.note-delete:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+/* =========================
+   Notes List
+========================= */
+
+.notes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.note-card {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 22px;
+    border-radius: 18px;
+    background: #e8e9ed;
+    box-shadow:
+        7px 7px 14px rgba(163, 165, 170, 0.45),
+        -7px -7px 14px rgba(255, 255, 255, 0.85);
+}
+
+.note-body {
+    min-width: 0;
+}
+
+.note-text {
+    margin-bottom: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.note-date {
+    color: #858a91;
+    font-size: 11px;
+}
+
+.note-delete {
+    flex-shrink: 0;
+    padding: 8px 14px;
+    color: #9a6868;
+    font-size: 12px;
+    box-shadow:
+        4px 4px 8px rgba(163, 165, 170, 0.5),
+        -4px -4px 8px rgba(255, 255, 255, 0.9);
+}
+
+@media (max-width: 500px) {
+    .note-form { padding: 20px; }
+    .note-card { padding: 16px; }
+}
