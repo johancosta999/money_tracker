@@ -121,9 +121,3 @@
     background: var(--mt-bg);
     color: var(--mt-ink);
 }
-
-/* Header theme button keeps its icon size on narrow screens, like the bell */
-.dashboard-action.theme-toggle {
-    flex: 0 0 auto;
-    font-size: 15px;
-}
