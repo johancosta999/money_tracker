@@ -69,3 +69,18 @@ export const filterAndSortTransactions = (transactions, { category = "all", plan
         .sort((a, b) =>
             sort === "oldest" ? getTime(a) - getTime(b) : getTime(b) - getTime(a)
         );
+
+// Default planner filter for a list: the newest planner (latest start date)
+// that has at least one of these transactions. "all" when none of them has a planner.
+// planners: the user's planners from GET /plan
+export const getLatestPlannerId = (transactions, planners) => {
+    const usedIds = new Set(
+        transactions.map((transaction) => getPlannerId(transaction)).filter(Boolean).map(String)
+    );
+
+    const latest = [...planners]
+        .filter((planner) => usedIds.has(String(planner._id)))
+        .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))[0];
+
+    return latest ? String(latest._id) : "all";
+};

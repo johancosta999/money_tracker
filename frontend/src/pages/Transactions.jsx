@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api, { getErrorMessage } from "../services/api";
 import FilterSelect from "../components/FilterSelect";
-import { SORT_OPTIONS, getCategoryOptions, getPlannerOptions, filterAndSortTransactions } from "../utils/transactionFilters";
+import { SORT_OPTIONS, getCategoryOptions, getPlannerOptions, filterAndSortTransactions, getLatestPlannerId } from "../utils/transactionFilters";
 import TransactionDetailsModal from "../components/TransactionDetailsModal";
 import { getTransactionDetails } from "../utils/transactionDetails";
 import SearchInput from "../components/SearchInput";
@@ -23,9 +23,17 @@ function Transactions() {
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
-                const { data } = await api.get("/transactions");
+                // Planners are only used to pick the default filter; the list works without them
+                const [{ data }, plans] = await Promise.all([
+                    api.get("/transactions"),
+                    api.get("/plan").catch(() => ({ data: [] }))
+                ]);
 
-                setTransactions(Array.isArray(data) ? data : []);
+                const list = Array.isArray(data) ? data : [];
+                setTransactions(list);
+
+                // Start on the newest planner's transactions; "All planners" is still in the filter
+                setPlanner(getLatestPlannerId(list, Array.isArray(plans.data) ? plans.data : []));
             } catch (fetchError) {
                 setError(getErrorMessage(fetchError, "Couldn't load transactions"));
             } finally {

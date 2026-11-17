@@ -5,7 +5,7 @@ import api, { getErrorMessage } from "../services/api";
 import FilterSelect from "../components/FilterSelect";
 import TransactionDetailsModal from "../components/TransactionDetailsModal";
 import { formatFullDate, formatDateTime, getEditedAt } from "../utils/transactionDetails";
-import { getPlannerOptions, matchesPlanner, matchesSearch } from "../utils/transactionFilters";
+import { getPlannerOptions, matchesPlanner, matchesSearch, getLatestPlannerId } from "../utils/transactionFilters";
 import SearchInput from "../components/SearchInput";
 import { exportCsv, datedFilename, csvDate } from "../utils/exportCsv";
 
@@ -40,9 +40,17 @@ function BankTransactions() {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const { data } = await api.get("/bank/bank-transactions");
+        // Planners are only used to pick the default filter; the list works without them
+        const [{ data }, plans] = await Promise.all([
+          api.get("/bank/bank-transactions"),
+          api.get("/plan").catch(() => ({ data: [] })),
+        ]);
 
-        setTransactions(Array.isArray(data) ? data : data.transactions || []);
+        const list = Array.isArray(data) ? data : data.transactions || [];
+        setTransactions(list);
+
+        // Start on the newest planner's transactions; "All planners" is still in the filter
+        setPlannerFilter(getLatestPlannerId(list, Array.isArray(plans.data) ? plans.data : []));
       } catch (error) {
         setError(getErrorMessage(error, "Couldn't load bank transactions"));
       } finally {
