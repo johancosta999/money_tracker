@@ -5,7 +5,9 @@ import api, { getErrorMessage } from "../services/api";
 import FilterSelect from "../components/FilterSelect";
 import TransactionDetailsModal from "../components/TransactionDetailsModal";
 import { formatFullDate, formatDateTime, getEditedAt } from "../utils/transactionDetails";
-import { getPlannerOptions, matchesPlanner } from "../utils/transactionFilters";
+import { getPlannerOptions, matchesPlanner, matchesSearch } from "../utils/transactionFilters";
+import SearchInput from "../components/SearchInput";
+import { exportCsv, datedFilename, csvDate } from "../utils/exportCsv";
 
 import "./dashboard.css";
 
@@ -30,6 +32,9 @@ function BankTransactions() {
 
   const [plannerFilter, setPlannerFilter] = useState("all");
 
+  const [search, setSearch] = useState("");
+
+  // { transactionId, ...props for TransactionDetailsModal }
   const [selectedDetails, setSelectedDetails] = useState(null);
 
   useEffect(() => {
@@ -51,8 +56,36 @@ function BankTransactions() {
   const visibleTransactions = transactions.filter(
     (transaction) =>
       (typeFilter === "all" || transaction.type?.toLowerCase() === typeFilter) &&
-      matchesPlanner(transaction, plannerFilter),
+      matchesPlanner(transaction, plannerFilter) &&
+      matchesSearch(transaction, search),
   );
+
+  const handleDelete = async () => {
+    const id = selectedDetails.transactionId;
+    await api.delete(`/bank/delete-transaction/${id}`);
+    setTransactions((current) => current.filter((item) => item._id !== id));
+    setSelectedDetails(null);
+  };
+
+  // Same wording as the list ("Own money", "To someone else"...)
+  const getSourceLabel = (transaction) => {
+    const type = transaction.type?.toLowerCase();
+    if (type === "deposit") return transaction.external ? "From someone else" : "Own money";
+    if (type === "transfer") return transaction.external ? "To someone else" : "To own account";
+    return "Cash in hand";
+  };
+
+  const handleExport = () =>
+    exportCsv(datedFilename("bank-transactions"), [
+      { label: "Date", value: (t) => csvDate(t.date || t.createdAt) },
+      { label: "Type", value: (t) => t.type },
+      { label: "Category", value: (t) => t.category || "" },
+      { label: "Money", value: getSourceLabel },
+      { label: "Affects balance", value: (t) => (t.external && t.type !== "Withdraw" ? "Yes" : "No") },
+      { label: "Amount", value: (t) => t.amount },
+      { label: "Planner", value: (t) => t.plannerId?.name || "" },
+      { label: "Description", value: (t) => t.description },
+    ], visibleTransactions);
 
   const formatCurrency = (value) => {
     return `Rs. ${Number(value || 0).toLocaleString()}`;
@@ -104,6 +137,12 @@ function BankTransactions() {
 
         {transactions.length > 0 && (
           <div className="filter-bar">
+            <SearchInput
+              id="bankSearch"
+              value={search}
+              onChange={setSearch}
+              placeholder="Description, category..."
+            />
             <FilterSelect
               id="bankTypeFilter"
               label="Type"
@@ -118,6 +157,14 @@ function BankTransactions() {
               onChange={setPlannerFilter}
               options={getPlannerOptions(transactions, true)}
             />
+            <button
+              type="button"
+              className="dashboard-action filter-export"
+              onClick={handleExport}
+              disabled={visibleTransactions.length === 0}
+            >
+              ⬇ Export CSV
+            </button>
           </div>
         )}
 
@@ -159,6 +206,7 @@ function BankTransactions() {
 
               const openDetails = () =>
                 setSelectedDetails({
+                  transactionId: transaction._id,
                   eyebrow: `BANK ${transactionLabel.toUpperCase()}`,
                   title: transaction.description || "Bank Transaction",
                   amount: `${amountSign}${formatCurrency(transaction.amount)}`,
@@ -224,8 +272,14 @@ function BankTransactions() {
 
       {selectedDetails && (
         <TransactionDetailsModal
-          {...selectedDetails}
+          eyebrow={selectedDetails.eyebrow}
+          title={selectedDetails.title}
+          amount={selectedDetails.amount}
+          amountClass={selectedDetails.amountClass}
+          rows={selectedDetails.rows}
           onClose={() => setSelectedDetails(null)}
+          onEdit={() => navigate(`/bank-transactions/${selectedDetails.transactionId}/edit`)}
+          onDelete={handleDelete}
         />
       )}
     </div>

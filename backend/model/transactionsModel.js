@@ -54,6 +54,9 @@ const transactionsSchema = new mongoose.Schema(
     }
 );
 
+// Every list/total query filters by user and sorts by date
+transactionsSchema.index({ user: 1, date: -1 });
+
 module.exports = mongoose.model(
     "transaction",
     transactionsSchema

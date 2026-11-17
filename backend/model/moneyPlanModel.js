@@ -84,4 +84,7 @@ const weeklySchema = new mongoose.Schema(
     }
 )
 
+// Planners are listed per user, newest first, and looked up by date range
+plannerSchema.index({ userId: 1, startDate: -1 });
+
 module.exports = mongoose.model("Planner", plannerSchema);

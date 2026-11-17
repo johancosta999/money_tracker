@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import api, { getErrorMessage } from "../services/api";
 import { DEFAULT_CATEGORIES } from "../utils/categories";
 import "./AddTransaction.css";
@@ -33,6 +33,11 @@ const getBalanceEffect = (type, external) => {
 function AddBankTransaction() {
   const navigate = useNavigate();
 
+  // On /bank-transactions/:id/edit this page edits an existing bank transaction
+  const { id: editId } = useParams();
+  const isEditing = Boolean(editId);
+  const [loadingExisting, setLoadingExisting] = useState(isEditing);
+
   const [formData, setFormData] = useState({
     type: "Deposit",
     amount: "",
@@ -55,9 +60,27 @@ function AddBankTransaction() {
 
     const fetchPlanners = async () => {
       try {
-        const { data } = await api.get("/plan");
+        const [{ data }, existing] = await Promise.all([
+          api.get("/plan"),
+          editId ? api.get(`/bank/bank-transaction/${editId}`) : Promise.resolve(null),
+        ]);
 
         if (ignore.current) return;
+
+        if (existing) {
+          // Prefill the form with the saved bank transaction
+          const transaction = existing.data;
+          setSelectedPlannerId(transaction.plannerId?._id || transaction.plannerId || "");
+          setFormData({
+            type: transaction.type,
+            amount: String(transaction.amount ?? ""),
+            external: Boolean(transaction.external),
+            // Older bank transactions have no category: start on the first one
+            category: transaction.category || DEFAULT_CATEGORIES[0],
+            date: new Date(transaction.date || transaction.createdAt).toISOString().split("T")[0],
+            description: transaction.description || "",
+          });
+        }
 
         // Newest planner first
         const sortedPlans = (Array.isArray(data) ? data : []).sort(
@@ -67,8 +90,13 @@ function AddBankTransaction() {
         setPlannerOptions(sortedPlans);
       } catch (fetchError) {
         if (!ignore.current) {
-          setError(getErrorMessage(fetchError, "Couldn't load planners"));
+          setError(getErrorMessage(
+            fetchError,
+            editId ? "Couldn't load this bank transaction" : "Couldn't load planners",
+          ));
         }
+      } finally {
+        if (!ignore.current) setLoadingExisting(false);
       }
     };
 
@@ -77,13 +105,19 @@ function AddBankTransaction() {
     return () => {
       ignore.current = true;
     };
-  }, []);
+  }, [editId]);
 
   // Same categories as normal transactions: the chosen planner's, or the defaults
   const selectedPlanner = plannerOptions.find((planner) => planner._id === selectedPlannerId);
-  const availableCategories = selectedPlanner?.categories?.length
+  const plannerCategories = selectedPlanner?.categories?.length
     ? selectedPlanner.categories
     : DEFAULT_CATEGORIES;
+
+  // When editing, keep the saved category selectable even if the planner no longer lists it
+  const availableCategories =
+    isEditing && formData.category && !plannerCategories.includes(formData.category)
+      ? [formData.category, ...plannerCategories]
+      : plannerCategories;
 
   const handlePlannerChange = (plannerId) => {
     setSelectedPlannerId(plannerId);
@@ -148,7 +182,7 @@ function AddBankTransaction() {
     setLoading(true);
 
     try {
-      const { data } = await api.post("/bank/create-transaction", {
+      const body = {
         type: formData.type,
 
         amount: Number(formData.amount),
@@ -162,20 +196,30 @@ function AddBankTransaction() {
         description: formData.description,
 
         plannerId: selectedPlannerId || null,
-      });
+      };
 
-      // Debt deposits are also saved to Notes by the server
-      setSuccess(
-        data?.noteCreated
-          ? "Bank transaction added and saved to your notes"
-          : "Bank transaction added successfully",
-      );
+      if (isEditing) {
+        await api.put(`/bank/update-transaction/${editId}`, body);
+        setSuccess("Bank transaction updated successfully");
+      } else {
+        const { data } = await api.post("/bank/create-transaction", body);
+
+        // Debt deposits are also saved to Notes by the server
+        setSuccess(
+          data?.noteCreated
+            ? "Bank transaction added and saved to your notes"
+            : "Bank transaction added successfully",
+        );
+      }
 
       setTimeout(() => {
         navigate("/bank-transactions");
       }, 800);
     } catch (error) {
-      setError(getErrorMessage(error, "Couldn't create bank transaction"));
+      setError(getErrorMessage(
+        error,
+        isEditing ? "Couldn't update bank transaction" : "Couldn't create bank transaction",
+      ));
     } finally {
       setLoading(false);
     }
@@ -190,14 +234,18 @@ function AddBankTransaction() {
           </Link>
 
           <div className="transaction-title">
-            <div className="transaction-title-icon">🏦</div>
+            <div className="transaction-title-icon">{isEditing ? "✎" : "🏦"}</div>
 
             <div>
               <p className="transaction-label">MONEY TRACKER</p>
 
-              <h1>Add Bank Transaction</h1>
+              <h1>{isEditing ? "Edit Bank Transaction" : "Add Bank Transaction"}</h1>
 
-              <p>Record deposits, withdrawals and transfers.</p>
+              <p>
+                {isEditing
+                  ? "Change the details and save."
+                  : "Record deposits, withdrawals and transfers."}
+              </p>
             </div>
           </div>
         </div>
@@ -377,9 +425,10 @@ function AddBankTransaction() {
           <button
             className="submit-transaction"
             type="submit"
-            disabled={loading}
+            // When editing, wait until the saved transaction has loaded
+            disabled={loading || loadingExisting}
           >
-            {loading ? "Saving..." : "Save Bank Transaction"}
+            {loading ? "Saving..." : isEditing ? "Save Changes" : "Save Bank Transaction"}
           </button>
         </form>
 

@@ -1,12 +1,13 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../context/useAuth";
 import api, { getErrorMessage } from "../services/api";
 import ThemeToggle from "../components/ThemeToggle";
 import "./Profile.css";
 
 function Profile() {
-  const { user, login } = useAuth();
+  const { user, login, logout } = useAuth();
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
@@ -23,6 +24,12 @@ function Profile() {
   const [resetError, setResetError] = useState("");
   const [resetSuccess, setResetSuccess] = useState("");
   const [resetForm, setResetForm] = useState({ email: "", password: "" });
+
+  const [showDeleteBox, setShowDeleteBox] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
   // Changing login credentials needs the current password (the backend enforces this too).
   // True when a new password is typed or the email differs from the saved one.
@@ -109,6 +116,39 @@ function Profile() {
     }
   };
 
+  // ---------- Delete account ----------
+
+  const openDeleteBox = () => {
+    setDeletePassword("");
+    setDeleteConfirmText("");
+    setDeleteError("");
+    setShowDeleteBox(true);
+  };
+
+  const closeDeleteBox = () => {
+    if (isDeleting) return;
+    // Don't leave the password sitting in state after the box closes
+    setDeletePassword("");
+    setShowDeleteBox(false);
+  };
+
+  const handleDeleteAccount = async (event) => {
+    event.preventDefault();
+    setDeleteError("");
+    setIsDeleting(true);
+
+    try {
+      // The server checks the password and removes all of the user's data
+      await api.delete(`/users/${user.id || user._id}`, { data: { password: deletePassword } });
+      setDeletePassword("");
+      logout();
+      navigate("/", { replace: true });
+    } catch (requestError) {
+      setDeleteError(getErrorMessage(requestError, "We couldn't delete your account. Please try again."));
+      setIsDeleting(false);
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -186,7 +226,56 @@ function Profile() {
             <button type="button" className="profile-button reset-button" onClick={openResetBox}>Reset totals to zero</button>
           </div>
         </section>
+
+        <section className="profile-card reset-card" aria-labelledby="delete-title">
+          <p className="profile-eyebrow reset-eyebrow">DANGER ZONE</p>
+          <h2 id="delete-title">Delete account</h2>
+          <p className="profile-subtitle">
+            Permanently remove your account and everything in it. This can't be undone.
+          </p>
+
+          <div className="profile-actions">
+            <button type="button" className="profile-button reset-button" onClick={openDeleteBox}>Delete my account</button>
+          </div>
+        </section>
       </div>
+
+      {showDeleteBox && (
+        <div className="reset-overlay" role="presentation" onClick={closeDeleteBox}>
+          <form
+            className="reset-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-dialog-title"
+            onClick={(event) => event.stopPropagation()}
+            onSubmit={handleDeleteAccount}
+          >
+            <h2 id="delete-dialog-title">Delete your account?</h2>
+            <p className="profile-subtitle">
+              This permanently deletes your account, transactions, bank transactions, planners and notes.
+              It can't be undone.
+            </p>
+
+            {deleteError && <div className="profile-message profile-message-error reset-message" role="alert">{deleteError}</div>}
+
+            <div className="reset-field">
+              <label htmlFor="deleteConfirm">Type DELETE to confirm</label>
+              <input id="deleteConfirm" value={deleteConfirmText} onChange={(event) => setDeleteConfirmText(event.target.value)} autoComplete="off" required autoFocus />
+            </div>
+            <div className="reset-field">
+              <label htmlFor="deletePassword">Password</label>
+              <input id="deletePassword" type="password" value={deletePassword} onChange={(event) => { setDeletePassword(event.target.value); setDeleteError(""); }} autoComplete="current-password" required />
+            </div>
+
+            <div className="profile-actions">
+              <button type="button" className="profile-button profile-button-secondary" onClick={closeDeleteBox} disabled={isDeleting}>Cancel</button>
+              <button type="submit" className="profile-button reset-button" disabled={isDeleting || deleteConfirmText.trim() !== "DELETE"}>
+                {isDeleting ? "Deleting..." : "Delete account"}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {showResetBox && (
         <div className="reset-overlay" role="presentation" onClick={closeResetBox}>

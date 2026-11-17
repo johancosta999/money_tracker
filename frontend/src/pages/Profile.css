@@ -42,3 +42,8 @@
 .reset-field label { display: block; margin-bottom: 9px; color: var(--mt-ink-soft); font-size: 13px; font-weight: 600; }
 .reset-field input { width: 100%; box-sizing: border-box; padding: 15px 16px; border: none; outline: none; border-radius: 14px; color: var(--mt-ink); font: inherit; font-size: 14px; background: var(--mt-bg); box-shadow: inset 5px 5px 10px var(--mt-sh-50), inset -5px -5px 10px var(--mt-hl-90); }
 @media (max-width: 600px) { .reset-dialog { padding: 24px 20px; } .reset-dialog .profile-actions { flex-direction: column-reverse; } }
+.privacy-card h1 { font-size: 30px; font-weight: 600; letter-spacing: -1px; }
+.privacy-card h2 { margin: 28px 0 10px; font-size: 18px; font-weight: 600; }
+.privacy-card p, .privacy-card li { color: var(--mt-ink-soft); font-size: 14px; line-height: 1.7; }
+.privacy-card .profile-subtitle { color: var(--mt-muted); }
+.privacy-card ul { padding-left: 20px; }

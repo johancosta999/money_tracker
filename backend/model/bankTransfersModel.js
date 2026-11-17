@@ -53,4 +53,7 @@ const bankTransfersSchema = new mongoose.Schema({
 
 }, { timestamps: true});
 
+// Every list/total query filters by user and sorts by date
+bankTransfersSchema.index({ userId: 1, date: -1 });
+
 module.exports = mongoose.model("bankTransfers", bankTransfersSchema);

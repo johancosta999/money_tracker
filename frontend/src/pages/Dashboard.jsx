@@ -4,6 +4,7 @@ import useAuth from "../context/useAuth";
 import api, { getErrorMessage } from "../services/api";
 import NotificationBell from "../components/NotificationBell";
 import SettingsMenu from "../components/SettingsMenu";
+import CategoryChart from "../components/CategoryChart";
 import "./dashboard.css";
 
 function Dashboard() {
@@ -203,6 +204,12 @@ function Dashboard() {
           </div>
         </Link>
       </section>
+
+      {/* =========================
+                Spending by category
+            ========================= */}
+
+      <CategoryChart />
 
       {/* =========================
                 Quick Actions

@@ -227,6 +227,10 @@ function Register() {
 
                 </div>
 
+                <p className="auth-legal">
+                    By registering you agree to our <Link to="/privacy">Privacy Policy</Link>.
+                </p>
+
 
                 {/* Back Home */}
 

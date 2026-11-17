@@ -46,10 +46,25 @@ export const matchesPlanner = (transaction, planner) => {
 const getTime = (transaction) =>
     new Date(transaction.date || transaction.createdAt).getTime();
 
+// Case-insensitive text search over the fields a user would remember
+export const matchesSearch = (transaction, search) => {
+    const query = String(search || "").trim().toLowerCase();
+    if (!query) return true;
+
+    return [
+        transaction.title,
+        transaction.description,
+        transaction.category,
+        transaction.type,
+        transaction.plannerId?.name
+    ].some((field) => String(field || "").toLowerCase().includes(query));
+};
+
 // Returns a new array; the original list is left untouched
-export const filterAndSortTransactions = (transactions, { category = "all", planner = "all", sort = "newest" }) =>
+export const filterAndSortTransactions = (transactions, { category = "all", planner = "all", sort = "newest", search = "" }) =>
     transactions
         .filter((transaction) => category === "all" || transaction.category === category)
+        .filter((transaction) => matchesSearch(transaction, search))
         .filter((transaction) => matchesPlanner(transaction, planner))
         .sort((a, b) =>
             sort === "oldest" ? getTime(a) - getTime(b) : getTime(b) - getTime(a)

@@ -293,3 +293,39 @@
         inset 3px 3px 7px var(--mt-sh-35),
         inset -3px -3px 7px var(--mt-hl-80);
 }
+.auth-success {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--mt-green);
+    background: var(--mt-bg);
+    box-shadow:
+        inset 3px 3px 7px var(--mt-sh-35),
+        inset -3px -3px 7px var(--mt-hl-80);
+}
+
+.forgot-link {
+    display: block;
+    margin: -6px 0 18px;
+    text-align: right;
+    font-size: 13px;
+    color: var(--mt-green);
+    text-decoration: none;
+}
+
+.forgot-link:hover {
+    color: var(--mt-green-deep);
+}
+
+.auth-legal {
+    margin-top: 14px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--mt-muted);
+}
+
+.auth-legal a {
+    color: var(--mt-green);
+}

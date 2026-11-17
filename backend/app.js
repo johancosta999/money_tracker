@@ -1,3 +1,6 @@
+// Must be first: starts Sentry error monitoring (only when SENTRY_DSN is set)
+require("./instrument");
+
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");                   // sets standard security headers
@@ -63,6 +66,8 @@ const apiLimiter = rateLimit({
     limit: 300,
     standardHeaders: "draft-7",
     legacyHeaders: false,
+    // Automated tests (Jest sets NODE_ENV=test) make many logins from one IP
+    skip: () => process.env.NODE_ENV === "test",
     message: { message: "Too many requests, please try again later" }
 });
 
@@ -72,6 +77,8 @@ const authLimiter = rateLimit({
     limit: 10,
     standardHeaders: "draft-7",
     legacyHeaders: false,
+    // Automated tests (Jest sets NODE_ENV=test) make many logins from one IP
+    skip: () => process.env.NODE_ENV === "test",
     message: { message: "Too many attempts, please try again in 15 minutes" }
 });
 
@@ -81,6 +88,10 @@ app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/register", authLimiter);
 // Resetting totals checks the password, so limit guessing there too
 app.use("/api/users/:id/reset-totals", authLimiter);
+// Password-reset emails and account deletion: same limit, stops email spam and password guessing
+app.use("/api/auth/forgot-password", authLimiter);
+app.use("/api/auth/reset-password", authLimiter);
+app.delete("/api/users/:id", authLimiter);
 
 app.use("/api/auth", require("./route/authRoute"));
 app.use("/api/users", require("./route/userRoute"));
@@ -133,9 +144,14 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-// Only accept traffic once the database is ready
-connectDB().then(() => {
-    app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
+// `node app.js` / `npm start`: connect, then accept traffic once the database is ready.
+// Tests require() this file instead and connect to their own in-memory database.
+if (require.main === module) {
+    connectDB().then(() => {
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`);
+        });
     });
-});
+}
+
+module.exports = app;

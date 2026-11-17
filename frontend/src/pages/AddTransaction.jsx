@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import api, { getErrorMessage } from "../services/api";
 import "./AddTransaction.css";
 
@@ -17,6 +17,10 @@ const defaultCategories = [
 function AddTransaction() {
     const navigate = useNavigate();
 
+    // On /transactions/:id/edit this page edits an existing transaction
+    const { id: editId } = useParams();
+    const isEditing = Boolean(editId);
+
     const [plannerOptions, setPlannerOptions] = useState([]);
     const [selectedPlannerId, setSelectedPlannerId] = useState("");
 
@@ -33,9 +37,15 @@ function AddTransaction() {
         || plannerOptions[0]
         || null;
 
-    const availableCategories = selectedPlanner?.categories?.length
+    const plannerCategories = selectedPlanner?.categories?.length
         ? selectedPlanner.categories
         : defaultCategories;
+
+    // When editing, keep the saved category selectable even if the planner no longer lists it
+    const availableCategories =
+        isEditing && formData.category && !plannerCategories.includes(formData.category)
+            ? [formData.category, ...plannerCategories]
+            : plannerCategories;
 
     const [loading, setLoading] = useState(false);
     const [loadingPlans, setLoadingPlans] = useState(true);
@@ -45,7 +55,10 @@ function AddTransaction() {
     useEffect(() => {
         const fetchPlans = async () => {
             try {
-                const { data } = await api.get("/plan");
+                const [{ data }, existing] = await Promise.all([
+                    api.get("/plan"),
+                    editId ? api.get(`/transactions/${editId}`) : Promise.resolve(null)
+                ]);
 
                 const sortedPlans = [...data].sort(
                     (a, b) => new Date(b.startDate) - new Date(a.startDate)
@@ -53,7 +66,21 @@ function AddTransaction() {
 
                 setPlannerOptions(sortedPlans);
 
-                if (sortedPlans.length > 0) {
+                if (existing) {
+                    // Prefill the form with the saved transaction
+                    const transaction = existing.data;
+                    setSelectedPlannerId(transaction.plannerId?._id || transaction.plannerId || "");
+                    setFormData({
+                        title: transaction.title || "",
+                        amount: String(transaction.amount ?? ""),
+                        type: transaction.type,
+                        category: transaction.category || defaultCategories[0],
+                        date: transaction.date
+                            ? new Date(transaction.date).toISOString().split("T")[0]
+                            : new Date().toISOString().split("T")[0],
+                        description: transaction.description || ""
+                    });
+                } else if (sortedPlans.length > 0) {
                     const newestPlanner = sortedPlans[0];
                     setSelectedPlannerId(newestPlanner._id);
 
@@ -69,14 +96,17 @@ function AddTransaction() {
                     }));
                 }
             } catch (fetchError) {
-                setError(getErrorMessage(fetchError, "Couldn't load planners"));
+                setError(getErrorMessage(
+                    fetchError,
+                    editId ? "Couldn't load this transaction" : "Couldn't load planners"
+                ));
             } finally {
                 setLoadingPlans(false);
             }
         };
 
         fetchPlans();
-    }, []);
+    }, [editId]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -123,7 +153,7 @@ function AddTransaction() {
         setLoading(true);
 
         try {
-            const { data } = await api.post("/transactions", {
+            const body = {
                 title: formData.title.trim(),
                 amount: Number(formData.amount),
                 type: formData.type,
@@ -131,20 +161,30 @@ function AddTransaction() {
                 date: formData.date,
                 description: formData.description.trim(),
                 plannerId: selectedPlannerId
-            });
+            };
 
-            // Debt income is also saved to Notes by the server
-            setSuccess(
-                data?.noteCreated
-                    ? "Transaction added and saved to your notes!"
-                    : "Transaction added successfully!"
-            );
+            if (isEditing) {
+                await api.put(`/transactions/${editId}`, body);
+                setSuccess("Transaction updated successfully!");
+            } else {
+                const { data } = await api.post("/transactions", body);
+
+                // Debt income is also saved to Notes by the server
+                setSuccess(
+                    data?.noteCreated
+                        ? "Transaction added and saved to your notes!"
+                        : "Transaction added successfully!"
+                );
+            }
 
             setTimeout(() => {
                 navigate("/transactions");
             }, 800);
         } catch (submitError) {
-            setError(getErrorMessage(submitError, "Couldn't create transaction"));
+            setError(getErrorMessage(
+                submitError,
+                isEditing ? "Couldn't update transaction" : "Couldn't create transaction"
+            ));
         } finally {
             setLoading(false);
         }
@@ -154,17 +194,17 @@ function AddTransaction() {
         <div className="add-transaction-page">
             <div className="add-transaction-card">
                 <div className="add-transaction-header">
-                    <Link to="/dashboard" className="back-link">
-                        ← Dashboard
+                    <Link to={isEditing ? "/transactions" : "/dashboard"} className="back-link">
+                        {isEditing ? "← Transactions" : "← Dashboard"}
                     </Link>
 
                     <div className="transaction-title">
-                        <div className="transaction-title-icon">+</div>
+                        <div className="transaction-title-icon">{isEditing ? "✎" : "+"}</div>
 
                         <div>
                             <p className="transaction-label">MONEY TRACKER</p>
-                            <h1>Add Transaction</h1>
-                            <p>Record your income or expense.</p>
+                            <h1>{isEditing ? "Edit Transaction" : "Add Transaction"}</h1>
+                            <p>{isEditing ? "Change the details and save." : "Record your income or expense."}</p>
                         </div>
                     </div>
                 </div>
@@ -308,13 +348,16 @@ function AddTransaction() {
                     <button
                         type="submit"
                         className="submit-transaction"
-                        disabled={loading || plannerOptions.length === 0}
+                        // When editing, wait until the saved transaction has loaded
+                        disabled={loading || plannerOptions.length === 0 || (isEditing && loadingPlans)}
                     >
-                        {loading ? "Adding Transaction..." : "Add Transaction"}
+                        {isEditing
+                            ? (loading ? "Saving..." : "Save Changes")
+                            : (loading ? "Adding Transaction..." : "Add Transaction")}
                     </button>
                 </form>
 
-                <Link to="/dashboard" className="cancel-link">
+                <Link to={isEditing ? "/transactions" : "/dashboard"} className="cancel-link">
                     Cancel
                 </Link>
             </div>

@@ -14,6 +14,9 @@ import Profile from "./pages/Profile";
 import BankTransactions from "./pages/BankTransactions";
 import AddBankTransaction from "./pages/AddBankTransaction";
 import Notes from "./pages/Notes";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Privacy from "./pages/Privacy";
 
 function PublicRoute({ children }) {
     const { token } = useAuth();
@@ -46,6 +49,16 @@ function App() {
                 />
 
                 <Route
+                    path="/forgot-password"
+                    element={<PublicRoute><ForgotPassword /></PublicRoute>}
+                />
+
+                {/* Not a PublicRoute: the emailed link must work even if someone is logged in */}
+                <Route path="/reset-password" element={<ResetPassword />} />
+
+                <Route path="/privacy" element={<Privacy />} />
+
+                <Route
                     path="/dashboard"
                     element={<ProtectedRoute><Dashboard /></ProtectedRoute>}
                 />
@@ -58,6 +71,16 @@ function App() {
                 <Route
                     path="/transactions"
                     element={<ProtectedRoute><Transactions /></ProtectedRoute>}
+                />
+
+                <Route
+                    path="/transactions/:id/edit"
+                    element={<ProtectedRoute><AddTransaction /></ProtectedRoute>}
+                />
+
+                <Route
+                    path="/bank-transactions/:id/edit"
+                    element={<ProtectedRoute><AddBankTransaction /></ProtectedRoute>}
                 />
 
                 <Route

@@ -1074,6 +1074,35 @@
     cursor: pointer;
 }
 
+.filter-search input {
+    padding: 12px 14px;
+    border: none;
+    outline: none;
+    border-radius: 12px;
+    color: var(--mt-ink);
+    font: inherit;
+    font-size: 14px;
+    background: var(--mt-bg);
+    box-shadow:
+        inset 4px 4px 8px var(--mt-sh-50),
+        inset -4px -4px 8px var(--mt-hl-90);
+}
+
+.filter-search input::placeholder {
+    color: var(--mt-muted-5);
+}
+
+.filter-export {
+    align-self: flex-end;
+    margin-left: auto;
+    padding: 12px 16px;
+}
+
+.filter-export:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
 .filter-empty {
     padding: 22px;
     color: var(--mt-muted);
@@ -1196,8 +1225,129 @@
     overflow-wrap: anywhere;
 }
 
+.details-error {
+    margin-top: 16px;
+    color: var(--mt-red-3);
+    font-size: 13px;
+}
+
+.details-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.details-confirm-text {
+    flex: 1 1 100%;
+    color: var(--mt-red-3);
+    font-size: 13px;
+}
+
+.details-button {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 12px;
+    color: var(--mt-grey-2);
+    background: var(--mt-bg);
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow:
+        5px 5px 10px var(--mt-sh-50),
+        -5px -5px 10px var(--mt-hl-90);
+    transition: 0.2s ease;
+}
+
+.details-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.details-button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.details-button-primary { color: var(--mt-green); }
+.details-button-danger { color: var(--mt-red-2); }
+
 @media (max-width: 600px) {
     .details-card { padding: 24px 20px; }
+    .details-actions .details-button { flex: 1; }
     .details-row { flex-direction: column; gap: 4px; }
     .details-row dd { text-align: left; }
+}
+
+
+/* =========================
+   Spending by Category chart
+========================= */
+
+.category-chart-heading {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.category-chart-heading .section-heading {
+    margin-bottom: 0;
+}
+
+.category-bars {
+    display: grid;
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.category-bar-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.category-bar-label span {
+    color: var(--mt-ink-soft);
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.category-bar-label strong {
+    flex-shrink: 0;
+    color: var(--mt-ink);
+}
+
+.category-bar-label small {
+    color: var(--mt-muted);
+    font-weight: 500;
+}
+
+.category-bar-track {
+    height: 12px;
+    border-radius: 999px;
+    box-shadow:
+        inset 3px 3px 6px var(--mt-sh-45),
+        inset -3px -3px 6px var(--mt-hl-85);
+}
+
+.category-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--mt-green-deep), var(--mt-green-soft));
+    transition: width 0.4s ease;
+}
+
+@media (max-width: 500px) {
+    .category-chart-heading .filter-select {
+        flex: 1 1 100%;
+    }
 }

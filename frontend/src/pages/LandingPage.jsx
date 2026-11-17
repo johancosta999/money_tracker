@@ -265,6 +265,7 @@ function LandingPage() {
                             <h4>Account</h4>
                             <Link to="/login">Login</Link>
                             <Link to="/register">Register</Link>
+                            <Link to="/privacy">Privacy</Link>
                         </div>
 
                     </div>

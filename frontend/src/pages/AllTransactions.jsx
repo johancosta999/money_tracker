@@ -5,6 +5,8 @@ import FilterSelect from "../components/FilterSelect";
 import { SORT_OPTIONS, getCategoryOptions, getPlannerOptions, filterAndSortTransactions } from "../utils/transactionFilters";
 import TransactionDetailsModal from "../components/TransactionDetailsModal";
 import { getTransactionDetails } from "../utils/transactionDetails";
+import SearchInput from "../components/SearchInput";
+import { exportCsv, datedFilename, csvDate } from "../utils/exportCsv";
 import "./dashboard.css";
 
 function Transactions() {
@@ -15,6 +17,7 @@ function Transactions() {
     const [category, setCategory] = useState("all");
     const [planner, setPlanner] = useState("all");
     const [sort, setSort] = useState("newest");
+    const [search, setSearch] = useState("");
     const [selectedTransaction, setSelectedTransaction] = useState(null);
 
     useEffect(() => {
@@ -33,7 +36,24 @@ function Transactions() {
         fetchTransactions();
     }, [navigate]);
 
-    const visibleTransactions = filterAndSortTransactions(transactions, { category, planner, sort });
+    const visibleTransactions = filterAndSortTransactions(transactions, { category, planner, sort, search });
+
+    const handleDelete = async () => {
+        await api.delete(`/transactions/${selectedTransaction._id}`);
+        setTransactions((current) => current.filter((item) => item._id !== selectedTransaction._id));
+        setSelectedTransaction(null);
+    };
+
+    const handleExport = () =>
+        exportCsv(datedFilename("transactions"), [
+            { label: "Date", value: (t) => csvDate(t.date) },
+            { label: "Type", value: (t) => (t.type === "income" ? "Income" : "Expense") },
+            { label: "Title", value: (t) => t.title },
+            { label: "Category", value: (t) => t.category },
+            { label: "Amount", value: (t) => t.amount },
+            { label: "Planner", value: (t) => t.plannerId?.name || "" },
+            { label: "Description", value: (t) => t.description }
+        ], visibleTransactions);
 
     const formatCurrency = (value) =>
         `Rs. ${Number(value || 0).toLocaleString()}`;
@@ -74,6 +94,7 @@ function Transactions() {
 
                 {transactions.length > 0 && (
                     <div className="filter-bar">
+                        <SearchInput id="transactionSearch" value={search} onChange={setSearch} />
                         <FilterSelect
                             id="categoryFilter"
                             label="Category"
@@ -95,6 +116,14 @@ function Transactions() {
                             onChange={setSort}
                             options={SORT_OPTIONS}
                         />
+                        <button
+                            type="button"
+                            className="dashboard-action filter-export"
+                            onClick={handleExport}
+                            disabled={visibleTransactions.length === 0}
+                        >
+                            ⬇ Export CSV
+                        </button>
                     </div>
                 )}
 
@@ -153,6 +182,8 @@ function Transactions() {
                 <TransactionDetailsModal
                     {...getTransactionDetails(selectedTransaction)}
                     onClose={() => setSelectedTransaction(null)}
+                    onEdit={() => navigate(`/transactions/${selectedTransaction._id}/edit`)}
+                    onDelete={handleDelete}
                 />
             )}
         </div>

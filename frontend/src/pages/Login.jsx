@@ -151,6 +151,10 @@ function Login() {
                     </div>
 
 
+                    <Link to="/forgot-password" className="forgot-link">
+                        Forgot password?
+                    </Link>
+
                     <button
                         type="submit"
                         className="auth-submit"
