@@ -973,6 +973,14 @@
     .notification-bell { flex: 0 0 auto; }
 }
 
+/* Dashboard bell + gear: keep them on the right once the header stacks */
+@media (max-width: 850px) {
+    .dashboard-icon-actions {
+        align-self: flex-end;
+        justify-content: flex-end;
+    }
+}
+
 
 /* =========================
    Settings Menu (header gear)

@@ -81,7 +81,7 @@ function Dashboard() {
           <h1>Your Dashboard</h1>
         </div>
 
-        <div className="dashboard-header-actions">
+        <div className="dashboard-header-actions dashboard-icon-actions">
           <NotificationBell notes={notes} />
 
           <SettingsMenu onLogout={handleLogout} />
