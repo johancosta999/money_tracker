@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api, { getErrorMessage } from "../services/api";
+import { DEFAULT_CATEGORIES } from "../utils/categories";
 import "./AddTransaction.css";
 
 // Labels for the "whose money" choice, per transaction type
@@ -36,6 +37,7 @@ function AddBankTransaction() {
     type: "Deposit",
     amount: "",
     external: false,
+    category: "",
     date: new Date().toISOString().split("T")[0],
     description: "",
   });
@@ -76,6 +78,25 @@ function AddBankTransaction() {
       ignore.current = true;
     };
   }, []);
+
+  // Same categories as normal transactions: the chosen planner's, or the defaults
+  const selectedPlanner = plannerOptions.find((planner) => planner._id === selectedPlannerId);
+  const availableCategories = selectedPlanner?.categories?.length
+    ? selectedPlanner.categories
+    : DEFAULT_CATEGORIES;
+
+  const handlePlannerChange = (plannerId) => {
+    setSelectedPlannerId(plannerId);
+
+    // Clear the category if the new planner doesn't have it
+    const planner = plannerOptions.find((option) => option._id === plannerId);
+    const categories = planner?.categories?.length ? planner.categories : DEFAULT_CATEGORIES;
+
+    setFormData((previous) => ({
+      ...previous,
+      category: categories.includes(previous.category) ? previous.category : "",
+    }));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -128,6 +149,8 @@ function AddBankTransaction() {
         amount: Number(formData.amount),
 
         external: affectsBalance,
+
+        category: formData.category,
 
         date: formData.date,
 
@@ -184,7 +207,7 @@ function AddBankTransaction() {
             <select
               id="plannerId"
               value={selectedPlannerId}
-              onChange={(e) => setSelectedPlannerId(e.target.value)}
+              onChange={(e) => handlePlannerChange(e.target.value)}
               disabled={loading}
             >
               <option value="">No planner</option>
@@ -192,6 +215,26 @@ function AddBankTransaction() {
               {plannerOptions.map((planner) => (
                 <option key={planner._id} value={planner._id}>
                   {planner.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="input-group">
+            <label htmlFor="category">Category (optional)</label>
+
+            <select
+              id="category"
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              disabled={loading}
+            >
+              <option value="">No category</option>
+
+              {availableCategories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
                 </option>
               ))}
             </select>

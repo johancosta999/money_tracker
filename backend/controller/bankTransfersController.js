@@ -12,6 +12,11 @@ const pickEditableFields = (body) => {
         if (body[key] !== undefined) fields[key] = body[key];
     });
 
+    // Category is optional free text; ignore anything that isn't a string
+    if (typeof body.category === 'string') {
+        fields.category = body.category.trim().slice(0, 50);
+    }
+
     // Withdrawals only move your own money, so they never affect the balance
     if (fields.type === 'Withdraw') fields.external = false;
 

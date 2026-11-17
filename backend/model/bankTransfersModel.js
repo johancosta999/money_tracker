@@ -38,6 +38,14 @@ const bankTransfersSchema = new mongoose.Schema({
         default: null
     },
 
+    // Optional spending category, same names as normal transactions ("" = none)
+    category: {
+        type: String,
+        trim: true,
+        maxlength: 50,
+        default: ""
+    },
+
     description : {
         type: String,
         trim : true

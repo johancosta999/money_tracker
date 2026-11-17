@@ -165,6 +165,7 @@ function BankTransactions() {
                   amountClass: transactionClass,
                   rows: [
                     { label: "Type", value: transactionLabel },
+                    { label: "Category", value: transaction.category || "No category" },
                     { label: "Money", value: sourceLabel },
                     { label: "Affects balance", value: affectsBalance ? "Yes" : "No" },
                     { label: "Planner", value: transaction.plannerId?.name || "No planner" },
@@ -198,6 +199,7 @@ function BankTransactions() {
                       <h3>{transaction.description || "Bank Transaction"}</h3>
                       <p>
                         {transactionLabel} • {sourceLabel} •{" "}
+                        {transaction.category && `${transaction.category} • `}
                         {formatDate(transaction.date || transaction.createdAt)}
                       </p>
                     </div>
