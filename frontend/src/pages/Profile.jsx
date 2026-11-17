@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import useAuth from "../context/useAuth";
 import api, { getErrorMessage } from "../services/api";
+import ThemeToggle from "../components/ThemeToggle";
 import "./Profile.css";
 
 function Profile() {
@@ -158,6 +159,16 @@ function Profile() {
               </> : <button type="button" className="profile-button profile-button-primary" onClick={startEditing}>Edit profile</button>}
             </div>
           </form>
+        </section>
+
+        <section className="profile-card appearance-card" aria-labelledby="appearance-title">
+          <p className="profile-eyebrow">APPEARANCE</p>
+          <h2 id="appearance-title">Theme</h2>
+          <p className="profile-subtitle">Choose between the light and dark look. Saved on this device.</p>
+
+          <div className="profile-actions">
+            <ThemeToggle className="profile-button profile-button-primary" />
+          </div>
         </section>
 
         {/* Reset totals: keeps every transaction, the dashboard just starts counting from zero again */}

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../context/useAuth";
 import api, { getErrorMessage } from "../services/api";
 import NotificationBell from "../components/NotificationBell";
+import ThemeToggle from "../components/ThemeToggle";
 import "./dashboard.css";
 
 function Dashboard() {
@@ -89,6 +90,8 @@ function Dashboard() {
           >
             ⚙ Settings
           </button>
+
+          <ThemeToggle className="dashboard-action theme-toggle" showLabel={false} />
 
           <button className="dashboard-action" onClick={handleLogout}>
             Logout

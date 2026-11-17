@@ -1,0 +1,129 @@
+/* =========================
+   Theme tokens
+   Light values are the original palette. Dark mode is enabled by
+   <html data-theme="dark"> (see src/theme.js).
+========================= */
+
+:root {
+    --mt-amber: #b58a4a;
+    --mt-bg: #e8e9ed;
+    --mt-bg-deep: #d5d7dc;
+    --mt-blue: #3e7cc4;
+    --mt-green: #34784d;
+    --mt-green-2: #4d9966;
+    --mt-green-bright: #3fbf6a;
+    --mt-green-deep: #2d6843;
+    --mt-green-muted: #6e9c7d;
+    --mt-green-muted-2: #4f7d5e;
+    --mt-green-pale: #e9f2ec;
+    --mt-green-soft: #5daa79;
+    --mt-grey-1: #6e7075;
+    --mt-grey-2: #6f747b;
+    --mt-grey-3: #777b81;
+    --mt-hl-22: rgba(255, 255, 255, 0.22);
+    --mt-hl-65: rgba(255, 255, 255, 0.65);
+    --mt-hl-70: rgba(255, 255, 255, 0.7);
+    --mt-hl-80: rgba(255, 255, 255, 0.8);
+    --mt-hl-85: rgba(255, 255, 255, 0.85);
+    --mt-hl-90: rgba(255, 255, 255, 0.9);
+    --mt-hl-95: rgba(255, 255, 255, 0.95);
+    --mt-ink: #292d32;
+    --mt-ink-2: #3a3e43;
+    --mt-ink-soft: #555a61;
+    --mt-ink-soft-2: #5b6068;
+    --mt-ink-soft-3: #5c6068;
+    --mt-ink-soft-4: #5d6269;
+    --mt-ink-strong: #20242b;
+    --mt-muted: #858a91;
+    --mt-muted-2: #9a9ea4;
+    --mt-muted-3: #9a9da2;
+    --mt-muted-4: #a0a3a8;
+    --mt-muted-5: #a0a4aa;
+    --mt-muted-6: #a9abb0;
+    --mt-overlay-20: rgba(41, 45, 50, 0.2);
+    --mt-overlay-25: rgba(41, 45, 50, 0.25);
+    --mt-overlay-35: rgba(41, 45, 50, 0.35);
+    --mt-red: #9a6868;
+    --mt-red-2: #b0605f;
+    --mt-red-3: #8a4d4d;
+    --mt-red-4: #9a5050;
+    --mt-red-5: #8a5a5a;
+    --mt-red-strong: #c0392b;
+    --mt-sh-20: rgba(163, 165, 170, 0.2);
+    --mt-sh-25: rgba(163, 165, 170, 0.25);
+    --mt-sh-30: rgba(163, 165, 170, 0.3);
+    --mt-sh-35: rgba(163, 165, 170, 0.35);
+    --mt-sh-40: rgba(163, 165, 170, 0.4);
+    --mt-sh-45: rgba(163, 165, 170, 0.45);
+    --mt-sh-50: rgba(163, 165, 170, 0.5);
+    --mt-sh-55: rgba(163, 165, 170, 0.55);
+    --mt-sh-60: rgba(163, 165, 170, 0.6);
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --mt-amber: #e0b26b;
+    --mt-bg: #1b2120;
+    --mt-bg-deep: #141917;
+    --mt-blue: #74abee;
+    --mt-green: #5cc285;
+    --mt-green-2: #66c98d;
+    --mt-green-bright: #4fd884;
+    --mt-green-deep: #4fb077;
+    --mt-green-muted: #82c09a;
+    --mt-green-muted-2: #7fb895;
+    --mt-green-pale: #1f3a2a;
+    --mt-green-soft: #74d29a;
+    --mt-grey-1: #a1a8a4;
+    --mt-grey-2: #a1a8a4;
+    --mt-grey-3: #a1a8a4;
+    --mt-hl-22: rgba(255, 255, 255, 0.013);
+    --mt-hl-65: rgba(255, 255, 255, 0.039);
+    --mt-hl-70: rgba(255, 255, 255, 0.042);
+    --mt-hl-80: rgba(255, 255, 255, 0.048);
+    --mt-hl-85: rgba(255, 255, 255, 0.051);
+    --mt-hl-90: rgba(255, 255, 255, 0.054);
+    --mt-hl-95: rgba(255, 255, 255, 0.057);
+    --mt-ink: #e3e8e5;
+    --mt-ink-2: #cfd5d1;
+    --mt-ink-soft: #b3bab6;
+    --mt-ink-soft-2: #b3bab6;
+    --mt-ink-soft-3: #b3bab6;
+    --mt-ink-soft-4: #b3bab6;
+    --mt-ink-strong: #eef2ef;
+    --mt-muted: #8f9792;
+    --mt-muted-2: #757d79;
+    --mt-muted-3: #757d79;
+    --mt-muted-4: #757d79;
+    --mt-muted-5: #757d79;
+    --mt-muted-6: #757d79;
+    --mt-overlay-20: rgba(0, 0, 0, 0.5);
+    --mt-overlay-25: rgba(0, 0, 0, 0.55);
+    --mt-overlay-35: rgba(0, 0, 0, 0.65);
+    --mt-red: #d99494;
+    --mt-red-2: #ec8584;
+    --mt-red-3: #e08585;
+    --mt-red-4: #e08080;
+    --mt-red-5: #d79a9a;
+    --mt-red-strong: #ff6b5c;
+    --mt-sh-20: rgba(0, 0, 0, 0.42);
+    --mt-sh-25: rgba(0, 0, 0, 0.45);
+    --mt-sh-30: rgba(0, 0, 0, 0.48);
+    --mt-sh-35: rgba(0, 0, 0, 0.51);
+    --mt-sh-40: rgba(0, 0, 0, 0.54);
+    --mt-sh-45: rgba(0, 0, 0, 0.57);
+    --mt-sh-50: rgba(0, 0, 0, 0.6);
+    --mt-sh-55: rgba(0, 0, 0, 0.63);
+    --mt-sh-60: rgba(0, 0, 0, 0.66);
+}
+
+:root[data-theme="dark"] body {
+    background: var(--mt-bg);
+    color: var(--mt-ink);
+}
+
+/* Header theme button keeps its icon size on narrow screens, like the bell */
+.dashboard-action.theme-toggle {
+    flex: 0 0 auto;
+    font-size: 15px;
+}

@@ -11,7 +11,7 @@
 
     padding: 30px;
 
-    background: #e8e9ed;
+    background: var(--mt-bg);
 }
 
 
@@ -26,11 +26,11 @@
 
     border-radius: 28px;
 
-    background: #e8e9ed;
+    background: var(--mt-bg);
 
     box-shadow:
-        18px 18px 35px rgba(163, 165, 170, 0.6),
-        -18px -18px 35px rgba(255, 255, 255, 0.95);
+        18px 18px 35px var(--mt-sh-60),
+        -18px -18px 35px var(--mt-hl-95);
 }
 
 
@@ -59,11 +59,11 @@
 
     font-size: 22px;
 
-    background: #e8e9ed;
+    background: var(--mt-bg);
 
     box-shadow:
-        7px 7px 14px rgba(163, 165, 170, 0.55),
-        -7px -7px 14px rgba(255, 255, 255, 0.95);
+        7px 7px 14px var(--mt-sh-55),
+        -7px -7px 14px var(--mt-hl-95);
 }
 
 
@@ -76,14 +76,14 @@
 
     letter-spacing: -0.7px;
 
-    color: #292d32;
+    color: var(--mt-ink);
 }
 
 
 .auth-brand p {
     font-size: 14px;
 
-    color: #858a91;
+    color: var(--mt-muted);
 }
 
 
@@ -105,7 +105,7 @@
 
     font-weight: 600;
 
-    color: #555a61;
+    color: var(--mt-ink-soft);
 }
 
 
@@ -121,27 +121,27 @@
 
     font-size: 14px;
 
-    color: #292d32;
+    color: var(--mt-ink);
 
-    background: #e8e9ed;
+    background: var(--mt-bg);
 
     box-shadow:
-        inset 5px 5px 10px rgba(163, 165, 170, 0.5),
-        inset -5px -5px 10px rgba(255, 255, 255, 0.9);
+        inset 5px 5px 10px var(--mt-sh-50),
+        inset -5px -5px 10px var(--mt-hl-90);
 
     transition: 0.2s ease;
 }
 
 
 .input-group input::placeholder {
-    color: #a0a4aa;
+    color: var(--mt-muted-5);
 }
 
 
 .input-group input:focus {
     box-shadow:
-        inset 3px 3px 7px rgba(163, 165, 170, 0.5),
-        inset -3px -3px 7px rgba(255, 255, 255, 0.9);
+        inset 3px 3px 7px var(--mt-sh-50),
+        inset -3px -3px 7px var(--mt-hl-90);
 }
 
 
@@ -167,13 +167,13 @@
 
     font-weight: 600;
 
-    color: #34784d;
+    color: var(--mt-green);
 
-    background: #e8e9ed;
+    background: var(--mt-bg);
 
     box-shadow:
-        8px 8px 16px rgba(163, 165, 170, 0.6),
-        -8px -8px 16px rgba(255, 255, 255, 0.95);
+        8px 8px 16px var(--mt-sh-60),
+        -8px -8px 16px var(--mt-hl-95);
 
     transition: 0.2s ease;
 }
@@ -183,8 +183,8 @@
     transform: translateY(-2px);
 
     box-shadow:
-        5px 5px 10px rgba(163, 165, 170, 0.6),
-        -5px -5px 10px rgba(255, 255, 255, 0.95);
+        5px 5px 10px var(--mt-sh-60),
+        -5px -5px 10px var(--mt-hl-95);
 }
 
 
@@ -192,8 +192,8 @@
     transform: translateY(1px);
 
     box-shadow:
-        inset 4px 4px 8px rgba(163, 165, 170, 0.5),
-        inset -4px -4px 8px rgba(255, 255, 255, 0.9);
+        inset 4px 4px 8px var(--mt-sh-50),
+        inset -4px -4px 8px var(--mt-hl-90);
 }
 
 
@@ -211,12 +211,12 @@
 
     font-size: 13px;
 
-    color: #858a91;
+    color: var(--mt-muted);
 }
 
 
 .auth-footer a {
-    color: #4d9966;
+    color: var(--mt-green-2);
 
     font-weight: 600;
 
@@ -225,7 +225,7 @@
 
 
 .auth-footer a:hover {
-    color: #34784d;
+    color: var(--mt-green);
 }
 
 
@@ -242,14 +242,14 @@
 
     font-size: 13px;
 
-    color: #858a91;
+    color: var(--mt-muted);
 
     text-decoration: none;
 }
 
 
 .back-home:hover {
-    color: #292d32;
+    color: var(--mt-ink);
 }
 
 
@@ -285,11 +285,11 @@
 
     font-size: 13px;
 
-    color: #8a4d4d;
+    color: var(--mt-red-3);
 
-    background: #e8e9ed;
+    background: var(--mt-bg);
 
     box-shadow:
-        inset 3px 3px 7px rgba(163, 165, 170, 0.35),
-        inset -3px -3px 7px rgba(255, 255, 255, 0.8);
+        inset 3px 3px 7px var(--mt-sh-35),
+        inset -3px -3px 7px var(--mt-hl-80);
 }

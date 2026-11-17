@@ -11,29 +11,29 @@
 }
 
 :root {
-    --bg: #e8e9ed;
+    --bg: var(--mt-bg);
 
-    --ink: #20242b;
-    --ink-soft: #5b6068;
-    --muted: #858a91;
-    --muted-light: #a0a4aa;
+    --ink: var(--mt-ink-strong);
+    --ink-soft: var(--mt-ink-soft-2);
+    --muted: var(--mt-muted);
+    --muted-light: var(--mt-muted-5);
 
-    --green: #34784d;
-    --green-soft: #5daa79;
-    --green-deep: #2d6843;
-    --green-pale: #e9f2ec;
+    --green: var(--mt-green);
+    --green-soft: var(--mt-green-soft);
+    --green-deep: var(--mt-green-deep);
+    --green-pale: var(--mt-green-pale);
 
     --shadow-raised:
-        8px 8px 16px rgba(163, 165, 170, 0.6),
-        -8px -8px 16px rgba(255, 255, 255, 0.95);
+        8px 8px 16px var(--mt-sh-60),
+        -8px -8px 16px var(--mt-hl-95);
 
     --shadow-raised-lg:
-        15px 15px 30px rgba(163, 165, 170, 0.6),
-        -15px -15px 30px rgba(255, 255, 255, 0.95);
+        15px 15px 30px var(--mt-sh-60),
+        -15px -15px 30px var(--mt-hl-95);
 
     --shadow-pressed:
-        inset 2px 2px 4px rgba(163, 165, 170, 0.5),
-        inset -2px -2px 4px rgba(255, 255, 255, 0.8);
+        inset 2px 2px 4px var(--mt-sh-50),
+        inset -2px -2px 4px var(--mt-hl-80);
 
     --font-display: 'Fraunces', Georgia, serif;
     --font-body: 'Manrope', Arial, sans-serif;
@@ -140,8 +140,8 @@ body {
     transform: translateY(-2px);
 
     box-shadow:
-        3px 3px 7px rgba(163, 165, 170, 0.55),
-        -3px -3px 7px rgba(255, 255, 255, 0.9);
+        3px 3px 7px var(--mt-sh-55),
+        -3px -3px 7px var(--mt-hl-90);
 }
 
 
@@ -242,8 +242,8 @@ body {
     color: var(--green-deep);
 
     box-shadow:
-        5px 5px 10px rgba(163, 165, 170, 0.6),
-        -5px -5px 10px rgba(255, 255, 255, 0.95);
+        5px 5px 10px var(--mt-sh-60),
+        -5px -5px 10px var(--mt-hl-95);
 }
 
 .primary-btn span {
@@ -358,7 +358,7 @@ body {
 
     border-radius: 6px 6px 2px 2px;
 
-    background: #d5d7dc;
+    background: var(--mt-bg-deep);
 
     box-shadow: var(--shadow-pressed);
 }
@@ -602,7 +602,7 @@ body {
 .landing-footer {
     padding: 42px 7% 24px;
 
-    border-top: 1px solid rgba(163, 165, 170, 0.35);
+    border-top: 1px solid var(--mt-sh-35);
 }
 
 .footer-top {
@@ -678,7 +678,7 @@ body {
 
     padding-top: 26px;
 
-    border-top: 1px solid rgba(163, 165, 170, 0.35);
+    border-top: 1px solid var(--mt-sh-35);
 
     display: flex;
 

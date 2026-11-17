@@ -8,8 +8,8 @@
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    background: #e8e9ed;
-    color: #292d32;
+    background: var(--mt-bg);
+    color: var(--mt-ink);
 }
 
 
@@ -22,11 +22,11 @@
     max-width: 720px;
     padding: 40px;
     border-radius: 28px;
-    background: #e8e9ed;
+    background: var(--mt-bg);
 
     box-shadow:
-        15px 15px 30px rgba(163, 165, 170, 0.6),
-        -15px -15px 30px rgba(255, 255, 255, 0.95);
+        15px 15px 30px var(--mt-sh-60),
+        -15px -15px 30px var(--mt-hl-95);
 }
 
 
@@ -42,7 +42,7 @@
     display: inline-block;
     margin-bottom: 28px;
 
-    color: #6e9c7d;
+    color: var(--mt-green-muted);
     font-size: 13px;
     font-weight: 600;
     text-decoration: none;
@@ -51,7 +51,7 @@
 }
 
 .back-link:hover {
-    color: #34784d;
+    color: var(--mt-green);
     transform: translateX(-3px);
 }
 
@@ -74,13 +74,13 @@
 
     font-size: 28px;
     font-weight: 300;
-    color: #5daa79;
+    color: var(--mt-green-soft);
 
-    background: #e8e9ed;
+    background: var(--mt-bg);
 
     box-shadow:
-        inset 5px 5px 10px rgba(163, 165, 170, 0.4),
-        inset -5px -5px 10px rgba(255, 255, 255, 0.85);
+        inset 5px 5px 10px var(--mt-sh-40),
+        inset -5px -5px 10px var(--mt-hl-85);
 }
 
 .transaction-label {
@@ -90,7 +90,7 @@
     font-weight: 700;
     letter-spacing: 2px;
 
-    color: #6e9c7d;
+    color: var(--mt-green-muted);
 }
 
 .transaction-title h1 {
@@ -103,7 +103,7 @@
 
 .transaction-title p:last-child {
     font-size: 13px;
-    color: #858a91;
+    color: var(--mt-muted);
 }
 
 
@@ -122,19 +122,19 @@
 }
 
 .error-message {
-    color: #9a6868;
+    color: var(--mt-red);
 
     box-shadow:
-        inset 3px 3px 7px rgba(163, 165, 170, 0.35),
-        inset -3px -3px 7px rgba(255, 255, 255, 0.8);
+        inset 3px 3px 7px var(--mt-sh-35),
+        inset -3px -3px 7px var(--mt-hl-80);
 }
 
 .success-message {
-    color: #4d9966;
+    color: var(--mt-green-2);
 
     box-shadow:
-        inset 3px 3px 7px rgba(163, 165, 170, 0.35),
-        inset -3px -3px 7px rgba(255, 255, 255, 0.8);
+        inset 3px 3px 7px var(--mt-sh-35),
+        inset -3px -3px 7px var(--mt-hl-80);
 }
 
 
@@ -158,7 +158,7 @@
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.7px;
-    color: #6e7075;
+    color: var(--mt-grey-1);
 }
 
 
@@ -180,27 +180,27 @@
     font-family: inherit;
     font-size: 13px;
 
-    color: #292d32;
-    background: #e8e9ed;
+    color: var(--mt-ink);
+    background: var(--mt-bg);
 
     box-shadow:
-        inset 4px 4px 8px rgba(163, 165, 170, 0.45),
-        inset -4px -4px 8px rgba(255, 255, 255, 0.85);
+        inset 4px 4px 8px var(--mt-sh-45),
+        inset -4px -4px 8px var(--mt-hl-85);
 
     transition: 0.2s ease;
 }
 
 .input-group input::placeholder,
 .input-group textarea::placeholder {
-    color: #a0a3a8;
+    color: var(--mt-muted-4);
 }
 
 .input-group input:focus,
 .input-group select:focus,
 .input-group textarea:focus {
     box-shadow:
-        inset 2px 2px 5px rgba(163, 165, 170, 0.45),
-        inset -2px -2px 5px rgba(255, 255, 255, 0.85),
+        inset 2px 2px 5px var(--mt-sh-45),
+        inset -2px -2px 5px var(--mt-hl-85),
         0 0 0 2px rgba(93, 170, 121, 0.15);
 }
 
@@ -232,7 +232,7 @@
     font-size: 11px;
     font-weight: 700;
 
-    color: #858a91;
+    color: var(--mt-muted);
 
     pointer-events: none;
 }
@@ -280,14 +280,14 @@
     font-size: 13px;
     font-weight: 600;
 
-    color: #777b81;
-    background: #e8e9ed;
+    color: var(--mt-grey-3);
+    background: var(--mt-bg);
 
     cursor: pointer;
 
     box-shadow:
-        6px 6px 12px rgba(163, 165, 170, 0.5),
-        -6px -6px 12px rgba(255, 255, 255, 0.85);
+        6px 6px 12px var(--mt-sh-50),
+        -6px -6px 12px var(--mt-hl-85);
 
     transition: 0.2s ease;
 }
@@ -302,24 +302,24 @@
 
 .type-button.active {
     box-shadow:
-        inset 4px 4px 8px rgba(163, 165, 170, 0.4),
-        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+        inset 4px 4px 8px var(--mt-sh-40),
+        inset -4px -4px 8px var(--mt-hl-80);
 }
 
 .type-button.expense-type.active {
-    color: #9a6868;
+    color: var(--mt-red);
 }
 
 .type-button.income-type.active {
-    color: #4d9966;
+    color: var(--mt-green-2);
 }
 
 .type-button.transfer-type.active {
-    color: #3e7cc4;
+    color: var(--mt-blue);
 }
 
 .type-button.own-source.active {
-    color: #5c6068;
+    color: var(--mt-ink-soft-3);
 }
 
 .type-button:disabled {
@@ -342,11 +342,11 @@
     font-size: 12px;
     font-weight: 600;
 
-    background: #e8e9ed;
+    background: var(--mt-bg);
 
     box-shadow:
-        inset 3px 3px 6px rgba(163, 165, 170, 0.35),
-        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+        inset 3px 3px 6px var(--mt-sh-35),
+        inset -3px -3px 6px var(--mt-hl-80);
 }
 
 .balance-effect-hint::before {
@@ -355,7 +355,7 @@
 }
 
 .balance-effect-hint.increase-effect {
-    color: #4d9966;
+    color: var(--mt-green-2);
 }
 
 .balance-effect-hint.increase-effect::before {
@@ -363,7 +363,7 @@
 }
 
 .balance-effect-hint.decrease-effect {
-    color: #9a6868;
+    color: var(--mt-red);
 }
 
 .balance-effect-hint.decrease-effect::before {
@@ -371,7 +371,7 @@
 }
 
 .balance-effect-hint.neutral-effect {
-    color: #858a91;
+    color: var(--mt-muted);
 }
 
 .balance-effect-hint.neutral-effect::before {
@@ -398,14 +398,14 @@
     font-size: 14px;
     font-weight: 600;
 
-    color: #34784d;
-    background: #e8e9ed;
+    color: var(--mt-green);
+    background: var(--mt-bg);
 
     cursor: pointer;
 
     box-shadow:
-        8px 8px 16px rgba(163, 165, 170, 0.6),
-        -8px -8px 16px rgba(255, 255, 255, 0.95);
+        8px 8px 16px var(--mt-sh-60),
+        -8px -8px 16px var(--mt-hl-95);
 
     transition: 0.2s ease;
 }
@@ -413,15 +413,15 @@
 .submit-transaction:hover:not(:disabled) {
     transform: translateY(-2px);
 
-    color: #2d6843;
+    color: var(--mt-green-deep);
 }
 
 .submit-transaction:active:not(:disabled) {
     transform: translateY(1px);
 
     box-shadow:
-        inset 4px 4px 8px rgba(163, 165, 170, 0.45),
-        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+        inset 4px 4px 8px var(--mt-sh-45),
+        inset -4px -4px 8px var(--mt-hl-80);
 }
 
 .submit-transaction:disabled {
@@ -441,7 +441,7 @@
 
     text-align: center;
 
-    color: #858a91;
+    color: var(--mt-muted);
     font-size: 12px;
     text-decoration: none;
 
@@ -449,7 +449,7 @@
 }
 
 .cancel-link:hover {
-    color: #555a61;
+    color: var(--mt-ink-soft);
 }
 
 

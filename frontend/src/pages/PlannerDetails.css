@@ -6,8 +6,8 @@
 .planner-details-page {
     min-height: 100vh;
     padding: 45px 7%;
-    background: #e8e9ed;
-    color: #292d32;
+    background: var(--mt-bg);
+    color: var(--mt-ink);
 }
 
 /* =========================
@@ -19,8 +19,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #e8e9ed;
-    color: #6e7075;
+    background: var(--mt-bg);
+    color: var(--mt-grey-1);
     font-size: 14px;
 }
 
@@ -35,7 +35,7 @@
 .planner-back-link {
     display: inline-block;
     margin-bottom: 30px;
-    color: #6e9c7d;
+    color: var(--mt-green-muted);
     font-size: 13px;
     font-weight: 600;
     text-decoration: none;
@@ -43,7 +43,7 @@
 }
 
 .planner-back-link:hover {
-    color: #34784d;
+    color: var(--mt-green);
     transform: translateX(-3px);
 }
 
@@ -52,7 +52,7 @@
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 2px;
-    color: #6e9c7d;
+    color: var(--mt-green-muted);
 }
 
 .planner-details-header h1 {
@@ -65,7 +65,7 @@
 .planner-period {
     margin: 0;
     font-size: 13px;
-    color: #858a91;
+    color: var(--mt-muted);
 }
 
 /* =========================
@@ -76,12 +76,12 @@
     margin-bottom: 25px;
     padding: 14px 18px;
     border-radius: 14px;
-    color: #9a6868;
+    color: var(--mt-red);
     font-size: 13px;
 
     box-shadow:
-        inset 3px 3px 7px rgba(163, 165, 170, 0.35),
-        inset -3px -3px 7px rgba(255, 255, 255, 0.8);
+        inset 3px 3px 7px var(--mt-sh-35),
+        inset -3px -3px 7px var(--mt-hl-80);
 }
 
 /* =========================
@@ -98,11 +98,11 @@
 .overview-card {
     padding: 25px;
     border-radius: 20px;
-    background: #e8e9ed;
+    background: var(--mt-bg);
 
     box-shadow:
-        10px 10px 20px rgba(163, 165, 170, 0.55),
-        -10px -10px 20px rgba(255, 255, 255, 0.9);
+        10px 10px 20px var(--mt-sh-55),
+        -10px -10px 20px var(--mt-hl-90);
 }
 
 .overview-card p {
@@ -110,7 +110,7 @@
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.7px;
-    color: #777b81;
+    color: var(--mt-grey-3);
 }
 
 .overview-card h2 {
@@ -120,7 +120,7 @@
 }
 
 .overview-card.danger h2 {
-    color: #9a6868;
+    color: var(--mt-red);
 }
 
 /* =========================
@@ -136,7 +136,7 @@
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 2px;
-    color: #6e9c7d;
+    color: var(--mt-green-muted);
 }
 
 .section-heading h2 {
@@ -162,17 +162,17 @@
 .week-card {
     padding: 27px;
     border-radius: 23px;
-    background: #e8e9ed;
+    background: var(--mt-bg);
 
     box-shadow:
-        10px 10px 22px rgba(163, 165, 170, 0.55),
-        -10px -10px 22px rgba(255, 255, 255, 0.9);
+        10px 10px 22px var(--mt-sh-55),
+        -10px -10px 22px var(--mt-hl-90);
 }
 
 .week-card.over-budget {
     box-shadow:
-        10px 10px 22px rgba(163, 165, 170, 0.55),
-        -10px -10px 22px rgba(255, 255, 255, 0.9);
+        10px 10px 22px var(--mt-sh-55),
+        -10px -10px 22px var(--mt-hl-90);
 }
 
 /* =========================
@@ -192,14 +192,14 @@
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 1.5px;
-    color: #6e9c7d;
+    color: var(--mt-green-muted);
 }
 
 .week-card-header h3 {
     margin: 0;
     font-size: 15px;
     font-weight: 600;
-    color: #3a3e43;
+    color: var(--mt-ink-2);
 }
 
 .week-status {
@@ -208,15 +208,15 @@
     border-radius: 10px;
     font-size: 10px;
     font-weight: 700;
-    color: #4d9966;
+    color: var(--mt-green-2);
 
     box-shadow:
-        inset 3px 3px 6px rgba(163, 165, 170, 0.35),
-        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+        inset 3px 3px 6px var(--mt-sh-35),
+        inset -3px -3px 6px var(--mt-hl-80);
 }
 
 .danger-status {
-    color: #9a6868;
+    color: var(--mt-red);
 }
 
 /* =========================
@@ -232,7 +232,7 @@
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.7px;
-    color: #858a91;
+    color: var(--mt-muted);
 }
 
 .budget-display {
@@ -252,19 +252,19 @@
     border: none;
     padding: 7px 13px;
     border-radius: 9px;
-    background: #e8e9ed;
-    color: #6e9c7d;
+    background: var(--mt-bg);
+    color: var(--mt-green-muted);
     font-size: 11px;
     font-weight: 600;
     cursor: pointer;
 
     box-shadow:
-        4px 4px 8px rgba(163, 165, 170, 0.45),
-        -4px -4px 8px rgba(255, 255, 255, 0.85);
+        4px 4px 8px var(--mt-sh-45),
+        -4px -4px 8px var(--mt-hl-85);
 }
 
 .budget-display button:hover {
-    color: #34784d;
+    color: var(--mt-green);
 }
 
 /* =========================
@@ -288,7 +288,7 @@
     transform: translateY(-50%);
     font-size: 11px;
     font-weight: 700;
-    color: #858a91;
+    color: var(--mt-muted);
 }
 
 .budget-input input {
@@ -298,14 +298,14 @@
     outline: none;
     padding: 13px 15px 13px 45px;
     border-radius: 12px;
-    background: #e8e9ed;
-    color: #292d32;
+    background: var(--mt-bg);
+    color: var(--mt-ink);
     font-family: inherit;
     font-size: 13px;
 
     box-shadow:
-        inset 4px 4px 8px rgba(163, 165, 170, 0.45),
-        inset -4px -4px 8px rgba(255, 255, 255, 0.85);
+        inset 4px 4px 8px var(--mt-sh-45),
+        inset -4px -4px 8px var(--mt-hl-85);
 }
 
 .budget-actions {
@@ -317,25 +317,25 @@
     border: none;
     padding: 9px 15px;
     border-radius: 10px;
-    background: #e8e9ed;
-    color: #34784d;
+    background: var(--mt-bg);
+    color: var(--mt-green);
     font-size: 11px;
     font-weight: 600;
     cursor: pointer;
 
     box-shadow:
-        5px 5px 10px rgba(163, 165, 170, 0.45),
-        -5px -5px 10px rgba(255, 255, 255, 0.85);
+        5px 5px 10px var(--mt-sh-45),
+        -5px -5px 10px var(--mt-hl-85);
 }
 
 .budget-actions button:active {
     box-shadow:
-        inset 3px 3px 6px rgba(163, 165, 170, 0.4),
-        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+        inset 3px 3px 6px var(--mt-sh-40),
+        inset -3px -3px 6px var(--mt-hl-80);
 }
 
 .budget-actions .cancel-budget {
-    color: #858a91;
+    color: var(--mt-muted);
 }
 
 /* =========================
@@ -351,8 +351,8 @@
     border-radius: 15px;
 
     box-shadow:
-        inset 4px 4px 8px rgba(163, 165, 170, 0.35),
-        inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+        inset 4px 4px 8px var(--mt-sh-35),
+        inset -4px -4px 8px var(--mt-hl-80);
 }
 
 .spending-row {
@@ -363,7 +363,7 @@
 
 .spending-row span {
     font-size: 11px;
-    color: #777b81;
+    color: var(--mt-grey-3);
 }
 
 .spending-row strong {
@@ -372,11 +372,11 @@
 }
 
 .positive {
-    color: #4d9966;
+    color: var(--mt-green-2);
 }
 
 .negative {
-    color: #9a6868;
+    color: var(--mt-red);
 }
 
 /* =========================
@@ -395,7 +395,7 @@
 
 .progress-label span {
     font-size: 10px;
-    color: #858a91;
+    color: var(--mt-muted);
 }
 
 .progress-bar {
@@ -404,19 +404,19 @@
     border-radius: 10px;
 
     box-shadow:
-        inset 3px 3px 6px rgba(163, 165, 170, 0.4),
-        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+        inset 3px 3px 6px var(--mt-sh-40),
+        inset -3px -3px 6px var(--mt-hl-80);
 }
 
 .progress-fill {
     height: 100%;
     border-radius: 10px;
-    background: #6e9c7d;
+    background: var(--mt-green-muted);
     transition: width 0.3s ease;
 }
 
 .danger-fill {
-    background: #9a6868;
+    background: var(--mt-red);
 }
 
 /* =========================
@@ -430,15 +430,15 @@
     text-align: center;
     font-size: 11px;
     font-weight: 600;
-    color: #4d9966;
+    color: var(--mt-green-2);
 
     box-shadow:
-        inset 3px 3px 6px rgba(163, 165, 170, 0.3),
-        inset -3px -3px 6px rgba(255, 255, 255, 0.8);
+        inset 3px 3px 6px var(--mt-sh-30),
+        inset -3px -3px 6px var(--mt-hl-80);
 }
 
 .danger-result {
-    color: #9a6868;
+    color: var(--mt-red);
 }
 
 /* =========================
@@ -453,11 +453,11 @@
     text-decoration: none;
     font-size: 11px;
     font-weight: 600;
-    color: #34784d;
+    color: var(--mt-green);
 
     box-shadow:
-        5px 5px 10px rgba(163, 165, 170, 0.45),
-        -5px -5px 10px rgba(255, 255, 255, 0.85);
+        5px 5px 10px var(--mt-sh-45),
+        -5px -5px 10px var(--mt-hl-85);
 
     transition: 0.2s ease;
 }
