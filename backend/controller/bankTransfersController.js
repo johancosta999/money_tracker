@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const bankTransfer = require('../model/bankTransfersModel')
 const Planner = require('../model/moneyPlanModel')
+const { isDebtCategory, addDebtNote } = require('../utils/debtNote')
 
 // Note: 500 responses only send a generic message. The real error is logged
 // with console.error on the server, so database details never reach the browser.
@@ -51,13 +52,32 @@ const createBankTransfer = async(req, res) => {
             return res.status(404).json({ message: plannerError });
         }
 
+        const fields = pickEditableFields(req.body);
+
+        // Every new bank transaction needs a category
+        if (!fields.category) {
+            return res.status(400).json({ message: 'Please choose a category' });
+        }
+
         const newTransfer = new bankTransfer({
-            ...pickEditableFields(req.body),
+            ...fields,
             userId : req.userId
         });
 
         const transfer = await newTransfer.save()
-        res.status(200).json(transfer)
+
+        // A debt deposit (money borrowed) is also saved as a note, like debt income.
+        // Bank descriptions are optional, so fall back to the amount.
+        const noteCreated =
+            transfer.type === 'Deposit' && isDebtCategory(transfer.category)
+                ? await addDebtNote(
+                    req.userId,
+                    transfer.description ||
+                        `Debt deposit: Rs. ${Number(transfer.amount).toLocaleString()}`
+                )
+                : false;
+
+        res.status(200).json({ ...transfer.toObject(), noteCreated })
 
     } catch (error) {
         console.error(error);
@@ -128,11 +148,18 @@ const updateBankTransaction = async(req, res) => {
             return res.status(404).json({ message: plannerError });
         }
 
+        const fields = pickEditableFields(req.body);
+
+        // An edit may change the category but not clear it
+        if (fields.category === '') {
+            return res.status(400).json({ message: 'Please choose a category' });
+        }
+
         const updateTransaction = await bankTransfer.findOneAndUpdate({
             _id:id,
             userId: req.userId
         },
-        pickEditableFields(req.body),
+        fields,
         {
             new: true,
             runValidators: true

@@ -37,7 +37,7 @@ function AddBankTransaction() {
     type: "Deposit",
     amount: "",
     external: false,
-    category: "",
+    category: DEFAULT_CATEGORIES[0],
     date: new Date().toISOString().split("T")[0],
     description: "",
   });
@@ -88,13 +88,13 @@ function AddBankTransaction() {
   const handlePlannerChange = (plannerId) => {
     setSelectedPlannerId(plannerId);
 
-    // Clear the category if the new planner doesn't have it
+    // Keep the category if the new planner has it, otherwise pick its first one
     const planner = plannerOptions.find((option) => option._id === plannerId);
     const categories = planner?.categories?.length ? planner.categories : DEFAULT_CATEGORIES;
 
     setFormData((previous) => ({
       ...previous,
-      category: categories.includes(previous.category) ? previous.category : "",
+      category: categories.includes(previous.category) ? previous.category : categories[0],
     }));
   };
 
@@ -140,10 +140,15 @@ function AddBankTransaction() {
       return;
     }
 
+    if (!formData.category) {
+      setError("Please choose a category");
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await api.post("/bank/create-transaction", {
+      const { data } = await api.post("/bank/create-transaction", {
         type: formData.type,
 
         amount: Number(formData.amount),
@@ -159,7 +164,12 @@ function AddBankTransaction() {
         plannerId: selectedPlannerId || null,
       });
 
-      setSuccess("Bank transaction added successfully");
+      // Debt deposits are also saved to Notes by the server
+      setSuccess(
+        data?.noteCreated
+          ? "Bank transaction added and saved to your notes"
+          : "Bank transaction added successfully",
+      );
 
       setTimeout(() => {
         navigate("/bank-transactions");
@@ -221,7 +231,7 @@ function AddBankTransaction() {
           </div>
 
           <div className="input-group">
-            <label htmlFor="category">Category (optional)</label>
+            <label htmlFor="category">Category</label>
 
             <select
               id="category"
@@ -229,9 +239,8 @@ function AddBankTransaction() {
               value={formData.category}
               onChange={handleChange}
               disabled={loading}
+              required
             >
-              <option value="">No category</option>
-
               {availableCategories.map((category) => (
                 <option key={category} value={category}>
                   {category}
