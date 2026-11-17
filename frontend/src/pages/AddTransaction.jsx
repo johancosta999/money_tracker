@@ -123,7 +123,7 @@ function AddTransaction() {
         setLoading(true);
 
         try {
-            await api.post("/transactions", {
+            const { data } = await api.post("/transactions", {
                 title: formData.title.trim(),
                 amount: Number(formData.amount),
                 type: formData.type,
@@ -133,7 +133,12 @@ function AddTransaction() {
                 plannerId: selectedPlannerId
             });
 
-            setSuccess("Transaction added successfully!");
+            // Debt income is also saved to Notes by the server
+            setSuccess(
+                data?.noteCreated
+                    ? "Transaction added and saved to your notes!"
+                    : "Transaction added successfully!"
+            );
 
             setTimeout(() => {
                 navigate("/transactions");

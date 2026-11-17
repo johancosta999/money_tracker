@@ -99,5 +99,6 @@ const deleteNote = async (req, res) => {
 module.exports = {
     getNotes,
     createNote,
-    deleteNote
+    deleteNote,
+    MAX_NOTES_PER_USER
 };

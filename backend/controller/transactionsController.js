@@ -1,6 +1,34 @@
 const Transaction = require("../model/transactionsModel");
 const Planner = require("../model/moneyPlanModel")
 const { isValidAmount } = require("../utils/validation")
+const Note = require("../model/noteModel")
+const { NOTE_MAX_LENGTH } = require("../model/noteModel")
+const { MAX_NOTES_PER_USER } = require("./noteController")
+
+// Saves the description of an income transaction in the "Debt" category as a
+// note. Returns true when a note was saved. Never throws: a note problem must
+// not undo or fail the transaction that was already created.
+const addDebtNote = async (userId, transaction) => {
+    const isDebtIncome =
+        transaction.type === "income" &&
+        String(transaction.category).trim().toLowerCase() === "debt";
+
+    const text = String(transaction.description || "").trim().slice(0, NOTE_MAX_LENGTH);
+
+    if (!isDebtIncome || !text) return false;
+
+    try {
+        // Same per-user limit as notes added by hand
+        const count = await Note.countDocuments({ userId });
+        if (count >= MAX_NOTES_PER_USER) return false;
+
+        await Note.create({ userId, text });
+        return true;
+    } catch (error) {
+        console.error("Couldn't save debt note:", error);
+        return false;
+    }
+};
 
 // Note: 500 responses only send a generic message. The real error is logged
 // with console.error on the server, so database details never reach the browser.
@@ -171,11 +199,22 @@ const createTransaction = async (req, res) => {
         });
 
 
+        // ---------------------------------------------
+        // DEBT INCOME -> NOTE
+        // Money received as a debt (a loan) is saved as a note so it
+        // shows up as a reminder in the notification bell.
+        // ---------------------------------------------
+
+        const noteCreated = await addDebtNote(req.userId, transaction);
+
+
         res.status(201).json({
 
             message: "Transaction created successfully",
 
-            transaction
+            transaction,
+
+            noteCreated
 
         });
 
